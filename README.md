@@ -13,3 +13,16 @@
 | **Remove**           | 파일을 삭제하는 작업만 수행한 경우                           |
 | **!BREAKING CHANGE** | 커다란 API 변경의 경우                                       |
 | **!HOTFIX**          | 급하게 치명적인 버그를 고쳐야 하는 경우                      |
+
+### `.gitmessage.txt` 적용 법 (클론된 레포에만 적용)
+
+```shell
+$ git config commit.template .gitmessage.txt
+```
+
+이후 터미널에서 `git commit`하고 엔터 누르면 메시지가 뜹니다. 혹시 nano 에디터가 뜬다면 다음 명령어를 입력해주세요. 글로벌로 적용됩니다.
+
+```shell
+$ git config --global core.editor "code --wait" # vscode 사용 시 (강추)
+$ git config --global core.editor "vim" # vim 사용 시
+```
