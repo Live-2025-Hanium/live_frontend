@@ -57,9 +57,5 @@ ios/Flutter/Flutter.framework
 ios/Flutter/Flutter.podspec
 ios/Pods/
 
-# SwiftPM
-ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
-ios/Runner.xcworkspace/xcshareddata/swiftpm/
-
 # CocoaPods
 ios/Podfile.lock
