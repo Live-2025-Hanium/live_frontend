@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerWidget {
@@ -9,6 +9,7 @@ class LoginScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoading = ref.watch(authProvider).isLoading;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -25,8 +26,8 @@ class LoginScreen extends ConsumerWidget {
                           width: 156,
                           height: 80,
                         ),
-                        SizedBox(height: 8),
-                        Text(
+                        const SizedBox(height: 8),
+                        const Text(
                           '세상 밖으로 한 발짝',
                           style: TextStyle(
                             fontSize: 22,
@@ -34,7 +35,7 @@ class LoginScreen extends ConsumerWidget {
                             fontStyle: FontStyle.normal,
                           ),
                         ),
-                        SizedBox(height: 180),
+                        const SizedBox(height: 180),
                         SizedBox(
                           width: double.infinity,
                           child: TextButton.icon(
@@ -43,11 +44,11 @@ class LoginScreen extends ConsumerWidget {
                                     .read(authProvider.notifier)
                                     .login('kakao'),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFFFDDC3F),
+                              backgroundColor: const Color(0xFFFDDC3F),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                 vertical: 12,
                                 horizontal: 14,
                               ),
@@ -57,7 +58,7 @@ class LoginScreen extends ConsumerWidget {
                               width: 26,
                               height: 24,
                             ),
-                            label: Text(
+                            label: const Text(
                               '카카오로 시작하기',
                               style: TextStyle(
                                 fontSize: 15,
@@ -67,7 +68,7 @@ class LoginScreen extends ConsumerWidget {
                             ),
                           ),
                         ),
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
                         SizedBox(
                           width: double.infinity,
                           child: TextButton.icon(
@@ -76,15 +77,15 @@ class LoginScreen extends ConsumerWidget {
                                     .read(authProvider.notifier)
                                     .login('google'),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFFFFFFFF),
+                              backgroundColor: const Color(0xFFFFFFFF),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                side: BorderSide(
+                                side: const BorderSide(
                                   color: Color(0xFFDEDEDE),
                                   width: 1,
                                 ),
                               ),
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                 vertical: 12,
                                 horizontal: 14,
                               ),
@@ -94,7 +95,7 @@ class LoginScreen extends ConsumerWidget {
                               width: 26,
                               height: 26,
                             ),
-                            label: Text(
+                            label: const Text(
                               '구글로 시작하기',
                               style: TextStyle(
                                 fontSize: 15,
@@ -104,16 +105,16 @@ class LoginScreen extends ConsumerWidget {
                             ),
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         TextButton(
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            padding: EdgeInsets.symmetric(vertical: 16),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
-                          child: Text(
+                          child: const Text(
                             '문의하기',
                             style: TextStyle(
                               fontSize: 12,
@@ -123,7 +124,7 @@ class LoginScreen extends ConsumerWidget {
                             ),
                           ),
                         ),
-                        SizedBox(height: 60),
+                        const SizedBox(height: 60),
                       ],
                     ),
           ),
