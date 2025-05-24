@@ -12,7 +12,8 @@ class LoginScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isLoading = ref.watch(authProvider).isLoading;
+    final authState = ref.watch(authProvider);
+    final isLoading = authState.status == AuthStatus.loading;
 
     return Scaffold(
       body: SafeArea(
@@ -43,7 +44,7 @@ class LoginScreen extends ConsumerWidget {
                           SizedBox(height: 180.h),
                           LoginButton(
                             onPressed: () {
-                              ref.read(authProvider.notifier).login('kakao');
+                              ref.read(authProvider.notifier).loginWithKakao();
                             },
                             label: '카카오로 시작하기',
                             icon: SvgPicture.asset(
@@ -56,7 +57,7 @@ class LoginScreen extends ConsumerWidget {
                           SizedBox(height: 12),
                           LoginButton(
                             onPressed: () {
-                              ref.read(authProvider.notifier).login('google');
+                              ref.read(authProvider.notifier).loginWithGoogle();
                             },
                             label: '구글로 시작하기',
                             icon: SvgPicture.asset(
