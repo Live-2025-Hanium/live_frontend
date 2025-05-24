@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
+import 'package:live_frontend/theme/app_colors.dart';
+import 'package:live_frontend/theme/app_text_styles.dart';
+import 'widgets/login_button.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
@@ -18,114 +22,75 @@ class LoginScreen extends ConsumerWidget {
             child:
                 isLoading
                     ? const CircularProgressIndicator()
-                    : Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        SvgPicture.asset(
-                          'assets/logo/logo.svg',
-                          width: 156,
-                          height: 80,
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          '세상 밖으로 한 발짝',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w600,
-                            fontStyle: FontStyle.normal,
+                    : SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          SizedBox(height: 262.h),
+                          SvgPicture.asset(
+                            'assets/logo/logo.svg',
+                            width: 156,
+                            height: 80,
                           ),
-                        ),
-                        const SizedBox(height: 180),
-                        SizedBox(
-                          width: double.infinity,
-                          child: TextButton.icon(
-                            onPressed:
-                                () => ref
-                                    .read(authProvider.notifier)
-                                    .login('kakao'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFFDDC3F),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 12,
-                                horizontal: 14,
-                              ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '세상 밖으로 한 발짝',
+                            style: AppTextStyles.titleSemibold(
+                              context,
+                              color: AppColors.greenNormal,
                             ),
+                          ),
+                          SizedBox(height: 180.h),
+                          LoginButton(
+                            onPressed: () {
+                              ref.read(authProvider.notifier).login('kakao');
+                            },
+                            label: '카카오로 시작하기',
                             icon: SvgPicture.asset(
                               'assets/logo/kakao.svg',
-                              width: 26,
+                              width: 24,
                               height: 24,
                             ),
-                            label: const Text(
-                              '카카오로 시작하기',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w200,
-                                color: Color(0xFF000000),
-                              ),
-                            ),
+                            backgroundColor: const Color(0xFFFDDC3F),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          width: double.infinity,
-                          child: TextButton.icon(
-                            onPressed:
-                                () => ref
-                                    .read(authProvider.notifier)
-                                    .login('google'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFFFFFFF),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                side: const BorderSide(
-                                  color: Color(0xFFDEDEDE),
-                                  width: 1,
-                                ),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 12,
-                                horizontal: 14,
-                              ),
-                            ),
+                          SizedBox(height: 12),
+                          LoginButton(
+                            onPressed: () {
+                              ref.read(authProvider.notifier).login('google');
+                            },
+                            label: '구글로 시작하기',
                             icon: SvgPicture.asset(
                               'assets/logo/google.svg',
                               width: 26,
                               height: 26,
                             ),
-                            label: const Text(
-                              '구글로 시작하기',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w200,
-                                color: Color(0xFF000000),
+                            backgroundColor: const Color(0xFFFFFFFF),
+                            borderSide: const BorderSide(
+                              color: AppColors.blackBlack2,
+                              width: 1,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          TextButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            child: Text(
+                              '문의하기',
+                              style: AppTextStyles.smallMedium(
+                                context,
+                                color: Colors.black,
+                                decoration: TextDecoration.underline,
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        TextButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          child: const Text(
-                            '문의하기',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF000000),
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 60),
-                      ],
+                          SizedBox(height: 60.h),
+                        ],
+                      ),
                     ),
           ),
         ),
