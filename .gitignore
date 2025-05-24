@@ -65,6 +65,7 @@ ios/Podfile.lock
 *.jks
 key.properties
 local.properties
+android/my-release-key
 
 # Gradle cache directory
 .gradle/
