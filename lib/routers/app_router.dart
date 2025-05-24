@@ -9,6 +9,7 @@ import 'package:live_frontend/screens/statistics/statistics_screen.dart';
 import 'package:live_frontend/screens/terms/terms_detail/terms_detail_screen.dart';
 import 'package:live_frontend/screens/terms/terms_screen.dart';
 import '../screens/login/login_screen.dart';
+import '../screens/login/profile_setup_screen.dart';
 import '../screens/home.dart';
 import '../providers/auth_provider.dart';
 
