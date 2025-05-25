@@ -51,7 +51,8 @@ android/app/google-services.json
 # Xcode
 *.xcworkspace
 *.xcuserstate
-*.xcuserdata/
+ios/Runner.xcodeproj/xcuserdata/
+ios/Runner.xcodeproj/xcshareddata/xcschemes/*.xcscheme
 DerivedData/
 ios/Flutter/Flutter.framework
 ios/Flutter/Flutter.podspec
@@ -59,3 +60,14 @@ ios/Pods/
 
 # CocoaPods
 ios/Podfile.lock
+
+# Android release key
+*.jks
+key.properties
+local.properties
+android/my-release-key
+
+# Gradle cache directory
+.gradle/
+
+.env

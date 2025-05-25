@@ -1,45 +1,102 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:flutter/foundation.dart';
+import '../models/user.dart';
+
+enum AuthStatus { initial, loading, authenticated, error }
 
 class AuthState {
-  final bool isLoading;
-  final bool isLoggedIn;
-  final String? userName;
+  final AuthStatus status;
+  final AppUser? user;
+  final String? token;
+  final String? error;
 
-  AuthState({this.isLoading = false, this.isLoggedIn = false, this.userName});
+  const AuthState({
+    this.status = AuthStatus.initial,
+    this.user,
+    this.token,
+    this.error,
+  });
 
-  AuthState copyWith({bool? isLoading, bool? isLoggedIn, String? userName}) {
+  AuthState copyWith({
+    AuthStatus? status,
+    AppUser? user,
+    String? token,
+    String? error,
+  }) {
     return AuthState(
-      isLoading: isLoading ?? this.isLoading,
-      isLoggedIn: isLoggedIn ?? this.isLoggedIn,
-      userName: userName ?? this.userName,
+      status: status ?? this.status,
+      user: user ?? this.user,
+      token: token ?? this.token,
+      error: error,
     );
   }
 }
 
-final authProvider = StateNotifierProvider<AuthController, AuthState>((ref) {
-  return AuthController();
-});
+final authProvider = StateNotifierProvider<AuthController, AuthState>(
+  (ref) => AuthController(),
+);
 
 class AuthController extends StateNotifier<AuthState> {
-  AuthController() : super(AuthState());
+  AuthController() : super(const AuthState());
 
-  Future<void> login(String provider) async {
-    state = state.copyWith(isLoading: true);
+  Future<void> loginWithGoogle() async {
+    state = state.copyWith(status: AuthStatus.loading);
     try {
-      // TODO : 실제 로그인 로직
-      await Future.delayed(const Duration(seconds: 2));
-      state = state.copyWith(
-        isLoading: false,
-        isLoggedIn: true,
-        userName: "홍길동", // 예시 사용자 이름
+      final googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        throw Exception('사용자가 Google 로그인을 취소했습니다.');
+      }
+
+      final googleAuth = await googleUser.authentication;
+
+      final user = AppUser.fromGoogle(googleUser);
+      debugPrint('✅ Google 로그인 성공');
+      debugPrint('accessToken: ${googleAuth.accessToken}');
+      debugPrint('idToken: ${googleAuth.idToken}');
+
+      // TODO: 백엔드에 idToken 전송 → 사용자 인증
+
+      state = AuthState(
+        status: AuthStatus.authenticated,
+        user: user,
+        token: googleAuth.idToken,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false);
-      rethrow;
+      state = state.copyWith(status: AuthStatus.error, error: e.toString());
+    }
+  }
+
+  Future<void> loginWithKakao() async {
+    state = state.copyWith(status: AuthStatus.loading);
+    try {
+      OAuthToken token;
+      if (await isKakaoTalkInstalled()) {
+        token = await UserApi.instance.loginWithKakaoTalk();
+      } else {
+        token = await UserApi.instance.loginWithKakaoAccount();
+      }
+
+      final kakaoUser = await UserApi.instance.me();
+      final user = AppUser.fromKakao(kakaoUser);
+
+      debugPrint('✅ Kakao 로그인 성공');
+      debugPrint('accessToken: ${token.accessToken}');
+
+      // TODO: 백엔드에 token.accessToken 전송 → 사용자 인증
+
+      state = AuthState(
+        status: AuthStatus.authenticated,
+        user: user,
+        token: token.accessToken,
+      );
+    } catch (e) {
+      state = state.copyWith(status: AuthStatus.error, error: e.toString());
     }
   }
 
   void logout() {
-    state = AuthState();
+    state = const AuthState();
   }
 }
