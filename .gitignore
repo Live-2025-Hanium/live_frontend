@@ -57,6 +57,7 @@ DerivedData/
 ios/Flutter/Flutter.framework
 ios/Flutter/Flutter.podspec
 ios/Pods/
+ios/Flutter/environment.secret.xcconfig
 
 # CocoaPods
 ios/Podfile.lock

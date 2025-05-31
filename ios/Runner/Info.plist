@@ -58,6 +58,7 @@
     		<key>CFBundleURLSchemes</key>
     		<array>
       			<string>kakao$(KAKAO_NATIVE_APP_KEY)</string>
+				<string>$(GOOGLE_REVERSED_CLIENT_ID)</string>
     		</array>
   		</dict>
 	</array>
