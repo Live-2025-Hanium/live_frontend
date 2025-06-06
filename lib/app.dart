@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:live_frontend/theme/app_colors.dart';
 import 'routers/app_router.dart';
 
 class MyApp extends ConsumerWidget {
@@ -19,8 +20,12 @@ class MyApp extends ConsumerWidget {
           routerConfig: router,
           title: 'Lively',
           theme: ThemeData(
+            checkboxTheme: CheckboxThemeData(
+              side: const BorderSide(
+                color: AppColors.greenNormal,
+              ), // ✅ 보더 색만 지정
+            ),
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
-            // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
           ),
         );
