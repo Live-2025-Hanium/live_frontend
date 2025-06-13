@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/screens/terms/widgets/term.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/theme/app_colors.dart';
+import 'package:live_frontend/providers/auth_provider.dart';
+import 'package:live_frontend/widgets/saeip_app_bar.dart';
 
 class Agreement {
   final String label;
@@ -10,15 +13,15 @@ class Agreement {
   Agreement(this.label, {this.agreed = false});
 }
 
-class TermsScreen extends StatefulWidget {
+class TermsScreen extends ConsumerStatefulWidget {
+  const TermsScreen({super.key});
+
   @override
   TermsScreenState createState() => TermsScreenState();
 }
 
-class TermsScreenState extends State<TermsScreen> {
+class TermsScreenState extends ConsumerState<TermsScreen> {
   bool agreedToAll = false;
-
-  String userName = "유저"; // Replace with actual user name
 
   List<Agreement> terms = [
     Agreement("서비스 이용 약관 (필수)"),
@@ -39,8 +42,10 @@ class TermsScreenState extends State<TermsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
+    final userName = authState.user?.name ?? "유저";
     return Scaffold(
-      appBar: AppBar(title: Text('이용 약관')),
+      appBar: SaeipAppBar(lastPage: '/home'), // 임시로 이전페이지는 홈으로 돌아가도록,,
       body: Padding(
         padding: EdgeInsets.only(
           left: 20.0,
@@ -55,12 +60,23 @@ class TermsScreenState extends State<TermsScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "$userName 님, 반갑습니다!",
-                  style: AppTextStyles.titleMedium(
-                    context,
-                    color: Colors.black,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      "$userName ",
+                      style: AppTextStyles.titleMedium(
+                        context,
+                        color: AppColors.greenNormal,
+                      ),
+                    ),
+                    Text(
+                      "님, 반갑습니다!",
+                      style: AppTextStyles.titleMedium(
+                        context,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 8.0),
                 Text(
