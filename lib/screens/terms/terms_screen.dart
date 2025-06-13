@@ -79,7 +79,7 @@ class TermsScreenState extends State<TermsScreen> {
                       "전체 동의",
                       style: AppTextStyles.subtitleMedium(
                         context,
-                        color: AppColors.blackBlack3,
+                        color: Colors.black,
                       ),
                     ),
                     SizedBox(
@@ -138,12 +138,10 @@ class TermsScreenState extends State<TermsScreen> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   backgroundColor:
-                      agreedToAll
-                          ? AppColors.greenNormal
-                          : AppColors.blackBlack2,
+                      agreedToAll ? AppColors.greenDark : AppColors.blackBlack2,
                 ),
                 child: Text(
-                  "동의하고 시작하기",
+                  "다음",
                   style: AppTextStyles.subtitleSemibold(
                     context,
                     color: Colors.white,
