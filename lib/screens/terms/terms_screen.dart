@@ -5,13 +5,13 @@ import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
-import 'package:markdown_widget/markdown_widget.dart';
 
 class Agreement {
   final String label;
   bool agreed;
+  final String? filePath;
 
-  Agreement(this.label, {this.agreed = false});
+  Agreement(this.label, {this.agreed = false, this.filePath});
 }
 
 class TermsScreen extends ConsumerStatefulWidget {
@@ -25,7 +25,7 @@ class TermsScreenState extends ConsumerState<TermsScreen> {
   bool agreedToAll = false;
 
   List<Agreement> terms = [
-    Agreement("서비스 이용 약관 (필수)"),
+    Agreement("서비스 이용 약관 (필수)", filePath: "terms_of_service.md"),
     Agreement("개인정보 처리 방침 (필수)"),
     Agreement("14세 이상 확인 (필수)"),
     Agreement("제3자 정보 제공 동의 (선택)"),
@@ -134,6 +134,7 @@ class TermsScreenState extends ConsumerState<TermsScreen> {
                               agreedToAll = terms.every((t) => t.agreed);
                             });
                           },
+                          filePath: term.filePath,
                         );
                       }).toList(),
                 ),
