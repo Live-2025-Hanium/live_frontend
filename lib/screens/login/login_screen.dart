@@ -18,82 +18,84 @@ class LoginScreen extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Center(
-            child:
-                isLoading
-                    ? const CircularProgressIndicator()
-                    : SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          SizedBox(height: 262.h),
-                          SvgPicture.asset(
-                            'assets/logo/logo.svg',
-                            width: 156,
-                            height: 80,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '세상 밖으로 한 발짝',
-                            style: AppTextStyles.titleSemibold(
-                              context,
-                              color: AppColors.greenNormal,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 60),
+          child:
+              isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          spacing: 12,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/logo/logo.svg',
+                              width: 204,
+                              height: 56,
                             ),
-                          ),
-                          SizedBox(height: 180.h),
-                          LoginButton(
-                            onPressed: () {
-                              ref.read(authProvider.notifier).loginWithKakao();
-                            },
-                            label: '카카오로 시작하기',
-                            icon: SvgPicture.asset(
-                              'assets/logo/kakao.svg',
-                              width: 24,
-                              height: 24,
-                            ),
-                            backgroundColor: const Color(0xFFFDDC3F),
-                          ),
-                          SizedBox(height: 12),
-                          LoginButton(
-                            onPressed: () {
-                              ref.read(authProvider.notifier).loginWithGoogle();
-                            },
-                            label: '구글로 시작하기',
-                            icon: SvgPicture.asset(
-                              'assets/logo/google.svg',
-                              width: 26,
-                              height: 26,
-                            ),
-                            backgroundColor: const Color(0xFFFFFFFF),
-                            borderSide: const BorderSide(
-                              color: AppColors.blackBlack2,
-                              width: 1,
-                            ),
-                          ),
-                          SizedBox(height: 4.h),
-                          TextButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                            ),
-                            child: Text(
-                              '문의하기',
-                              style: AppTextStyles.smallMedium(
+                            Text(
+                              '세상 밖으로 한 발짝',
+                              style: AppTextStyles.titleSemibold(
                                 context,
-                                color: Colors.black,
-                                decoration: TextDecoration.underline,
+                                color: AppColors.greenNormal,
                               ),
                             ),
-                          ),
-                          SizedBox(height: 60.h),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-          ),
+                      LoginButton(
+                        onPressed: () {
+                          ref.read(authProvider.notifier).loginWithKakao();
+                        },
+                        label: '카카오로 시작하기',
+                        icon: SvgPicture.asset(
+                          'assets/logo/kakao.svg',
+                          width: 24,
+                          height: 24,
+                        ),
+                        backgroundColor: const Color(0xFFFDDC3F),
+                      ),
+                      SizedBox(height: 12),
+                      LoginButton(
+                        onPressed: () {
+                          ref.read(authProvider.notifier).loginWithGoogle();
+                        },
+                        label: 'Google로 시작하기',
+                        icon: SvgPicture.asset(
+                          'assets/logo/google.svg',
+                          width: 26,
+                          height: 26,
+                        ),
+                        backgroundColor: const Color(0xFFFFFFFF),
+                        borderSide: const BorderSide(
+                          color: AppColors.blackBlack2,
+                          width: 1,
+                        ),
+                      ),
+                      SizedBox(height: 4.h),
+                      TextButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                        child: Text(
+                          '문의하기',
+                          style: AppTextStyles.smallMedium(
+                            context,
+                            color: Colors.black,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
         ),
       ),
     );
