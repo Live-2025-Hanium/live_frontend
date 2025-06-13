@@ -5,6 +5,7 @@ import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
+import 'package:markdown_widget/markdown_widget.dart';
 
 class Agreement {
   final String label;

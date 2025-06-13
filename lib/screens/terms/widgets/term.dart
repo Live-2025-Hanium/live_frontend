@@ -7,14 +7,16 @@ class Term extends StatelessWidget {
   final String description;
   final bool isChecked;
   final ValueChanged<bool?> onChanged;
+  final String? termPath;
 
   const Term({
-    Key? key,
+    super.key,
     required this.title,
     required this.description,
     required this.isChecked,
     required this.onChanged,
-  }) : super(key: key);
+    this.termPath,
+  });
 
   @override
   Widget build(BuildContext context) {
