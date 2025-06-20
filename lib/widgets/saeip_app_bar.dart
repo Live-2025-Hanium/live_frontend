@@ -12,6 +12,7 @@ class SaeipAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? lastPage;
   final VoidCallback? leadingAction;
   final AppBarStyle appBarStyle;
+  final void Function()? onBack;
 
   const SaeipAppBar({
     super.key,
@@ -20,6 +21,7 @@ class SaeipAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.lastPage,
     this.leadingAction,
     this.appBarStyle = AppBarStyle.detail,
+    this.onBack,
   });
 
   @override
@@ -28,7 +30,9 @@ class SaeipAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     void goBack() {
-      if (GoRouter.of(context).canPop()) {
+      if (onBack != null) {
+        onBack!();
+      } else if (GoRouter.of(context).canPop()) {
         context.pop();
       } else {
         context.push(lastPage ?? '/home');

@@ -21,18 +21,23 @@ class Term extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void onTap() async {
+      // 파일 경로가 null이 아닐 때만 동작
+      if (filePath == null) return;
+      bool? checked = await context.pushNamed(
+        'terms_detail',
+        pathParameters: {'file_path': filePath!},
+        extra: isChecked,
+      );
+      if (checked != null) {
+        onChanged(checked);
+      }
+    }
+
     return ListTile(
       contentPadding: const EdgeInsets.all(0),
       enabled: filePath != null,
-      onTap:
-          filePath != null
-              ? () {
-                context.pushNamed(
-                  'terms_detail',
-                  pathParameters: {'file_path': filePath!},
-                );
-              }
-              : null,
+      onTap: filePath != null ? onTap : null,
       title: Text(
         title,
         style: AppTextStyles.bodyRegular(

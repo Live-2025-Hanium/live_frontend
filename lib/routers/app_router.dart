@@ -63,7 +63,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: ':file_path',
             builder: (context, state) {
               final path = state.pathParameters['file_path']!;
-              return TermsDetailScreen(path: path);
+              final data = state.extra as bool?;
+              return TermsDetailScreen(path: path, isChecked: data ?? false);
             },
           ),
         ],

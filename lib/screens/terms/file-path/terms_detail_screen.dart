@@ -7,25 +7,40 @@ import 'package:markdown_widget/markdown_widget.dart';
 
 class TermsDetailScreen extends StatefulWidget {
   final String path;
-  const TermsDetailScreen({super.key, required this.path});
+  final bool isChecked;
+  const TermsDetailScreen({
+    super.key,
+    required this.path,
+    this.isChecked = false,
+  });
 
   @override
   State<TermsDetailScreen> createState() => _TermsDetailScreenState();
 }
 
 class _TermsDetailScreenState extends State<TermsDetailScreen> {
-  bool isChecked = false;
+  late bool _isChecked;
+
+  @override
+  void initState() {
+    super.initState();
+    _isChecked = widget.isChecked;
+  }
 
   void onChanged(bool? value) {
     setState(() {
-      isChecked = value ?? false;
+      _isChecked = value ?? false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    void onBack() {
+      Navigator.of(context).pop(_isChecked);
+    }
+
     return Scaffold(
-      appBar: SaeipAppBar(title: '서비스 이용 약관'),
+      appBar: SaeipAppBar(title: '서비스 이용 약관', onBack: onBack),
       body: FutureBuilder<String>(
         future: rootBundle.loadString('assets/terms/${widget.path}'),
         builder: (context, snapshot) {
@@ -40,7 +55,13 @@ class _TermsDetailScreenState extends State<TermsDetailScreen> {
             child: Stack(
               children: [
                 // 마크다운 본문
-                Positioned.fill(child: MarkdownWidget(data: snapshot.data!)),
+                Positioned.fill(
+                  bottom: 80,
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  child: MarkdownWidget(data: snapshot.data!),
+                ),
                 Positioned(
                   bottom: 0,
                   left: 0,
@@ -74,7 +95,7 @@ class _TermsDetailScreenState extends State<TermsDetailScreen> {
                               child: Transform.scale(
                                 scale: 32 / 18,
                                 child: Checkbox(
-                                  value: isChecked,
+                                  value: _isChecked,
                                   onChanged: onChanged,
                                   activeColor: AppColors.greenNormal,
                                   checkColor: Colors.white,
