@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:live_frontend/screens/terms/file-path/terms_detail_screen.dart';
+import 'package:live_frontend/screens/terms/terms_detail/terms_detail_screen.dart';
 import 'package:live_frontend/screens/terms/terms_screen.dart';
 import '../screens/login/login_screen.dart';
 import '../screens/home.dart';
