@@ -1,27 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/screens/terms/widgets/term.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/theme/app_colors.dart';
+import 'package:live_frontend/providers/auth_provider.dart';
+import 'package:live_frontend/widgets/saeip_app_bar.dart';
 
 class Agreement {
   final String label;
   bool agreed;
+  final String? filePath;
 
-  Agreement(this.label, {this.agreed = false});
+  Agreement(this.label, {this.agreed = false, this.filePath});
 }
 
-class TermsScreen extends StatefulWidget {
+class TermsScreen extends ConsumerStatefulWidget {
+  const TermsScreen({super.key});
+
   @override
   TermsScreenState createState() => TermsScreenState();
 }
 
-class TermsScreenState extends State<TermsScreen> {
+class TermsScreenState extends ConsumerState<TermsScreen> {
   bool agreedToAll = false;
 
-  String userName = "유저"; // Replace with actual user name
-
   List<Agreement> terms = [
-    Agreement("서비스 이용 약관 (필수)"),
+    Agreement("서비스 이용 약관 (필수)", filePath: "terms_of_service.md"),
     Agreement("개인정보 처리 방침 (필수)"),
     Agreement("14세 이상 확인 (필수)"),
     Agreement("제3자 정보 제공 동의 (선택)"),
@@ -39,8 +43,10 @@ class TermsScreenState extends State<TermsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
+    final userName = authState.user?.name ?? "유저";
     return Scaffold(
-      appBar: AppBar(title: Text('이용 약관')),
+      appBar: SaeipAppBar(lastPage: '/home'), // 임시로 이전페이지는 홈으로 돌아가도록,,
       body: Padding(
         padding: EdgeInsets.only(
           left: 20.0,
@@ -55,12 +61,23 @@ class TermsScreenState extends State<TermsScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "$userName 님, 반갑습니다!",
-                  style: AppTextStyles.titleMedium(
-                    context,
-                    color: Colors.black,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      "$userName ",
+                      style: AppTextStyles.titleMedium(
+                        context,
+                        color: AppColors.greenNormal,
+                      ),
+                    ),
+                    Text(
+                      "님, 반갑습니다!",
+                      style: AppTextStyles.titleMedium(
+                        context,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 8.0),
                 Text(
@@ -79,7 +96,7 @@ class TermsScreenState extends State<TermsScreen> {
                       "전체 동의",
                       style: AppTextStyles.subtitleMedium(
                         context,
-                        color: AppColors.blackBlack3,
+                        color: Colors.black,
                       ),
                     ),
                     SizedBox(
@@ -117,6 +134,7 @@ class TermsScreenState extends State<TermsScreen> {
                               agreedToAll = terms.every((t) => t.agreed);
                             });
                           },
+                          filePath: term.filePath,
                         );
                       }).toList(),
                 ),
@@ -138,12 +156,10 @@ class TermsScreenState extends State<TermsScreen> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   backgroundColor:
-                      agreedToAll
-                          ? AppColors.greenNormal
-                          : AppColors.blackBlack2,
+                      agreedToAll ? AppColors.greenDark : AppColors.blackBlack2,
                 ),
                 child: Text(
-                  "동의하고 시작하기",
+                  "다음",
                   style: AppTextStyles.subtitleSemibold(
                     context,
                     color: Colors.white,

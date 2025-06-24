@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:live_frontend/screens/terms/terms_detail/terms_detail_screen.dart';
 import 'package:live_frontend/screens/terms/terms_screen.dart';
 import '../screens/login/login_screen.dart';
 import '../screens/home.dart';
@@ -40,13 +41,33 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
-      GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
       GoRoute(
+        name: 'login',
+        path: '/login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        name: 'home',
+        path: '/home',
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        name: 'terms',
         path: '/terms',
         builder: (context, state) {
           return TermsScreen();
         },
+        routes: [
+          GoRoute(
+            name: 'terms_detail',
+            path: ':file_path',
+            builder: (context, state) {
+              final path = state.pathParameters['file_path']!;
+              final data = state.extra as bool?;
+              return TermsDetailScreen(path: path, isChecked: data ?? false);
+            },
+          ),
+        ],
       ),
     ],
   );
