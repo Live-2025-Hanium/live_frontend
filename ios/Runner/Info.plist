@@ -62,5 +62,21 @@
     		</array>
   		</dict>
 	</array>
+	<!-- 📷 카메라 접근 -->
+	<key>NSCameraUsageDescription</key>
+	<string>앱에서 카메라를 사용하기 위해 권한이 필요합니다.</string>
+
+	<!-- 🖼️ 사진 앨범 접근 -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>사진을 업로드하거나 선택하기 위해 사진 라이브러리 접근 권한이 필요합니다.</string>
+
+	<!-- 🧭 위치 접근 (앱 실행 중) -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>현재 위치 기반 서비스를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
+
+	<!-- 🔔 알림 권한 (선택 사항) -->
+	<key>NSUserNotificationUsageDescription</key>
+	<string>알림을 수신하기 위해 권한이 필요합니다.</string>
+
 </dict>
 </plist>

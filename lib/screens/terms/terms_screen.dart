@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:live_frontend/screens/terms/widgets/term.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/theme/app_colors.dart';
@@ -146,8 +147,7 @@ class TermsScreenState extends ConsumerState<TermsScreen> {
                 onPressed:
                     agreedToAll
                         ? () {
-                          // Handle agreement submission
-                          //   Navigator.pop(context);
+                          context.push('/error');
                         }
                         : null,
                 style: ElevatedButton.styleFrom(

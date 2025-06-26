@@ -11,6 +11,19 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
 
+    final saeipColorScheme = ColorScheme(
+      brightness: Brightness.light,
+      primary: AppColors.greenNormal,
+      onPrimary: Colors.white,
+      primaryContainer: AppColors.greenLight, // primary.light
+      secondary: AppColors.pinkNormal,
+      onSecondary: Colors.white,
+      surface: Colors.white, // background.paper
+      onSurface: Colors.black,
+      error: AppColors.errorError3,
+      onError: Colors.white,
+    );
+
     return ScreenUtilInit(
       designSize: const Size(360, 780),
       minTextAdapt: true,
@@ -18,14 +31,12 @@ class MyApp extends ConsumerWidget {
       builder: (context, child) {
         return MaterialApp.router(
           routerConfig: router,
-          title: 'Lively',
+          title: 'SaeIp',
           theme: ThemeData(
             checkboxTheme: CheckboxThemeData(
-              side: const BorderSide(
-                color: AppColors.greenNormal,
-              ), // ✅ 보더 색만 지정
+              side: const BorderSide(color: AppColors.greenNormal),
             ),
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+            colorScheme: saeipColorScheme,
             useMaterial3: true,
           ),
         );

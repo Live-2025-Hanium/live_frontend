@@ -19,7 +19,11 @@ val localProperties = Properties().apply {
 
 android {
     namespace = "com.example.live_frontend"
-    compileSdk = flutter.compileSdkVersion
+	compileSdk = 35
+    defaultConfig {
+        minSdk = 26
+        targetSdk = 35
+    }
     ndkVersion = "27.0.12077973"
 
     compileOptions {

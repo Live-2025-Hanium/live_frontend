@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:live_frontend/screens/404/not_found_screen.dart';
 import 'package:live_frontend/screens/terms/terms_detail/terms_detail_screen.dart';
 import 'package:live_frontend/screens/terms/terms_screen.dart';
 import '../screens/login/login_screen.dart';
@@ -39,6 +40,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (isLoggedIn && isOnLoginPage) return '/terms';
 
       return null;
+    },
+    errorBuilder: (context, state) {
+      return NotFoundScreen(error: state.error);
     },
     routes: [
       GoRoute(
