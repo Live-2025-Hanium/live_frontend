@@ -44,6 +44,7 @@ dependencies:
   flutter_dotenv: ^5.2.1
   markdown_widget: ^2.3.2
   gap: ^3.0.1
+  flutter_native_splash: ^2.4.6
 
 dev_dependencies:
   flutter_test:
