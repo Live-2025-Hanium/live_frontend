@@ -100,6 +100,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
+      GoRoute(
+        name: 'profile_setup',
+        path: '/profile_setup',
+        builder: (context, state) => const ProfileSetupScreen(),
+      ),
     ],
   );
 });

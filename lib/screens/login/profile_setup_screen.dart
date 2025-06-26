@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:go_router/go_router.dart';
+import 'package:live_frontend/screens/login/widgets/nickname_field.dart';
+import 'package:live_frontend/widgets/saeip_app_bar.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   const ProfileSetupScreen({super.key});
@@ -11,6 +14,7 @@ class ProfileSetupScreen extends StatefulWidget {
 
 class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
+  final _nicknameController = TextEditingController();
 
   final List<String> jobs = ['학생', '직장인', '주부', '프리랜서/자영업', '무직/구직 중', '기타'];
 
@@ -21,6 +25,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: SaeipAppBar(lastPage: '/terms'),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
@@ -37,18 +42,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                FormBuilderTextField(
-                  name: 'nickname',
-                  maxLength: 10,
-                  decoration: const InputDecoration(
-                    labelText: '닉네임',
-                    suffix: Text('중복 확인'),
-                  ),
-                  validator: FormBuilderValidators.compose([
-                    FormBuilderValidators.required(),
-                    FormBuilderValidators.maxLength(10),
-                  ]),
-                ),
+                NicknameField(),
+
                 const SizedBox(height: 20),
                 FormBuilderRadioGroup(
                   name: 'gender',
@@ -134,8 +129,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   onPressed: () {
                     if (_formKey.currentState?.saveAndValidate() ?? false) {
                       final formData = _formKey.currentState!.value;
-                      print('폼 데이터: $formData');
-                      // TODO: 제출 로직
+                      // print('폼 데이터: $formData');
+                      context.pushNamed('home');
                     } else {
                       print('폼 유효성 오류');
                     }
