@@ -43,6 +43,7 @@ dependencies:
   kakao_flutter_sdk_user: ^1.9.7+3
   flutter_dotenv: ^5.2.1
   markdown_widget: ^2.3.2
+  gap: ^3.0.1
 
 dev_dependencies:
   flutter_test:
