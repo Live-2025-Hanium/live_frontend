@@ -56,7 +56,8 @@ class SaeipModal extends StatelessWidget {
             Row(
               children: [
                 if (onCancel != null) ...[
-                  SaeipButton(
+                  _buildModalButton(
+                    context,
                     text: "취소",
                     onPressed: onCancel!,
                     backgroundColor: AppColors.blackBlack1,
@@ -64,7 +65,8 @@ class SaeipModal extends StatelessWidget {
                   ),
                   const Gap(8),
                 ],
-                SaeipButton(
+                _buildModalButton(
+                  context,
                   text: confirmText,
                   onPressed: () {
                     onConfirm();
@@ -79,6 +81,22 @@ class SaeipModal extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildModalButton(
+    BuildContext context, {
+    required String text,
+    required void Function() onPressed,
+    Color backgroundColor = AppColors.greenDark,
+    Color textColor = Colors.white,
+  }) {
+    return SaeipButton(
+      text: text,
+      onPressed: onPressed,
+      backgroundColor: backgroundColor,
+      textStyle: AppTextStyles.bodySemibold(context, color: textColor),
+      height: 40,
     );
   }
 }

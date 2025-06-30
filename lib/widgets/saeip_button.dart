@@ -8,6 +8,7 @@ class SaeipButton extends StatelessWidget {
   final Color backgroundColor;
   final Color textColor;
   final double height;
+  final TextStyle? textStyle;
 
   const SaeipButton({
     super.key,
@@ -16,6 +17,7 @@ class SaeipButton extends StatelessWidget {
     this.backgroundColor = AppColors.greenDark,
     this.textColor = Colors.white,
     this.height = 48,
+    this.textStyle,
   });
 
   @override
@@ -24,6 +26,7 @@ class SaeipButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
+          elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -32,7 +35,9 @@ class SaeipButton extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: AppTextStyles.bodyRegular(context, color: textColor),
+          style:
+              textStyle ??
+              AppTextStyles.bodySemibold(context, color: textColor),
         ),
       ),
     );

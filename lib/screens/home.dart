@@ -25,7 +25,7 @@ class HomeScreen extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return SaeipModal(
-          //   title: "모달 테스트",
+          title: "모달 테스트",
           message: "모달 테스트다!",
           onConfirm: () => Navigator.of(context).pop(),
           confirmText: "확인",
