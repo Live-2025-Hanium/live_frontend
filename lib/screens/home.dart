@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
+import 'package:live_frontend/widgets/saeip_button.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -11,9 +12,9 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: SaeipAppBar(title: 'Home'),
       body: Center(
-        child: ElevatedButton(
+        child: SaeipButton.outlined(
           onPressed: () => _dialogBuilder(context),
-          child: const Text('모달 띄우기', style: TextStyle(fontSize: 20)),
+          text: '모달 띄우기',
         ),
       ),
     );
