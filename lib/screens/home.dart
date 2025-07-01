@@ -3,6 +3,7 @@ import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
 import 'package:live_frontend/widgets/saeip_toast.dart';
+import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -11,16 +12,25 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: SaeipAppBar(title: 'Home'),
-      body: Column(
-        children: [
-          SizedBox(
-            child: SaeipButton.outlined(
-              onPressed: () => _dialogBuilder(context),
-              text: '모달 띄우기',
+      body: SizedBox.expand(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              child: SaeipButton.outlined(
+                onPressed: () => _dialogBuilder(context),
+                text: '모달 띄우기',
+              ),
             ),
-          ),
-          SaeipToast(message: '토스트 메시지 테스트'),
-        ],
+            SizedBox(
+              child: SaeipButton(
+                onPressed: () => _showToast(context),
+                text: '토스트 띄우기',
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -38,6 +48,15 @@ class HomeScreen extends StatelessWidget {
           onCancel: () => Navigator.of(context).pop(),
         );
       },
+    );
+  }
+
+  // 토스트 띄우기
+  void _showToast(BuildContext context) {
+    showSaeipToast(
+      context: context,
+      child: SaeipToast(message: '토스트 메시지 테스트'),
+      duration: const Duration(seconds: 2),
     );
   }
 }
