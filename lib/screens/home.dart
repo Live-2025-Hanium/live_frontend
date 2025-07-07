@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
@@ -14,16 +15,19 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: SaeipAppBar(title: 'Home'),
       bottomNavigationBar: SaeipNavigationBar(initialIndex: 0),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SaeipButton.outlined(
-            onPressed: () => _dialogBuilder(context),
-            text: '모달 띄우기',
-          ),
-          SaeipButton(onPressed: () => _showToast(context), text: '토스트 띄우기'),
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SaeipButton.outlined(
+              onPressed: () => _dialogBuilder(context),
+              text: '모달 띄우기',
+            ),
+            Gap(16),
+            SaeipButton(onPressed: () => _showToast(context), text: '토스트 띄우기'),
+          ],
+        ),
       ),
     );
   }
