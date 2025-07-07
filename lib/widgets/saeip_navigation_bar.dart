@@ -62,79 +62,85 @@ class _SaeipNavigationBarState extends State<SaeipNavigationBar> {
       BlendMode.srcIn,
     );
 
-    return NavigationBar(
-      height: isIOS ? 84.0 : 80.0,
-      backgroundColor: Colors.white,
-      labelPadding: const EdgeInsets.symmetric(horizontal: 2.0),
-      onDestinationSelected: onTap,
-      indicatorColor: Colors.white,
-      selectedIndex: _currentIndex,
-      labelTextStyle: WidgetStateProperty.resolveWith<TextStyle?>((
-        Set<WidgetState> states,
-      ) {
-        if (states.contains(WidgetState.selected)) {
-          return selectedLabelStyle;
-        }
-        return labelStyle;
-      }),
+    return ClipRRect(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(8),
+        topRight: Radius.circular(8),
+      ),
+      child: NavigationBar(
+        height: isIOS ? 84.0 : 80.0,
+        backgroundColor: Colors.white,
+        labelPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+        onDestinationSelected: onTap,
+        indicatorColor: Colors.white,
+        selectedIndex: _currentIndex,
+        labelTextStyle: WidgetStateProperty.resolveWith<TextStyle?>((
+          Set<WidgetState> states,
+        ) {
+          if (states.contains(WidgetState.selected)) {
+            return selectedLabelStyle;
+          }
+          return labelStyle;
+        }),
 
-      destinations: [
-        NavigationDestination(
-          selectedIcon: SvgPicture.asset(
-            'assets/icons/home.svg',
-            colorFilter: selectedIconColorFilter,
+        destinations: [
+          NavigationDestination(
+            selectedIcon: SvgPicture.asset(
+              'assets/icons/home.svg',
+              colorFilter: selectedIconColorFilter,
+            ),
+            icon: SvgPicture.asset(
+              'assets/icons/home.svg',
+              colorFilter: iconColorFilter,
+            ),
+            label: '홈',
           ),
-          icon: SvgPicture.asset(
-            'assets/icons/home.svg',
-            colorFilter: iconColorFilter,
+          NavigationDestination(
+            selectedIcon: SvgPicture.asset(
+              'assets/icons/statistics.svg',
+              colorFilter: selectedIconColorFilter,
+            ),
+            icon: SvgPicture.asset(
+              'assets/icons/statistics.svg',
+              colorFilter: iconColorFilter,
+            ),
+            label: '통계',
           ),
-          label: '홈',
-        ),
-        NavigationDestination(
-          selectedIcon: SvgPicture.asset(
-            'assets/icons/statistics.svg',
-            colorFilter: selectedIconColorFilter,
+          NavigationDestination(
+            selectedIcon: SvgPicture.asset(
+              'assets/icons/map.svg',
+              colorFilter: selectedIconColorFilter,
+            ),
+            icon: SvgPicture.asset(
+              'assets/icons/map.svg',
+              colorFilter: iconColorFilter,
+            ),
+            label: '지도',
           ),
-          icon: SvgPicture.asset(
-            'assets/icons/statistics.svg',
-            colorFilter: iconColorFilter,
+          NavigationDestination(
+            selectedIcon: SvgPicture.asset(
+              'assets/icons/forum.svg',
+              colorFilter: selectedIconColorFilter,
+            ),
+            icon: SvgPicture.asset(
+              'assets/icons/forum.svg',
+              colorFilter: iconColorFilter,
+            ),
+            label: '게시판',
           ),
-          label: '통계',
-        ),
-        NavigationDestination(
-          selectedIcon: SvgPicture.asset(
-            'assets/icons/map.svg',
-            colorFilter: selectedIconColorFilter,
+          NavigationDestination(
+            selectedIcon: SvgPicture.asset(
+              'assets/icons/person.svg',
+              colorFilter: selectedIconColorFilter,
+            ),
+            icon: SvgPicture.asset(
+              'assets/icons/person.svg',
+              colorFilter: iconColorFilter,
+            ),
+            label: '마이페이지',
           ),
-          icon: SvgPicture.asset(
-            'assets/icons/map.svg',
-            colorFilter: iconColorFilter,
-          ),
-          label: '지도',
-        ),
-        NavigationDestination(
-          selectedIcon: SvgPicture.asset(
-            'assets/icons/forum.svg',
-            colorFilter: selectedIconColorFilter,
-          ),
-          icon: SvgPicture.asset(
-            'assets/icons/forum.svg',
-            colorFilter: iconColorFilter,
-          ),
-          label: '게시판',
-        ),
-        NavigationDestination(
-          selectedIcon: SvgPicture.asset(
-            'assets/icons/person.svg',
-            colorFilter: selectedIconColorFilter,
-          ),
-          icon: SvgPicture.asset(
-            'assets/icons/person.svg',
-            colorFilter: iconColorFilter,
-          ),
-          label: '마이페이지',
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
