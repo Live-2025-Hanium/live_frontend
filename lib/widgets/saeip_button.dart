@@ -36,27 +36,24 @@ class SaeipButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-            side:
-                type == SaeipButtonType.outlined
-                    ? BorderSide(color: AppColors.greenDark, width: 1)
-                    : BorderSide.none,
-          ),
-          backgroundColor: backgroundColor,
-          minimumSize: Size(height, height),
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side:
+              type == SaeipButtonType.outlined
+                  ? BorderSide(color: AppColors.greenDark, width: 1)
+                  : BorderSide.none,
         ),
-        child: Text(
-          text,
-          style:
-              textStyle ??
-              AppTextStyles.bodySemibold(context, color: textColor),
-        ),
+        backgroundColor: backgroundColor,
+        minimumSize: Size(height, height),
+      ),
+      child: Text(
+        text,
+        style:
+            textStyle ?? AppTextStyles.bodySemibold(context, color: textColor),
       ),
     );
   }

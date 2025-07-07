@@ -91,12 +91,14 @@ class SaeipModal extends StatelessWidget {
     Color backgroundColor = AppColors.greenDark,
     Color textColor = Colors.white,
   }) {
-    return SaeipButton(
-      text: text,
-      onPressed: onPressed,
-      backgroundColor: backgroundColor,
-      textStyle: AppTextStyles.bodySemibold(context, color: textColor),
-      height: 40,
+    return Expanded(
+      child: SaeipButton(
+        text: text,
+        onPressed: onPressed,
+        backgroundColor: backgroundColor,
+        textStyle: AppTextStyles.bodySemibold(context, color: textColor),
+        height: 40,
+      ),
     );
   }
 }
