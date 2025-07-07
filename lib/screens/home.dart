@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
+import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
 import 'package:live_frontend/widgets/saeip_toast.dart';
 import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 
@@ -12,25 +13,17 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: SaeipAppBar(title: 'Home'),
-      body: SizedBox.expand(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              child: SaeipButton.outlined(
-                onPressed: () => _dialogBuilder(context),
-                text: '모달 띄우기',
-              ),
-            ),
-            SizedBox(
-              child: SaeipButton(
-                onPressed: () => _showToast(context),
-                text: '토스트 띄우기',
-              ),
-            ),
-          ],
-        ),
+      bottomNavigationBar: SaeipNavigationBar(initialIndex: 0),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SaeipButton.outlined(
+            onPressed: () => _dialogBuilder(context),
+            text: '모달 띄우기',
+          ),
+          SaeipButton(onPressed: () => _showToast(context), text: '토스트 띄우기'),
+        ],
       ),
     );
   }

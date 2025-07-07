@@ -9,7 +9,13 @@ class ForumScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: SaeipAppBar(title: 'Forum'),
-      body: const Center(child: Text('포럼 화면')),
+      body: Container(
+        padding: const EdgeInsets.all(16.0),
+        width: double.infinity,
+        height: double.infinity,
+        color: Colors.grey,
+        child: Text('포럼 화면'),
+      ),
       bottomNavigationBar: const SaeipNavigationBar(initialIndex: 3),
     );
   }
