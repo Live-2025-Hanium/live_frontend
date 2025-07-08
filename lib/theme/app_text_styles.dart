@@ -10,7 +10,7 @@ class AppTextStyles {
   static TextStyle titleSemibold(
     BuildContext context, {
     Color? color,
-    TextDecoration? decoration,
+    TextDecoration decoration = TextDecoration.none,
   }) => TextStyle(
     fontFamily: 'Pretendard',
     fontSize: responsiveFont(22, min: 18, max: 28),
@@ -24,7 +24,7 @@ class AppTextStyles {
   static TextStyle titleMedium(
     BuildContext context, {
     Color? color,
-    TextDecoration? decoration,
+    TextDecoration decoration = TextDecoration.none,
   }) => TextStyle(
     fontFamily: 'Pretendard',
     fontSize: responsiveFont(22, min: 18, max: 28),
@@ -38,7 +38,7 @@ class AppTextStyles {
   static TextStyle subtitleSemibold(
     BuildContext context, {
     Color? color,
-    TextDecoration? decoration,
+    TextDecoration decoration = TextDecoration.none,
   }) => TextStyle(
     fontFamily: 'Pretendard',
     fontSize: responsiveFont(18, min: 16, max: 24),
@@ -52,7 +52,7 @@ class AppTextStyles {
   static TextStyle subtitleMedium(
     BuildContext context, {
     Color? color,
-    TextDecoration? decoration,
+    TextDecoration decoration = TextDecoration.none,
   }) => TextStyle(
     fontFamily: 'Pretendard',
     fontSize: responsiveFont(18, min: 16, max: 24),
@@ -66,7 +66,7 @@ class AppTextStyles {
   static TextStyle bodySemibold(
     BuildContext context, {
     Color? color,
-    TextDecoration? decoration,
+    TextDecoration decoration = TextDecoration.none,
   }) => TextStyle(
     fontFamily: 'Pretendard',
     fontSize: responsiveFont(15, min: 12, max: 22),
@@ -80,7 +80,7 @@ class AppTextStyles {
   static TextStyle bodyMedium(
     BuildContext context, {
     Color? color,
-    TextDecoration? decoration,
+    TextDecoration decoration = TextDecoration.none,
   }) => TextStyle(
     fontFamily: 'Pretendard',
     fontSize: responsiveFont(15, min: 12, max: 22),
@@ -94,7 +94,7 @@ class AppTextStyles {
   static TextStyle bodyRegular(
     BuildContext context, {
     Color? color,
-    TextDecoration? decoration,
+    TextDecoration decoration = TextDecoration.none,
   }) => TextStyle(
     fontFamily: 'Pretendard',
     fontSize: responsiveFont(15, min: 12, max: 22),
@@ -108,7 +108,7 @@ class AppTextStyles {
   static TextStyle smallSemibold(
     BuildContext context, {
     Color? color,
-    TextDecoration? decoration,
+    TextDecoration decoration = TextDecoration.none,
   }) => TextStyle(
     fontFamily: 'Pretendard',
     fontSize: responsiveFont(12, min: 10, max: 18),
@@ -122,7 +122,7 @@ class AppTextStyles {
   static TextStyle smallMedium(
     BuildContext context, {
     Color? color,
-    TextDecoration? decoration,
+    TextDecoration decoration = TextDecoration.none,
   }) => TextStyle(
     fontFamily: 'Pretendard',
     fontSize: responsiveFont(12, min: 10, max: 18),
@@ -136,7 +136,7 @@ class AppTextStyles {
   static TextStyle tinyMedium(
     BuildContext context, {
     Color? color,
-    TextDecoration? decoration,
+    TextDecoration decoration = TextDecoration.none,
   }) => TextStyle(
     fontFamily: 'Pretendard',
     fontSize: responsiveFont(10, min: 8, max: 14),

@@ -1,0 +1,60 @@
+import 'package:flutter/material.dart';
+import 'package:live_frontend/theme/app_colors.dart';
+import 'package:live_frontend/theme/app_text_styles.dart';
+
+enum SaeipButtonType { filled, outlined }
+
+class SaeipButton extends StatelessWidget {
+  final String text;
+  final void Function() onPressed;
+  final Color backgroundColor;
+  final Color textColor;
+  final double height;
+  final TextStyle? textStyle;
+  final SaeipButtonType type;
+
+  const SaeipButton({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    this.backgroundColor = AppColors.greenDark,
+    this.textColor = Colors.white,
+    this.height = 48,
+    this.textStyle,
+    this.type = SaeipButtonType.filled,
+  });
+
+  const SaeipButton.outlined({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    this.backgroundColor = Colors.white,
+    this.textColor = Colors.black,
+    this.height = 48,
+    this.textStyle,
+  }) : type = SaeipButtonType.outlined;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side:
+              type == SaeipButtonType.outlined
+                  ? BorderSide(color: AppColors.greenDark, width: 1)
+                  : BorderSide.none,
+        ),
+        backgroundColor: backgroundColor,
+        minimumSize: Size(height, height),
+      ),
+      child: Text(
+        text,
+        style:
+            textStyle ?? AppTextStyles.bodySemibold(context, color: textColor),
+      ),
+    );
+  }
+}
