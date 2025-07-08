@@ -44,7 +44,6 @@ dependencies:
   flutter_dotenv: ^5.2.1
   markdown_widget: ^2.3.2
   gap: ^3.0.1
-  flutter_native_splash: ^2.4.6
   permission_handler: ^12.0.0+1
   image_picker: ^1.1.2
   camera: ^0.11.1
@@ -53,6 +52,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.6
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -61,6 +63,13 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
   riverpod_lint: ^2.6.5
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path_ios: "assets/logo/app_icons/ios.png"
+  image_path_android: "assets/logo/app_icons/android.png"
+  remove_alpha_ios: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

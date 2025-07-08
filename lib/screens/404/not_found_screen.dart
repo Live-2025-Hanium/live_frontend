@@ -19,48 +19,53 @@ class NotFoundScreen extends StatelessWidget {
         width: double.infinity,
         height: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SvgPicture.asset('assets/images/404.svg'),
-            const Gap(38),
-            Text(
-              '페이지를 찾을 수 없어요.',
-              style: AppTextStyles.titleMedium(context, color: Colors.black),
-            ),
-            const Gap(8),
-            Text(
-              '페이지가 이동되었거나 삭제되었을 수 있어요.',
-              style: AppTextStyles.bodyRegular(
-                context,
-                color: AppColors.blackBlack4,
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SvgPicture.asset('assets/images/404.svg'),
+              const Gap(38),
+              Text(
+                '페이지를 찾을 수 없어요.',
+                style: AppTextStyles.titleMedium(context, color: Colors.black),
               ),
-            ),
-            const MaxGap(240),
-            ElevatedButton(
-              onPressed: () {
-                context.pushNamed('home');
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+              const Gap(8),
+              Text(
+                '페이지가 이동되었거나 삭제되었을 수 있어요.',
+                style: AppTextStyles.bodyRegular(
+                  context,
+                  color: AppColors.blackBlack4,
                 ),
-                backgroundColor: AppColors.greenDark,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 14,
+              ),
+              const MaxGap(240),
+              ElevatedButton(
+                onPressed: () {
+                  context.pushNamed('home');
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  backgroundColor: AppColors.greenDark,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 14,
+                  ),
+                  minimumSize: const Size(double.infinity, 48),
                 ),
-                minimumSize: const Size(double.infinity, 48),
+                child: Text(
+                  '홈으로 돌아가기',
+                  style: AppTextStyles.bodySemibold(
+                    context,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-              child: Text(
-                '홈으로 돌아가기',
-                style: AppTextStyles.bodySemibold(context, color: Colors.white),
-              ),
-            ),
-            const MaxGap(40),
-          ],
+              const MaxGap(40),
+            ],
+          ),
         ),
       ),
     );

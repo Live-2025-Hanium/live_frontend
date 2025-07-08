@@ -10,16 +10,24 @@ void showSaeipToast({
   late final OverlayEntry entry;
 
   entry = OverlayEntry(
-    builder:
-        (_) => Stack(
-          children: [
-            GestureDetector(
-              onTap: () => entry.remove(),
-              child: Container(color: Color.fromRGBO(0, 0, 0, 0.1)),
-            ),
-            Positioned(bottom: 40, left: 40, right: 40, child: child),
-          ],
-        ),
+    builder: (context) {
+      final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
+
+      return Stack(
+        children: [
+          GestureDetector(
+            onTap: () => entry.remove(),
+            child: Container(color: Color.fromRGBO(0, 0, 0, 0.1)),
+          ),
+          Positioned(
+            bottom: 40 + bottomPadding,
+            left: 40,
+            right: 40,
+            child: child,
+          ),
+        ],
+      );
+    },
   );
 
   overlay.insert(entry);
