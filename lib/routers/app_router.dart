@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/screens/404/not_found_screen.dart';
+import 'package:live_frontend/screens/forum/forum_screen.dart';
+import 'package:live_frontend/screens/map/map_screen.dart';
+import 'package:live_frontend/screens/mypage/mypage_screen.dart';
+import 'package:live_frontend/screens/statistics/statistics_screen.dart';
 import 'package:live_frontend/screens/terms/terms_detail/terms_detail_screen.dart';
 import 'package:live_frontend/screens/terms/terms_screen.dart';
 import '../screens/login/login_screen.dart';
 import '../screens/home.dart';
 import '../providers/auth_provider.dart';
+
 
 // 라우터 새로고침 트리거
 final routerRefreshProvider = ChangeNotifierProvider((ref) {
@@ -55,6 +60,27 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/home',
         builder: (context, state) => const HomeScreen(),
       ),
+      GoRoute(
+        name: 'statistics',
+        path: '/statistics',
+        builder: (context, state) => const StatisticsScreen(),
+      ),
+      GoRoute(
+        name: 'map',
+        path: '/map',
+        builder: (context, state) => const MapScreen(),
+      ),
+      GoRoute(
+        name: 'forum',
+        path: '/forum',
+        builder: (context, state) => const ForumScreen(),
+      ),
+      GoRoute(
+        name: 'mypage',
+        path: '/mypage',
+        builder: (context, state) => const MyPageScreen(),
+      ),
+
       GoRoute(
         name: 'terms',
         path: '/terms',
