@@ -64,8 +64,6 @@ class _SaeipNavigationBarState extends State<SaeipNavigationBar> {
     );
 
     return Container(
-      height: isIOS ? 84.h : 80.h,
-      padding: EdgeInsets.only(top: isIOS ? 6.h : 13.h),
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -81,94 +79,98 @@ class _SaeipNavigationBarState extends State<SaeipNavigationBar> {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(8),
-          topRight: Radius.circular(8),
-        ),
-        child: NavigationBar(
-          height: isIOS ? 84.h : 80.h,
-          backgroundColor: Colors.white,
-          labelPadding: const EdgeInsets.symmetric(horizontal: 2.0),
-          onDestinationSelected: onTap,
-          indicatorColor: Colors.white,
-          selectedIndex: _currentIndex,
-          labelTextStyle: WidgetStateProperty.resolveWith<TextStyle?>((
-            Set<WidgetState> states,
-          ) {
-            if (states.contains(WidgetState.selected)) {
-              return selectedLabelStyle;
-            }
-            return labelStyle;
-          }),
+      child: SafeArea(
+        top: false,
+        bottom: true,
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(8),
+            topRight: Radius.circular(8),
+          ),
+          child: NavigationBar(
+            height: isIOS ? 84.h : 80.h,
+            backgroundColor: Colors.white,
+            labelPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+            onDestinationSelected: onTap,
+            indicatorColor: Colors.white,
+            selectedIndex: _currentIndex,
+            labelTextStyle: WidgetStateProperty.resolveWith<TextStyle?>((
+              Set<WidgetState> states,
+            ) {
+              if (states.contains(WidgetState.selected)) {
+                return selectedLabelStyle;
+              }
+              return labelStyle;
+            }),
 
-          destinations: [
-            NavigationDestination(
-              selectedIcon: SvgPicture.asset(
-                'assets/icons/home.svg',
-                colorFilter: selectedIconColorFilter,
-                height: 20.h,
+            destinations: [
+              NavigationDestination(
+                selectedIcon: SvgPicture.asset(
+                  'assets/icons/home.svg',
+                  colorFilter: selectedIconColorFilter,
+                  height: 20.h,
+                ),
+                icon: SvgPicture.asset(
+                  'assets/icons/home.svg',
+                  colorFilter: iconColorFilter,
+                  height: 20.h,
+                ),
+                label: '홈',
               ),
-              icon: SvgPicture.asset(
-                'assets/icons/home.svg',
-                colorFilter: iconColorFilter,
-                height: 20.h,
+              NavigationDestination(
+                selectedIcon: SvgPicture.asset(
+                  'assets/icons/statistics.svg',
+                  colorFilter: selectedIconColorFilter,
+                  height: 20.h,
+                ),
+                icon: SvgPicture.asset(
+                  'assets/icons/statistics.svg',
+                  colorFilter: iconColorFilter,
+                  height: 20.h,
+                ),
+                label: '통계',
               ),
-              label: '홈',
-            ),
-            NavigationDestination(
-              selectedIcon: SvgPicture.asset(
-                'assets/icons/statistics.svg',
-                colorFilter: selectedIconColorFilter,
-                height: 20.h,
+              NavigationDestination(
+                selectedIcon: SvgPicture.asset(
+                  'assets/icons/map.svg',
+                  colorFilter: selectedIconColorFilter,
+                  height: 20.h,
+                ),
+                icon: SvgPicture.asset(
+                  'assets/icons/map.svg',
+                  colorFilter: iconColorFilter,
+                  height: 20.h,
+                ),
+                label: '지도',
               ),
-              icon: SvgPicture.asset(
-                'assets/icons/statistics.svg',
-                colorFilter: iconColorFilter,
-                height: 20.h,
+              NavigationDestination(
+                selectedIcon: SvgPicture.asset(
+                  'assets/icons/forum.svg',
+                  colorFilter: selectedIconColorFilter,
+                  height: 20.h,
+                ),
+                icon: SvgPicture.asset(
+                  'assets/icons/forum.svg',
+                  colorFilter: iconColorFilter,
+                  height: 20.h,
+                ),
+                label: '게시판',
               ),
-              label: '통계',
-            ),
-            NavigationDestination(
-              selectedIcon: SvgPicture.asset(
-                'assets/icons/map.svg',
-                colorFilter: selectedIconColorFilter,
-                height: 20.h,
+              NavigationDestination(
+                selectedIcon: SvgPicture.asset(
+                  'assets/icons/person.svg',
+                  colorFilter: selectedIconColorFilter,
+                  height: 20.h,
+                ),
+                icon: SvgPicture.asset(
+                  'assets/icons/person.svg',
+                  colorFilter: iconColorFilter,
+                  height: 20.h,
+                ),
+                label: '마이페이지',
               ),
-              icon: SvgPicture.asset(
-                'assets/icons/map.svg',
-                colorFilter: iconColorFilter,
-                height: 20.h,
-              ),
-              label: '지도',
-            ),
-            NavigationDestination(
-              selectedIcon: SvgPicture.asset(
-                'assets/icons/forum.svg',
-                colorFilter: selectedIconColorFilter,
-                height: 20.h,
-              ),
-              icon: SvgPicture.asset(
-                'assets/icons/forum.svg',
-                colorFilter: iconColorFilter,
-                height: 20.h,
-              ),
-              label: '게시판',
-            ),
-            NavigationDestination(
-              selectedIcon: SvgPicture.asset(
-                'assets/icons/person.svg',
-                colorFilter: selectedIconColorFilter,
-                height: 20.h,
-              ),
-              icon: SvgPicture.asset(
-                'assets/icons/person.svg',
-                colorFilter: iconColorFilter,
-                height: 20.h,
-              ),
-              label: '마이페이지',
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

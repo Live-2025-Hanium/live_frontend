@@ -50,69 +50,72 @@ class _TermsDetailScreenState extends State<TermsDetailScreen> {
           if (snapshot.hasError) {
             return Center(child: Text('불러오기 실패: ${snapshot.error}'));
           }
-          return Padding(
-            padding: const EdgeInsets.all(16),
-            child: Stack(
-              children: [
-                // 마크다운 본문
-                Positioned.fill(
-                  bottom: 80,
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  child: MarkdownWidget(data: snapshot.data!),
-                ),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: 96,
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-                    color: Colors.white,
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Stack(
+                children: [
+                  // 마크다운 본문
+                  Positioned.fill(
+                    bottom: 80,
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    child: MarkdownWidget(data: snapshot.data!),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
                     child: Container(
-                      width: double.infinity,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: AppColors.blackBlack0,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            '약관 동의',
-                            style: AppTextStyles.subtitleMedium(
-                              context,
-                              color: Colors.black,
+                      height: 96,
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+                      color: Colors.white,
+                      child: Container(
+                        width: double.infinity,
+                        height: 48,
+                        padding: const EdgeInsets.fromLTRB(16, 0, 4, 0),
+                        decoration: BoxDecoration(
+                          color: AppColors.blackBlack0,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              '약관 동의',
+                              style: AppTextStyles.subtitleMedium(
+                                context,
+                                color: Colors.black,
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            width: 48,
-                            height: 48,
-                            child: Center(
-                              child: Transform.scale(
-                                scale: 32 / 18,
-                                child: Checkbox(
-                                  value: _isChecked,
-                                  onChanged: onChanged,
-                                  activeColor: AppColors.greenNormal,
-                                  checkColor: Colors.white,
-                                  shape: const CircleBorder(),
-                                  materialTapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                  visualDensity: VisualDensity.compact,
+                            SizedBox(
+                              width: 48,
+                              height: 48,
+                              child: Center(
+                                child: Transform.scale(
+                                  scale: 32 / 18,
+                                  child: Checkbox(
+                                    value: _isChecked,
+                                    onChanged: onChanged,
+                                    activeColor: AppColors.greenNormal,
+                                    checkColor: Colors.white,
+                                    shape: const CircleBorder(),
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    visualDensity: VisualDensity.compact,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
