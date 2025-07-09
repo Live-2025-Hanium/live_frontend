@@ -102,10 +102,8 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       GoRoute(
         name: 'survey',
-        path: '/survey/:page',
-        builder:
-            (context, state) =>
-                SurveyScreen(page: state.pathParameters['page'] ?? '1'),
+        path: '/survey',
+        builder: (context, state) => SurveyScreen(),
       ),
     ],
   );

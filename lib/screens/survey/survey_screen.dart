@@ -1,25 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
 import 'package:go_router/go_router.dart';
+import 'package:percent_indicator/flutter_percent_indicator.dart';
 
 class SurveyScreen extends ConsumerStatefulWidget {
-  final String page;
-  const SurveyScreen({super.key, this.page = '0'});
+  const SurveyScreen({super.key});
 
   @override
   ConsumerState<SurveyScreen> createState() => _SurveyScreenState();
 }
 
-class _SurveyScreenState extends ConsumerState<SurveyScreen> {
+class _SurveyScreenState extends ConsumerState<SurveyScreen>
+    with TickerProviderStateMixin {
+  late PageController _pageViewController;
+  int _currentPage = 1;
+  final int _totalPages = 5;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageViewController = PageController();
+    _currentPage = 1;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pageViewController.dispose();
+  }
+
+  void goToNextPage() {
+    if (_currentPage < _totalPages) {
+      _pageViewController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SaeipAppBar(lastPage: '/home'),
+      appBar: SaeipAppBar(),
       body: Container(
         width: double.infinity,
         padding: const EdgeInsets.only(
@@ -35,16 +64,35 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
             children: <Widget>[
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [_buildUserInfoWidget()],
+                children: [
+                  _buildUserInfoWidget(),
+                  const Gap(16),
+                  LinearPercentIndicator(
+                    width: 300.w,
+                    animation: true,
+                    animationDuration: 1000,
+                    lineHeight: 2.0,
+                    trailing: Text(
+                      '$_currentPage / $_totalPages',
+                      style: AppTextStyles.smallMedium(
+                        context,
+                        color: AppColors.blackBlack5,
+                      ),
+                    ),
+                    percent: _currentPage / _totalPages,
+                    progressColor: AppColors.greenNormal,
+                  ),
+                  _buildLikertSelector(
+                    context: context,
+                    question: '바보야',
+                    selectedIndex: 0,
+                    onChanged: (index) {},
+                  ),
+                ],
               ),
               SizedBox(
                 width: double.infinity,
-                child: SaeipButton(
-                  text: '다음',
-                  onPressed: () {
-                    context.push('/forum/detail');
-                  },
-                ),
+                child: SaeipButton(text: '다음', onPressed: () {}),
               ),
             ],
           ),
@@ -82,6 +130,25 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
           textAlign: TextAlign.center,
         ),
       ],
+    );
+  }
+
+  Widget _buildLikertSelector({
+    required BuildContext context,
+    required String question,
+    required int selectedIndex,
+    required ValueChanged<int> onChanged,
+  }) {
+    List<Color> colors = [
+      AppColors.pinkNormal,
+      AppColors.pinkNormal,
+      AppColors.blackBlack3,
+      AppColors.greenNormal,
+      AppColors.greenNormal,
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [Text(question, style: AppTextStyles.subtitleMedium(context))],
     );
   }
 }

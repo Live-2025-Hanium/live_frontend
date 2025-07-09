@@ -20,7 +20,7 @@ class ForumScreen extends StatelessWidget {
           child: SaeipButton(
             text: '설문조사',
             onPressed: () {
-              context.pushNamed('survey', queryParameters: {'page': '0'});
+              context.pushNamed('survey');
             },
           ),
         ),
