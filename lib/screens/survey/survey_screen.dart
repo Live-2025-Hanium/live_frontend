@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:live_frontend/models/survey_question_model.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
+import 'package:live_frontend/screens/survey/utils/parse_questions.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
 import 'package:go_router/go_router.dart';
+import 'package:live_frontend/widgets/saeip_toast.dart';
+import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 import 'package:percent_indicator/flutter_percent_indicator.dart';
 
 class SurveyScreen extends ConsumerStatefulWidget {
@@ -22,6 +26,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
   late PageController _pageViewController;
   int _currentPage = 1;
   final int _totalPages = 5;
+  final _questions = loadQuestionsFromAssets();
 
   @override
   void initState() {
@@ -82,11 +87,35 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
                     percent: _currentPage / _totalPages,
                     progressColor: AppColors.greenNormal,
                   ),
-                  _buildLikertSelector(
-                    context: context,
-                    question: '바보야',
-                    selectedIndex: 0,
-                    onChanged: (index) {},
+                  FutureBuilder(
+                    future: _questions,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(
+                          child: Text(
+                            '오류가 발생했습니다: ${snapshot.error}',
+                            style: AppTextStyles.subtitleMedium(context),
+                          ),
+                        );
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(
+                          child: Text(
+                            '설문조사 질문이 없습니다.',
+                            style: AppTextStyles.subtitleMedium(context),
+                          ),
+                        );
+                      }
+
+                      final questions = snapshot.data!;
+                      return _buildLikertSelector(
+                        context: context,
+                        question: questions[0].question ?? "",
+                        selectedIndex: 0,
+                        onChanged: (index) => {},
+                      );
+                    },
                   ),
                 ],
               ),

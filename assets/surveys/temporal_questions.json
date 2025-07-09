@@ -1,0 +1,38 @@
+[
+	{
+		"questionNumber": 1,
+		"question": "How often do you use the app?"
+	},
+	{
+		"questionNumber": 2,
+		"question": "What features do you use the most?"
+	},
+	{
+		"questionNumber": 3,
+		"question": "How satisfied are you with the app's performance?"
+	},
+	{
+		"questionNumber": 4,
+		"question": "Would you recommend this app to others?"
+	},
+	{
+		"questionNumber": 5,
+		"question": "What improvements would you like to see in the app?"
+	},
+	{
+		"questionNumber": 6,
+		"question": "How do you feel about the app's user interface?"
+	},
+	{	"questionNumber": 7,
+		"question": "How likely are you to continue using the app in the future?"
+	},
+	{	"questionNumber": 8,
+		"question": "What is your overall satisfaction with the app?"
+	},
+	{	"questionNumber": 9,
+		"question": "How do you feel about the app's customer support?"
+	},
+	{	"questionNumber": 10,
+		"question": "What additional features would you like to see in the app?"
+	}
+]
