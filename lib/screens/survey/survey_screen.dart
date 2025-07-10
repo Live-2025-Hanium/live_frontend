@@ -24,7 +24,7 @@ class SurveyScreen extends ConsumerStatefulWidget {
 class _SurveyScreenState extends ConsumerState<SurveyScreen>
     with TickerProviderStateMixin {
   late PageController _pageViewController;
-  int _currentPage = 1;
+  int _currentPage = 0;
   final int _totalPages = 5;
   final _questions = loadQuestionsFromAssets();
 
@@ -32,7 +32,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
   void initState() {
     super.initState();
     _pageViewController = PageController();
-    _currentPage = 1;
+    _currentPage = 0;
   }
 
   @override
@@ -42,7 +42,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
   }
 
   void goToNextPage() {
-    if (_currentPage < _totalPages) {
+    if (_currentPage < _totalPages - 1) {
       _pageViewController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -73,6 +73,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
                   _buildUserInfoWidget(),
                   const Gap(16),
                   LinearPercentIndicator(
+                    padding: EdgeInsets.only(left: 0, right: 10.w),
                     width: 300.w,
                     animation: true,
                     animationDuration: 1000,
@@ -107,13 +108,23 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
                           ),
                         );
                       }
-
-                      final questions = snapshot.data!;
-                      return _buildLikertSelector(
+                      /*
+						_buildLikertSelector(
                         context: context,
                         question: questions[0].question ?? "",
                         selectedIndex: 0,
                         onChanged: (index) => {},
+                      )*/
+                      // 데이터가 정상적으로 로드되었을 때
+                      final questions = snapshot.data!;
+                      return Column(
+                        children: [Text("임시로 넣은 텍스트입니다. 실제 질문을 넣어주세요.")],
+                        // _buildLikertSelector(
+                        //   context: context,
+                        //   question: questions[0].question ?? "",
+                        //   selectedIndex: 0,
+                        //   onChanged: (index) => {},
+                        // ),
                       );
                     },
                   ),
@@ -168,16 +179,117 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
     required int selectedIndex,
     required ValueChanged<int> onChanged,
   }) {
-    List<Color> colors = [
-      AppColors.pinkNormal,
-      AppColors.pinkNormal,
-      AppColors.blackBlack3,
-      AppColors.greenNormal,
-      AppColors.greenNormal,
+    List<(Color color, Color borderColor)> colors = [
+      (AppColors.pinkNormal, AppColors.pinkLightActive),
+      (AppColors.pinkNormal, AppColors.pinkLightActive),
+      (AppColors.blackBlack3, AppColors.blackBlack2),
+      (AppColors.greenNormal, AppColors.greenLightActive),
+      (AppColors.greenNormal, AppColors.greenLightActive),
     ];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [Text(question, style: AppTextStyles.subtitleMedium(context))],
+
+    List<double> widths = [48.w, 36.w, 28.w, 36.w, 48.w];
+
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            question,
+            style: AppTextStyles.subtitleMedium(context),
+            textAlign: TextAlign.start,
+          ),
+          Gap(15),
+          Row(
+            children: [
+              _buildCustomRadioButton(
+                width: widths[0],
+                height: widths[0],
+                color: colors[0].$1,
+                borderColor: colors[0].$2,
+                isSelected: selectedIndex == 0,
+                onChanged: () => onChanged(0),
+              ),
+              Gap(24.w),
+              _buildCustomRadioButton(
+                width: widths[1],
+                height: widths[1],
+                color: colors[1].$1,
+                borderColor: colors[1].$2,
+                isSelected: selectedIndex == 1,
+                onChanged: () => onChanged(1),
+              ),
+              Gap(16.w),
+              _buildCustomRadioButton(
+                width: widths[2],
+                height: widths[2],
+                color: colors[2].$1,
+                borderColor: colors[2].$2,
+                isSelected: selectedIndex == 2,
+                onChanged: () => onChanged(2),
+              ),
+              Gap(16.w),
+              _buildCustomRadioButton(
+                width: widths[3],
+                height: widths[3],
+                color: colors[3].$1,
+                borderColor: colors[3].$2,
+                isSelected: selectedIndex == 3,
+                onChanged: () => onChanged(3),
+              ),
+              Gap(24.w),
+              _buildCustomRadioButton(
+                width: widths[4],
+                height: widths[4],
+                color: colors[4].$1,
+                borderColor: colors[4].$2,
+                isSelected: selectedIndex == 4,
+                onChanged: () => onChanged(4),
+              ),
+            ],
+          ),
+
+          //   _buildCustomRadioButton(
+          //     color: colors[0].$1,
+          //     borderColor: colors[0].$2,
+          //     width: widths[0],
+          //     height: widths[0],
+          //     isSelected: selectedIndex == 0,
+          //     onChanged: () => onChanged(0),
+          //   ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCustomRadioButton({
+    required double width,
+    required double height,
+    required Color color,
+    required Color borderColor,
+    required bool isSelected,
+    required VoidCallback onChanged,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        onChanged();
+      },
+      behavior: HitTestBehavior.translucent,
+      child: SizedBox(
+        width: 48.w,
+        height: 48.w,
+        child: Center(
+          child: Container(
+            width: width,
+            height: height,
+            decoration: BoxDecoration(
+              color: isSelected ? color : Colors.transparent,
+              borderRadius: BorderRadius.circular(width / 2),
+              border: Border.all(color: borderColor, width: 1.0),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
