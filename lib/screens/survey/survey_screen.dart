@@ -10,8 +10,10 @@ import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
 import 'package:go_router/go_router.dart';
+import 'package:live_frontend/widgets/saeip_modal.dart';
 import 'package:live_frontend/widgets/saeip_toast.dart';
 import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
+import 'package:markdown_widget/markdown_widget.dart';
 import 'package:percent_indicator/flutter_percent_indicator.dart';
 
 class SurveyScreen extends ConsumerStatefulWidget {
@@ -56,6 +58,8 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
+    } else {
+      _dialogBuilder(context);
     }
   }
 
@@ -191,7 +195,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
                 child: SaeipButton(
                   text: '다음',
                   onPressed: goToNextPage,
-                  disabled: isAllSelected(_questions) == false,
+                  disabled: !allSelected,
                 ),
               ),
             ],
@@ -323,24 +327,46 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
     required bool isSelected,
     required VoidCallback onChanged,
   }) {
-    return GestureDetector(
-      onTap: onChanged,
-      behavior: HitTestBehavior.translucent,
-      child: SizedBox(
-        width: 48.w,
-        height: 48.w,
-        child: Center(
-          child: Container(
-            width: width,
-            height: height,
-            decoration: BoxDecoration(
-              color: isSelected ? color : Colors.transparent,
-              borderRadius: BorderRadius.circular(width / 2),
-              border: Border.all(color: borderColor, width: 1.0),
+    return SizedBox(
+      width: 48.w,
+      height: 48.w,
+      child: Material(
+        color: Colors.transparent,
+        shape: const CircleBorder(),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: onChanged,
+          splashColor: color.toOpacity(0.2), // 선택 색상 기준 splash
+          child: Center(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              width: width,
+              height: height,
+              decoration: BoxDecoration(
+                color: isSelected ? color : Colors.transparent,
+                borderRadius: BorderRadius.circular(width / 2),
+                border: Border.all(color: borderColor, width: 1.0),
+              ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> _dialogBuilder(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SaeipModal(
+          title: "잠깐!",
+          message: "제출 이후 답변을 수정할 수 없어요.",
+          onConfirm: () => Navigator.of(context).pop(),
+          confirmText: "확인",
+          onCancel: () => Navigator.of(context).pop(),
+        );
+      },
     );
   }
 }
