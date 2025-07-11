@@ -26,6 +26,8 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
   late PageController _pageViewController;
   int _currentPage = 0;
   int _totalPages = 5;
+  List<SurveyQuestionModel> _questions = [];
+
   late final Future<List<SurveyQuestionModel>> _questionsFuture =
       loadQuestionsFromAssets().then((questions) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -66,8 +68,21 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
     }
   }
 
+  bool isAllSelected(List<SurveyQuestionModel> questions) {
+    final firstIndex = _currentPage * 4;
+    final lastIndex = (firstIndex + 4).clamp(0, questions.length);
+    for (int i = firstIndex; i < lastIndex; i++) {
+      if (i < questions.length && questions[i].response == null) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool allSelected = isAllSelected(_questions);
+    int progress = allSelected ? _currentPage + 1 : _currentPage;
     return Scaffold(
       appBar: SaeipAppBar(onBack: _currentPage > 0 ? goToPrevPage : null),
       body: Container(
@@ -85,13 +100,13 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
                 animationDuration: 1000,
                 lineHeight: 2.0,
                 trailing: Text(
-                  '$_currentPage / $_totalPages',
+                  '$progress / $_totalPages',
                   style: AppTextStyles.smallMedium(
                     context,
                     color: AppColors.blackBlack5,
                   ),
                 ),
-                percent: _totalPages == 0 ? 0 : _currentPage / _totalPages,
+                percent: _totalPages == 0 ? 0 : progress / _totalPages,
                 progressColor: AppColors.greenNormal,
               ),
               const Gap(16),
@@ -109,6 +124,14 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
 
                     final questions = snapshot.data!;
                     final totalPages = (questions.length / 4).ceil();
+
+                    if (_questions.isEmpty) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        setState(() {
+                          _questions = questions;
+                        });
+                      });
+                    }
 
                     return PageView.builder(
                       controller: _pageViewController,
@@ -138,7 +161,13 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
                                 selectedIndex: question.response ?? -1,
                                 onChanged: (selected) {
                                   setState(() {
-                                    question.response = selected;
+                                    if (question.response == selected) {
+                                      // 이미 선택된 경우 선택 해제
+                                      question.response = null;
+                                    } else {
+                                      // 새로 선택된 경우
+                                      question.response = selected;
+                                    }
                                   });
                                 },
                               ),
@@ -159,7 +188,11 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
               const Gap(16),
               SizedBox(
                 width: double.infinity,
-                child: SaeipButton(text: '다음', onPressed: goToNextPage),
+                child: SaeipButton(
+                  text: '다음',
+                  onPressed: goToNextPage,
+                  disabled: isAllSelected(_questions) == false,
+                ),
               ),
             ],
           ),
@@ -219,7 +252,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
       children: <Widget>[
         Text(
           question,
-          style: AppTextStyles.subtitleMedium(context),
+          style: AppTextStyles.bodyRegular(context, color: Colors.black),
           textAlign: TextAlign.start,
         ),
         const Gap(15),
