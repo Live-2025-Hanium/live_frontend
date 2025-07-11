@@ -25,20 +25,27 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
     with TickerProviderStateMixin {
   late PageController _pageViewController;
   int _currentPage = 0;
-  final int _totalPages = 5;
-  final _questions = loadQuestionsFromAssets();
+  int _totalPages = 5;
+  late final Future<List<SurveyQuestionModel>> _questionsFuture =
+      loadQuestionsFromAssets().then((questions) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {
+            _totalPages = (questions.length / 4).ceil();
+          });
+        });
+        return questions;
+      });
 
   @override
   void initState() {
     super.initState();
     _pageViewController = PageController();
-    _currentPage = 0;
   }
 
   @override
   void dispose() {
-    super.dispose();
     _pageViewController.dispose();
+    super.dispose();
   }
 
   void goToNextPage() {
@@ -50,89 +57,109 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
     }
   }
 
+  void goToPrevPage() {
+    if (_currentPage > 0) {
+      _pageViewController.previousPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SaeipAppBar(),
+      appBar: SaeipAppBar(onBack: _currentPage > 0 ? goToPrevPage : null),
       body: Container(
         width: double.infinity,
-        padding: const EdgeInsets.only(
-          left: 16.0,
-          right: 16.0,
-          top: 0,
-          bottom: 40.0,
-        ),
+        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 40),
         child: SafeArea(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _buildUserInfoWidget(),
-                  const Gap(16),
-                  LinearPercentIndicator(
-                    padding: EdgeInsets.only(left: 0, right: 10.w),
-                    width: 300.w,
-                    animation: true,
-                    animationDuration: 1000,
-                    lineHeight: 2.0,
-                    trailing: Text(
-                      '$_currentPage / $_totalPages',
-                      style: AppTextStyles.smallMedium(
-                        context,
-                        color: AppColors.blackBlack5,
-                      ),
-                    ),
-                    percent: _currentPage / _totalPages,
-                    progressColor: AppColors.greenNormal,
+            children: [
+              _buildUserInfoWidget(),
+              const Gap(16),
+              LinearPercentIndicator(
+                padding: EdgeInsets.only(left: 0, right: 10.w),
+                width: 300.w,
+                animation: true,
+                animationDuration: 1000,
+                lineHeight: 2.0,
+                trailing: Text(
+                  '$_currentPage / $_totalPages',
+                  style: AppTextStyles.smallMedium(
+                    context,
+                    color: AppColors.blackBlack5,
                   ),
-                  FutureBuilder(
-                    future: _questions,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Center(
-                          child: Text(
-                            '오류가 발생했습니다: ${snapshot.error}',
-                            style: AppTextStyles.subtitleMedium(context),
-                          ),
-                        );
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Center(
-                          child: Text(
-                            '설문조사 질문이 없습니다.',
-                            style: AppTextStyles.subtitleMedium(context),
-                          ),
-                        );
-                      }
-                      /*
-						_buildLikertSelector(
-                        context: context,
-                        question: questions[0].question ?? "",
-                        selectedIndex: 0,
-                        onChanged: (index) => {},
-                      )*/
-                      // 데이터가 정상적으로 로드되었을 때
-                      final questions = snapshot.data!;
-                      return Column(
-                        children: [Text("임시로 넣은 텍스트입니다. 실제 질문을 넣어주세요.")],
-                        // _buildLikertSelector(
-                        //   context: context,
-                        //   question: questions[0].question ?? "",
-                        //   selectedIndex: 0,
-                        //   onChanged: (index) => {},
-                        // ),
-                      );
-                    },
-                  ),
-                ],
+                ),
+                percent: _totalPages == 0 ? 0 : _currentPage / _totalPages,
+                progressColor: AppColors.greenNormal,
               ),
+              const Gap(16),
+              Expanded(
+                child: FutureBuilder<List<SurveyQuestionModel>>(
+                  future: _questionsFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('오류: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('질문 없음'));
+                    }
+
+                    final questions = snapshot.data!;
+                    final totalPages = (questions.length / 4).ceil();
+
+                    return PageView.builder(
+                      controller: _pageViewController,
+                      itemCount: totalPages,
+                      physics: const NeverScrollableScrollPhysics(), // 버튼으로만 이동
+                      itemBuilder: (context, pageIndex) {
+                        final startIndex = pageIndex * 4;
+                        final endIndex = (startIndex + 4).clamp(
+                          0,
+                          questions.length,
+                        );
+                        final questionsForPage = questions.sublist(
+                          startIndex,
+                          endIndex,
+                        );
+
+                        return ListView.builder(
+                          itemCount: questionsForPage.length,
+                          padding: EdgeInsets.only(top: 8.h, bottom: 24.h),
+                          itemBuilder: (context, index) {
+                            final question = questionsForPage[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 24.0),
+                              child: _buildLikertSelector(
+                                context: context,
+                                question: question.question ?? "",
+                                selectedIndex: question.response ?? -1,
+                                onChanged: (selected) {
+                                  setState(() {
+                                    question.response = selected;
+                                  });
+                                },
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      onPageChanged: (index) {
+                        setState(() {
+                          _currentPage = index;
+                        });
+                      },
+                    );
+                  },
+                ),
+              ),
+
+              const Gap(16),
               SizedBox(
                 width: double.infinity,
-                child: SaeipButton(text: '다음', onPressed: () {}),
+                child: SaeipButton(text: '다음', onPressed: goToNextPage),
               ),
             ],
           ),
@@ -141,9 +168,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
     );
   }
 
-  // 사용자 님에 대해 알려주세요 위젯
   Widget _buildUserInfoWidget() {
-    // 사용자 이름 rivorpod에서 가져오기
     final userName = ref.watch(authProvider).user?.name ?? "사용자";
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,76 +214,71 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
 
     List<double> widths = [48.w, 36.w, 28.w, 36.w, 48.w];
 
-    return SizedBox(
-      width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            question,
-            style: AppTextStyles.subtitleMedium(context),
-            textAlign: TextAlign.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          question,
+          style: AppTextStyles.subtitleMedium(context),
+          textAlign: TextAlign.start,
+        ),
+        const Gap(15),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 4.w),
+          child: Row(
+            children: List.generate(5, (i) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  right:
+                      i == 0
+                          ? 24.w
+                          : i == 1
+                          ? 16.w
+                          : 0,
+                  left:
+                      i == 4
+                          ? 24.w
+                          : i == 3
+                          ? 16.w
+                          : 0,
+                ),
+                child: _buildCustomRadioButton(
+                  width: widths[i],
+                  height: widths[i],
+                  color: colors[i].$1,
+                  borderColor: colors[i].$2,
+                  isSelected: selectedIndex == i,
+                  onChanged: () => onChanged(i),
+                ),
+              );
+            }),
           ),
-          Gap(15),
-          Row(
+        ),
+        Gap(5.h),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _buildCustomRadioButton(
-                width: widths[0],
-                height: widths[0],
-                color: colors[0].$1,
-                borderColor: colors[0].$2,
-                isSelected: selectedIndex == 0,
-                onChanged: () => onChanged(0),
+              Text(
+                '아니오',
+                style: AppTextStyles.smallMedium(
+                  context,
+                  color: AppColors.blackBlack5,
+                ),
               ),
-              Gap(24.w),
-              _buildCustomRadioButton(
-                width: widths[1],
-                height: widths[1],
-                color: colors[1].$1,
-                borderColor: colors[1].$2,
-                isSelected: selectedIndex == 1,
-                onChanged: () => onChanged(1),
-              ),
-              Gap(16.w),
-              _buildCustomRadioButton(
-                width: widths[2],
-                height: widths[2],
-                color: colors[2].$1,
-                borderColor: colors[2].$2,
-                isSelected: selectedIndex == 2,
-                onChanged: () => onChanged(2),
-              ),
-              Gap(16.w),
-              _buildCustomRadioButton(
-                width: widths[3],
-                height: widths[3],
-                color: colors[3].$1,
-                borderColor: colors[3].$2,
-                isSelected: selectedIndex == 3,
-                onChanged: () => onChanged(3),
-              ),
-              Gap(24.w),
-              _buildCustomRadioButton(
-                width: widths[4],
-                height: widths[4],
-                color: colors[4].$1,
-                borderColor: colors[4].$2,
-                isSelected: selectedIndex == 4,
-                onChanged: () => onChanged(4),
+              Text(
+                '예',
+                style: AppTextStyles.smallMedium(
+                  context,
+                  color: AppColors.blackBlack5,
+                ),
               ),
             ],
           ),
-
-          //   _buildCustomRadioButton(
-          //     color: colors[0].$1,
-          //     borderColor: colors[0].$2,
-          //     width: widths[0],
-          //     height: widths[0],
-          //     isSelected: selectedIndex == 0,
-          //     onChanged: () => onChanged(0),
-          //   ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -271,9 +291,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
     required VoidCallback onChanged,
   }) {
     return GestureDetector(
-      onTap: () {
-        onChanged();
-      },
+      onTap: onChanged,
       behavior: HitTestBehavior.translucent,
       child: SizedBox(
         width: 48.w,
