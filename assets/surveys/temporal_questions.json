@@ -1,38 +1,42 @@
 [
-	{
-		"questionNumber": 1,
-		"question": "How often do you use the app?"
-	},
-	{
-		"questionNumber": 2,
-		"question": "What features do you use the most?"
-	},
-	{
-		"questionNumber": 3,
-		"question": "How satisfied are you with the app's performance?"
-	},
-	{
-		"questionNumber": 4,
-		"question": "Would you recommend this app to others?"
-	},
-	{
-		"questionNumber": 5,
-		"question": "What improvements would you like to see in the app?"
-	},
-	{
-		"questionNumber": 6,
-		"question": "How do you feel about the app's user interface?"
-	},
-	{	"questionNumber": 7,
-		"question": "How likely are you to continue using the app in the future?"
-	},
-	{	"questionNumber": 8,
-		"question": "What is your overall satisfaction with the app?"
-	},
-	{	"questionNumber": 9,
-		"question": "How do you feel about the app's customer support?"
-	},
-	{	"questionNumber": 10,
-		"question": "What additional features would you like to see in the app?"
-	}
+  {
+    "questionNumber": 1,
+    "question": "요즘 하루 중 대부분의 시간을 집에서 보내시나요?"
+  },
+  {
+    "questionNumber": 2,
+    "question": "최근 다른 사람과 대화를 나눈 적이 드문 편인가요?"
+  },
+  {
+    "questionNumber": 3,
+    "question": "다른 사람과 연락하거나 만나는 것이 부담스럽게 느껴질 때가 있나요?"
+  },
+  {
+    "questionNumber": 4,
+    "question": "최근 몇 주 동안 하루 일과나 생활 리듬이 불규칙했다고 느끼시나요?"
+  },
+  {
+    "questionNumber": 5,
+    "question": "요즘 자주 외로움을 느끼시나요?"
+  },
+  {
+    "questionNumber": 6,
+    "question": "마음 속 이야기를 편하게 털어놓을 사람이 지금 주변에 있다고 느끼시나요?"
+  },
+  {
+    "questionNumber": 7,
+    "question": "최근에 나를 응원하거나 이해해주는 사람이 있다고 느끼신 적이 있나요?"
+  },
+  {
+    "questionNumber": 8,
+    "question": "요즘 무기력하거나 의욕이 없다고 느끼는 날이 자주 있나요?"
+  },
+  {
+    "questionNumber": 9,
+    "question": "최근 며칠 동안 '아무것도 하기 싫다'는 생각이 자주 드시나요?"
+  },
+  {
+    "questionNumber": 10,
+    "question": "도움을 받고 싶지만 어떻게 시작해야 할지 모르겠다고 느끼신 적이 있나요?"
+  }
 ]
