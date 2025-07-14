@@ -9,7 +9,7 @@ import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
-// import 'package:go_router/go_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
 // import 'package:live_frontend/widgets/saeip_toast.dart';
 // import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
@@ -193,7 +193,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
               SizedBox(
                 width: double.infinity,
                 child: SaeipButton(
-                  text: '다음',
+                  text: _currentPage + 1 == _totalPages ? '제출' : '다음',
                   onPressed: goToNextPage,
                   disabled: !allSelected,
                 ),
@@ -362,8 +362,8 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
         return SaeipModal(
           title: "잠깐!",
           message: "제출 이후 답변을 수정할 수 없어요.",
-          onConfirm: () => Navigator.of(context).pop(),
-          confirmText: "확인",
+          onConfirm: () => context.goNamed('home'),
+          confirmText: "제출",
           onCancel: () => Navigator.of(context).pop(),
         );
       },
