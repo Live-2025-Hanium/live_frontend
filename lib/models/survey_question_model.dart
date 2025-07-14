@@ -10,11 +10,11 @@ class SurveyQuestionModel {
     question = json['question'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['questionNumber'] = questionNumber;
-    data['question'] = question;
-    return data;
+  Map<String, dynamic> toAnswerJson() {
+    return {
+      'questionNumber': questionNumber,
+      'answerNumber': response != null ? response! + 1 : null,
+    };
   }
 
   SurveyQuestionModel copyWith({int? response}) {

@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,8 +14,6 @@ import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
-// import 'package:live_frontend/widgets/saeip_toast.dart';
-// import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 import 'package:percent_indicator/flutter_percent_indicator.dart';
 
@@ -356,6 +357,10 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
   }
 
   Future<void> _dialogBuilder(BuildContext context) {
+    final jsonList = _questions.map((q) => q.toAnswerJson()).toList();
+
+    log("응답 JSON", name: "Survey", error: jsonEncode(jsonList));
+
     return showDialog(
       context: context,
       builder: (BuildContext context) {
