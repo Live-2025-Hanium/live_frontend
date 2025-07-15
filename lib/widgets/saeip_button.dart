@@ -12,6 +12,7 @@ class SaeipButton extends StatelessWidget {
   final double height;
   final TextStyle? textStyle;
   final SaeipButtonType type;
+  final bool disabled;
 
   const SaeipButton({
     super.key,
@@ -22,6 +23,7 @@ class SaeipButton extends StatelessWidget {
     this.height = 48,
     this.textStyle,
     this.type = SaeipButtonType.filled,
+    this.disabled = false,
   });
 
   const SaeipButton.outlined({
@@ -32,12 +34,13 @@ class SaeipButton extends StatelessWidget {
     this.textColor = Colors.black,
     this.height = 48,
     this.textStyle,
+    this.disabled = false,
   }) : type = SaeipButtonType.outlined;
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: onPressed,
+      onPressed: disabled ? null : onPressed,
       style: ElevatedButton.styleFrom(
         elevation: 0,
         shape: RoundedRectangleBorder(

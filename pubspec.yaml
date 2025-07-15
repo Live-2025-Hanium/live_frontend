@@ -48,6 +48,7 @@ dependencies:
   image_picker: ^1.1.2
   camera: ^0.11.1
   geolocator: ^14.0.1
+  percent_indicator: ^4.2.5
 
 dev_dependencies:
   flutter_test:
@@ -86,6 +87,7 @@ flutter:
     - assets/logo/
     - assets/terms/
     - assets/icons/
+    - assets/surveys/
     - .env
 
   # To add assets to your application, add an assets section, like this:
