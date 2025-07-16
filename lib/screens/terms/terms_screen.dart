@@ -148,7 +148,7 @@ class TermsScreenState extends ConsumerState<TermsScreen> {
                   onPressed:
                       agreedToAll
                           ? () {
-                            context.push('/error');
+                            context.pushNamed('profile_setup');
                           }
                           : null,
                   style: ElevatedButton.styleFrom(

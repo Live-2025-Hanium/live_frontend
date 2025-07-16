@@ -10,6 +10,7 @@ import 'package:live_frontend/screens/survey/survey_screen.dart';
 import 'package:live_frontend/screens/terms/terms_detail/terms_detail_screen.dart';
 import 'package:live_frontend/screens/terms/terms_screen.dart';
 import '../screens/login/login_screen.dart';
+import '../screens/login/profile_setup_screen.dart';
 import '../screens/home.dart';
 import '../providers/auth_provider.dart';
 
@@ -99,7 +100,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
-
+      GoRoute(
+        name: 'profile_setup',
+        path: '/profile_setup',
+        builder: (context, state) => const ProfileSetupScreen(),
+      ),
       GoRoute(
         name: 'survey',
         path: '/survey',
