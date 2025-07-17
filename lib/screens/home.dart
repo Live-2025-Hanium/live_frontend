@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
@@ -26,6 +27,11 @@ class HomeScreen extends StatelessWidget {
             ),
             Gap(16),
             SaeipButton(onPressed: () => _showToast(context), text: '토스트 띄우기'),
+            Gap(16),
+            SaeipButton(
+              onPressed: () => _dialogImageBuilder(context),
+              text: '이미지 모달 띄우기',
+            ),
           ],
         ),
       ),
@@ -40,6 +46,22 @@ class HomeScreen extends StatelessWidget {
         return SaeipModal(
           title: "모달 테스트",
           message: "모달 테스트다!",
+          onConfirm: () => Navigator.of(context).pop(),
+          confirmText: "확인",
+          onCancel: () => Navigator.of(context).pop(),
+        );
+      },
+    );
+  }
+
+  Future<void> _dialogImageBuilder(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SaeipModal.image(
+          title: "모달 테스트",
+          message: "모달 테스트다!",
+          image: SvgPicture.asset('assets/images/404.svg'),
           onConfirm: () => Navigator.of(context).pop(),
           confirmText: "확인",
           onCancel: () => Navigator.of(context).pop(),

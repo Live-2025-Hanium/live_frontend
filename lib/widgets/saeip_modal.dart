@@ -4,6 +4,13 @@ import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
 
+// 이미지 모달이랑 텍스트 모달 타입
+
+class SaeipModalType {
+  static const image = 'image';
+  static const text = 'text';
+}
+
 class SaeipModal extends StatelessWidget {
   final String? title;
   final String message;
@@ -13,6 +20,8 @@ class SaeipModal extends StatelessWidget {
   final String confirmText;
   final void Function()? onClose;
   final Color confirmBackgroundColor;
+  final String type;
+  final Widget? image;
 
   const SaeipModal({
     super.key,
@@ -24,7 +33,22 @@ class SaeipModal extends StatelessWidget {
     this.onClose,
     this.confirmBackgroundColor = AppColors.greenDark,
     this.cancelMessage = '취소',
+    this.type = SaeipModalType.text,
+    this.image,
   });
+
+  const SaeipModal.image({
+    super.key,
+    required this.message,
+    this.cancelMessage = '취소',
+    required this.onConfirm,
+    this.title,
+    this.onCancel,
+    this.confirmText = '확인',
+    this.onClose,
+    this.confirmBackgroundColor = AppColors.greenDark,
+    required this.image,
+  }) : type = SaeipModalType.image;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +78,8 @@ class SaeipModal extends StatelessWidget {
               style: AppTextStyles.bodyRegular(context, color: Colors.black),
               textAlign: TextAlign.center,
             ),
+            if (type == SaeipModalType.image)
+              Padding(padding: const EdgeInsets.only(top: 12), child: image!),
             const Gap(36),
             Row(
               children: [
