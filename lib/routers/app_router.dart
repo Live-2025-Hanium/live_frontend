@@ -7,10 +7,10 @@ import 'package:live_frontend/screens/map/map_screen.dart';
 import 'package:live_frontend/screens/mypage/mypage_screen.dart';
 import 'package:live_frontend/screens/statistics/statistics_screen.dart';
 import 'package:live_frontend/screens/survey/survey_screen.dart';
-import 'package:live_frontend/screens/terms/terms_detail/terms_detail_screen.dart';
-import 'package:live_frontend/screens/terms/terms_screen.dart';
+import 'package:live_frontend/screens/login/terms/terms_detail/terms_detail_screen.dart';
+import 'package:live_frontend/screens/login/terms/terms_screen.dart';
 import '../screens/login/login_screen.dart';
-import '../screens/login/profile_setup_screen.dart';
+import '../screens/login/profile_setup/profile_setup_screen.dart';
 import '../screens/home.dart';
 import '../providers/auth_provider.dart';
 
@@ -43,7 +43,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (!isLoggedIn && !isOnLoginPage) return '/login';
 
       // 3. 로그인 돼있는데 로그인 페이지 가려고 하면 → 약관 동의 화면 (임시처리)
-      if (isLoggedIn && isOnLoginPage) return '/terms';
+      if (isLoggedIn && isOnLoginPage) return '/login/terms';
 
       return null;
     },
@@ -55,7 +55,36 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'login',
         path: '/login',
         builder: (context, state) => const LoginScreen(),
+        routes: [
+          GoRoute(
+            name: 'profile_setup',
+            path: '/profile_setup',
+            builder: (context, state) => const ProfileSetupScreen(),
+          ),
+          GoRoute(
+            name: 'terms',
+            path: '/terms',
+            builder: (context, state) {
+              return TermsScreen();
+            },
+            routes: [
+              GoRoute(
+                name: 'terms_detail',
+                path: ':file_path',
+                builder: (context, state) {
+                  final path = state.pathParameters['file_path']!;
+                  final data = state.extra as bool?;
+                  return TermsDetailScreen(
+                    path: path,
+                    isChecked: data ?? false,
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
       ),
+
       GoRoute(
         name: 'home',
         path: '/home',
@@ -82,29 +111,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const MyPageScreen(),
       ),
 
-      GoRoute(
-        name: 'terms',
-        path: '/terms',
-        builder: (context, state) {
-          return TermsScreen();
-        },
-        routes: [
-          GoRoute(
-            name: 'terms_detail',
-            path: ':file_path',
-            builder: (context, state) {
-              final path = state.pathParameters['file_path']!;
-              final data = state.extra as bool?;
-              return TermsDetailScreen(path: path, isChecked: data ?? false);
-            },
-          ),
-        ],
-      ),
-      GoRoute(
-        name: 'profile_setup',
-        path: '/profile_setup',
-        builder: (context, state) => const ProfileSetupScreen(),
-      ),
       GoRoute(
         name: 'survey',
         path: '/survey',
