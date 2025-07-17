@@ -7,6 +7,7 @@ import 'package:live_frontend/widgets/saeip_button.dart';
 class SaeipModal extends StatelessWidget {
   final String? title;
   final String message;
+  final String? cancelMessage;
   final void Function()? onCancel;
   final void Function() onConfirm;
   final String confirmText;
@@ -22,6 +23,7 @@ class SaeipModal extends StatelessWidget {
     required this.confirmText,
     this.onClose,
     this.confirmBackgroundColor = AppColors.greenDark,
+    this.cancelMessage = '취소',
   });
 
   @override
@@ -56,48 +58,42 @@ class SaeipModal extends StatelessWidget {
             Row(
               children: [
                 if (onCancel != null) ...[
-                  _buildModalButton(
-                    context,
-                    text: "취소",
-                    onPressed: onCancel!,
-                    backgroundColor: AppColors.blackBlack1,
-                    textColor: Colors.black,
+                  Expanded(
+                    child: SaeipButton(
+                      text: cancelMessage!,
+                      onPressed: onCancel!,
+                      backgroundColor: AppColors.blackBlack1,
+                      textStyle: AppTextStyles.bodyRegular(
+                        context,
+                        color: Colors.black,
+                      ),
+                      height: 40,
+                    ),
                   ),
                   const Gap(8),
                 ],
-                _buildModalButton(
-                  context,
-                  text: confirmText,
-                  onPressed: () {
-                    onConfirm();
-                    if (onClose != null) {
-                      onClose!();
-                      Navigator.of(context).pop();
-                    }
-                  },
+                Expanded(
+                  child: SaeipButton(
+                    text: confirmText,
+                    onPressed: () {
+                      onConfirm();
+                      if (onClose != null) {
+                        onClose!();
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    textStyle: AppTextStyles.bodyMedium(
+                      context,
+                      color: Colors.white,
+                    ),
+                    height: 40,
+                    backgroundColor: confirmBackgroundColor,
+                  ),
                 ),
               ],
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildModalButton(
-    BuildContext context, {
-    required String text,
-    required void Function() onPressed,
-    Color backgroundColor = AppColors.greenDark,
-    Color textColor = Colors.white,
-  }) {
-    return Expanded(
-      child: SaeipButton(
-        text: text,
-        onPressed: onPressed,
-        backgroundColor: backgroundColor,
-        textStyle: AppTextStyles.bodySemibold(context, color: textColor),
-        height: 40,
       ),
     );
   }
