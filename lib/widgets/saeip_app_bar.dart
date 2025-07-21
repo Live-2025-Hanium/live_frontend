@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'dart:math';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -47,11 +47,20 @@ class SaeipAppBar extends StatelessWidget implements PreferredSizeWidget {
     if (appBarStyle == AppBarStyle.common) {
       return AppBar(
         automaticallyImplyLeading: false,
-        title: SvgPicture.asset('assets/logo/logo.svg', width: 73, height: 20),
+        title: SvgPicture.asset(
+          'assets/logo/logo.svg',
+          width: 73.h,
+          height: 20.h,
+        ),
         centerTitle: false,
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications_none),
+            iconSize: 22.h,
+            padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 14.h),
+            icon: SvgPicture.asset(
+              'assets/icons/notification.svg',
+              colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
+            ),
             onPressed: () {
               /* 알림 화면으로 */
             },
