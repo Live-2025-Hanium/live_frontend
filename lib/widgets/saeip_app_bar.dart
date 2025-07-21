@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -32,10 +33,12 @@ class SaeipAppBar extends StatelessWidget implements PreferredSizeWidget {
     void goBack() {
       if (onBack != null) {
         onBack!();
+      } else if (lastPage != null) {
+        context.pushNamed(lastPage!);
       } else if (GoRouter.of(context).canPop()) {
         context.pop();
       } else {
-        context.push(lastPage ?? '/home');
+        context.pushNamed('home');
       }
     }
 

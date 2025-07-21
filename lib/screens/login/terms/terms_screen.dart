@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:live_frontend/screens/terms/widgets/term.dart';
+import 'package:live_frontend/screens/login/terms/widgets/term.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
@@ -47,7 +47,7 @@ class TermsScreenState extends ConsumerState<TermsScreen> {
     final authState = ref.watch(authProvider);
     final userName = authState.user?.name ?? "유저";
     return Scaffold(
-      appBar: SaeipAppBar(lastPage: '/home'), // 임시로 이전페이지는 홈으로 돌아가도록,,
+      appBar: SaeipAppBar(lastPage: 'home'), // 임시로 이전페이지는 홈으로 돌아가도록,,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
