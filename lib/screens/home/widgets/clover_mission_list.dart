@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/screens/home/widgets/mission_tile.dart';
@@ -52,13 +53,13 @@ class CloverMissionList extends StatelessWidget {
     return Row(
       children: [
         for (var i = 0; i < difficulty.value; i++)
-          Icon(Icons.star, size: 16, color: Color(0xFFFFC800)),
+          Icon(Icons.star, size: 16.h, color: Color(0xFFFFC800)),
         // 빈 별
         for (var i = 0; i < emptyStars; i++)
-          Icon(Icons.star_border, size: 16, color: Color(0xFFFFC800)),
+          Icon(Icons.star_border, size: 16.h, color: Color(0xFFFFC800)),
         Gap(8),
         Text(
-          '$category',
+          category.koreanLabel,
           style: AppTextStyles.bodyRegular(
             context,
             color: AppColors.blackBlack3,

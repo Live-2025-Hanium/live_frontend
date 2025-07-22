@@ -49,6 +49,23 @@ enum MissionCategory {
   study,
 }
 
+extension MissionCategoryExtension on MissionCategory {
+  String get koreanLabel {
+    switch (this) {
+      case MissionCategory.relationship:
+        return '관계';
+      case MissionCategory.health:
+        return '건강 챙기기';
+      case MissionCategory.work:
+        return '업무';
+      case MissionCategory.hobby:
+        return '취미';
+      case MissionCategory.study:
+        return '공부';
+    }
+  }
+}
+
 // Mission 모델
 @JsonSerializable()
 class Mission {

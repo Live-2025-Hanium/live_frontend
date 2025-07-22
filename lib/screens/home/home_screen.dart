@@ -3,11 +3,9 @@ import 'package:gap/gap.dart';
 import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission_list.dart';
 import 'package:live_frontend/screens/home/widgets/home_profile.dart';
-import 'package:live_frontend/screens/home/widgets/mission_tile.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
-import 'package:live_frontend/models/mission_models.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
