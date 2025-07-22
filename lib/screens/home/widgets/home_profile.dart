@@ -22,6 +22,7 @@ class HomeProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     String dateString = Jiffy.now().format(pattern: 'yyyy년 M월 d일');
     return Container(
+      color: Colors.white,
       height: 116.h,
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
       child: Row(
