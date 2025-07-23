@@ -13,53 +13,7 @@ class StatisticsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: SaeipAppBar(title: 'Statistics'),
-      body: Container(
-        padding: const EdgeInsets.all(16.0),
-        color: Colors.grey[200],
-        child: Container(
-          height: 80.h,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4.0),
-            color: Colors.white,
-            border: Border.all(color: AppColors.blackBlack1, width: 1.0),
-          ),
-          child: Padding(
-            padding: EdgeInsetsGeometry.symmetric(horizontal: 22.w),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  '1',
-                  style: AppTextStyles.titleMedium(
-                    context,
-                    color: AppColors.blackBlack4,
-                  ),
-                ),
-                Gap(24.w),
-                Column(
-                  children: [
-                    Text(
-                      'Total Views',
-                      style: AppTextStyles.bodyRegular(
-                        context,
-                        color: AppColors.blackBlack4,
-                      ),
-                    ),
-                    Text(
-                      '1,234',
-                      style: AppTextStyles.bodyRegular(
-                        context,
-                        color: AppColors.blackBlack4,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      body: Center(child: Text('통계화면')),
       bottomNavigationBar: const SaeipNavigationBar(initialIndex: 1),
     );
   }

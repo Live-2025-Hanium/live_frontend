@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/models/mission_models.dart';
-import 'package:live_frontend/screens/home/widgets/clover_mission_list.dart';
+import 'package:live_frontend/screens/home/widgets/clover_mission/clover_mission_list.dart';
 import 'package:live_frontend/screens/home/widgets/home_profile.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
+import 'package:live_frontend/widgets/saeip_button.dart';
 import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -47,6 +48,8 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ],
               ),
+              Gap(16),
+              SaeipButton(text: '버튼', onPressed: () {}),
             ],
           ),
         ),

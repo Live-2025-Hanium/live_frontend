@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/models/mission_models.dart';
-import 'package:live_frontend/screens/home/widgets/clover_sub_content.dart';
+import 'package:live_frontend/screens/home/widgets/clover_mission/clover_sub_content.dart';
 import 'package:live_frontend/screens/home/widgets/mission_tile.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
