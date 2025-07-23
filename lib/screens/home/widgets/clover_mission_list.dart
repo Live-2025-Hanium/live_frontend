@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/models/mission_models.dart';
+import 'package:live_frontend/screens/home/widgets/clover_sub_content.dart';
 import 'package:live_frontend/screens/home/widgets/mission_tile.dart';
-import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
 class CloverMissionList extends StatelessWidget {
@@ -28,10 +26,9 @@ class CloverMissionList extends StatelessWidget {
                 MissionTile(
                   missionStatus: mission.missionStatus,
                   missionTitle: mission.title,
-                  subContent: _buildSubContent(
-                    context,
-                    mission.missionDifficulty,
-                    mission.missionCategory,
+                  subContent: CloverSubContent(
+                    category: mission.missionCategory,
+                    difficulty: mission.missionDifficulty,
                   ),
                 ),
                 Gap(8),
@@ -40,32 +37,6 @@ class CloverMissionList extends StatelessWidget {
           }).toList(),
         ],
       ),
-    );
-  }
-
-  Widget _buildSubContent(
-    BuildContext context,
-    MissionDifficulty difficulty,
-    MissionCategory category,
-  ) {
-    const totalStars = 5;
-    final emptyStars = totalStars - difficulty.value;
-    return Row(
-      children: [
-        for (var i = 0; i < difficulty.value; i++)
-          Icon(Icons.star, size: 16.h, color: Color(0xFFFFC800)),
-        // 빈 별
-        for (var i = 0; i < emptyStars; i++)
-          Icon(Icons.star_border, size: 16.h, color: Color(0xFFFFC800)),
-        Gap(8),
-        Text(
-          category.koreanLabel,
-          style: AppTextStyles.bodyRegular(
-            context,
-            color: AppColors.blackBlack3,
-          ),
-        ),
-      ],
     );
   }
 }

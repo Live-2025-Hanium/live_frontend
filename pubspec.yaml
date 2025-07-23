@@ -54,7 +54,6 @@ dependencies:
   cached_network_image: ^3.4.1
   jiffy: ^6.4.3
   json_annotation: ^4.9.0
-  flutter_rating_bar: ^4.0.1
 
 dev_dependencies:
   flutter_test:
