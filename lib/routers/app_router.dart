@@ -11,7 +11,7 @@ import 'package:live_frontend/screens/login/terms/terms_detail/terms_detail_scre
 import 'package:live_frontend/screens/login/terms/terms_screen.dart';
 import '../screens/login/login_screen.dart';
 import '../screens/login/profile_setup/profile_setup_screen.dart';
-import '../screens/home.dart';
+import '../screens/home/home_screen.dart';
 import '../providers/auth_provider.dart';
 
 // 라우터 새로고침 트리거
