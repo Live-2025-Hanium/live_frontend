@@ -51,13 +51,18 @@ dependencies:
   camera: ^0.11.1
   geolocator: ^14.0.1
   percent_indicator: ^4.2.5
+  cached_network_image: ^3.4.1
+  jiffy: ^6.4.3
+  json_annotation: ^4.9.0
+  flutter_rating_bar: ^4.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.6
-
+  build_runner: ^2.4.9
+  json_serializable: ^6.5.4
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
