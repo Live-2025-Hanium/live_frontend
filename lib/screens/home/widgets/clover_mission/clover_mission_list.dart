@@ -34,7 +34,7 @@ class CloverMissionList extends StatelessWidget {
                 Gap(8),
               ],
             );
-          }).toList(),
+          }),
         ],
       ),
     );
