@@ -1,57 +1,148 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:live_frontend/models/mission_models.dart';
+import 'package:live_frontend/screens/home/widgets/clover_mission/clover_sub_content.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
+
+List<Mission> temporaryData = [
+  Mission(
+    userMissionId: 1,
+    title: 'Clover Mission 1',
+    missionStatus: MissionStatus.assigned,
+    missionDifficulty: MissionDifficulty.easy,
+    missionCategory: MissionCategory.health,
+  ),
+  Mission(
+    userMissionId: 1,
+    title: 'Clover Mission 1',
+    missionStatus: MissionStatus.assigned,
+    missionDifficulty: MissionDifficulty.easy,
+    missionCategory: MissionCategory.health,
+  ),
+  Mission(
+    userMissionId: 1,
+    title: 'Clover Mission 1',
+    missionStatus: MissionStatus.assigned,
+    missionDifficulty: MissionDifficulty.easy,
+    missionCategory: MissionCategory.health,
+  ),
+];
 
 class NewCloverMissionModal extends StatelessWidget {
   const NewCloverMissionModal({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16.0),
-      child: Container(
-        height: 80.h,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4.0),
-          color: Colors.white,
-          border: Border.all(color: AppColors.blackBlack1, width: 1.0),
-        ),
-        child: Padding(
-          padding: EdgeInsetsGeometry.symmetric(horizontal: 22.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                '1',
-                style: AppTextStyles.titleMedium(
-                  context,
-                  color: AppColors.blackBlack4,
+    return Dialog(
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            padding: EdgeInsets.fromLTRB(16.w, 36.h, 16.w, 4.h),
+            width: 328.w,
+            height: 424.h,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  '클로버 미션 도착!',
+                  style: AppTextStyles.titleMedium(
+                    context,
+                    color: Colors.black,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-              Gap(24.w),
-              Column(
-                children: [
-                  Text(
-                    'Total Views',
-                    style: AppTextStyles.bodyRegular(
-                      context,
-                      color: AppColors.blackBlack4,
-                    ),
-                  ),
-                  Text(
-                    '1,234',
-                    style: AppTextStyles.bodyRegular(
-                      context,
-                      color: AppColors.blackBlack4,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                Gap(12.h),
+                Image.asset(
+                  // 이유는 모르겠는데 svg가 안됨.
+                  'assets/images/clover.png',
+                  width: 52.w,
+                  height: 52.w,
+                ),
+                Gap(24.h),
+                ...temporaryData.asMap().entries.map((entry) {
+                  final idx = entry.key;
+                  final data = entry.value;
+                  return Column(
+                    children: [
+                      _buildTitle(
+                        context,
+                        idx,
+                        data.title,
+                        data.missionDifficulty,
+                        data.missionCategory,
+                      ),
+                      Gap(8.h),
+                    ],
+                  );
+                }),
+              ],
+            ),
           ),
+          Positioned(
+            top: 4,
+            right: 4,
+            child: IconButton(
+              icon: Icon(Icons.close, color: AppColors.blackBlack4),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTitle(
+    BuildContext context,
+    int index,
+    String title,
+    MissionDifficulty difficulty,
+    MissionCategory category,
+  ) {
+    return Container(
+      height: 80.h,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(4.0),
+        color: Colors.white,
+        border: Border.all(color: AppColors.blackBlack1, width: 1.0),
+      ),
+      child: Padding(
+        padding: EdgeInsetsGeometry.symmetric(horizontal: 22.w),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              '${index + 1}',
+              style: AppTextStyles.titleMedium(
+                context,
+                color: AppColors.blackBlack4,
+              ),
+            ),
+            Gap(24.w),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: AppTextStyles.bodyRegular(
+                    context,
+                    color: Colors.black,
+                  ),
+                ),
+                Gap(4.h),
+                CloverSubContent(difficulty: difficulty, category: category),
+              ],
+            ),
+          ],
         ),
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission/clover_mission_list.dart';
+import 'package:live_frontend/screens/home/widgets/clover_mission/new_clover_mission_modal.dart';
 import 'package:live_frontend/screens/home/widgets/home_profile.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
@@ -49,7 +50,15 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
               Gap(16),
-              SaeipButton(text: '버튼', onPressed: () {}),
+              SaeipButton(
+                text: '버튼',
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => NewCloverMissionModal(),
+                  );
+                },
+              ),
             ],
           ),
         ),
