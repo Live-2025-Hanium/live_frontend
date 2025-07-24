@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -38,6 +36,7 @@ class NewCloverMissionModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Stack(
         children: [
           Container(
@@ -46,9 +45,9 @@ class NewCloverMissionModal extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             padding: EdgeInsets.fromLTRB(16.w, 36.h, 16.w, 4.h),
-            width: 328.w,
-            height: 424.h,
+            width: double.infinity,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
