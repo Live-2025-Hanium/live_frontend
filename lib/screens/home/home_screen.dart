@@ -91,24 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 todayFinishedMissionCount: 2,
               ),
               Gap(16),
-              CloverMissionList(
-                missions: [
-                  Mission(
-                    title: 'Clover Mission 1',
-                    missionStatus: MissionStatus.assigned,
-                    missionCategory: MissionCategory.health,
-                    missionDifficulty: MissionDifficulty.easy,
-                    userMissionId: 1,
-                  ),
-                  Mission(
-                    title: 'Clover Mission 1',
-                    missionStatus: MissionStatus.completed,
-                    missionCategory: MissionCategory.health,
-                    missionDifficulty: MissionDifficulty.easy,
-                    userMissionId: 2,
-                  ),
-                ],
-              ),
+              CloverMissionList(missionList: temporaryData),
               Gap(16),
             ],
           ),

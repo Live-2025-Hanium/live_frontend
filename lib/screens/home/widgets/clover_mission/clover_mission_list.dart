@@ -1,13 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission/clover_sub_content.dart';
 import 'package:live_frontend/screens/home/widgets/mission_tile.dart';
+import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
-class CloverMissionList extends StatelessWidget {
-  final List<Mission> missions;
-  const CloverMissionList({super.key, required this.missions});
+class CloverMissionList extends StatefulWidget {
+  final List<Mission> missionList;
+  const CloverMissionList({super.key, required this.missionList});
+  @override
+  State<CloverMissionList> createState() => _CloverMissionListState();
+}
+
+class _CloverMissionListState extends State<CloverMissionList> {
+  bool showNewCloverMission = false;
+
+  @override
+  void initState() {
+    super.initState();
+    showNewCloverMission = isMissionAllCompleted();
+  }
+
+  bool isMissionAllCompleted() {
+    return widget.missionList.every(
+      (mission) => mission.missionStatus == MissionStatus.completed,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +40,26 @@ class CloverMissionList extends StatelessWidget {
             'Clover',
             style: AppTextStyles.titleMedium(context, color: Colors.black),
           ),
-          ...missions.map((mission) {
+          Gap(8),
+          if (showNewCloverMission)
+            ElevatedButton(
+              onPressed: () => {},
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                  side: BorderSide(color: AppColors.greenDark, width: 1),
+                ),
+                backgroundColor: Colors.white,
+                minimumSize: Size(double.infinity, 80.h),
+              ),
+              child: Text(
+                '+ 새로운 클로버 미션',
+                style: AppTextStyles.bodyRegular(context, color: Colors.black),
+              ),
+            ),
+          Gap(8),
+          ...widget.missionList.map((mission) {
             return Column(
               children: [
                 MissionTile(
