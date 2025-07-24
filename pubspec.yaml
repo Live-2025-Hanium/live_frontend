@@ -54,6 +54,7 @@ dependencies:
   cached_network_image: ^3.4.1
   jiffy: ^6.4.3
   json_annotation: ^4.9.0
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:

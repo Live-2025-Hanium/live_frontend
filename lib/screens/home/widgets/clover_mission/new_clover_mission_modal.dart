@@ -6,32 +6,10 @@ import 'package:live_frontend/screens/home/widgets/clover_mission/clover_sub_con
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
-List<Mission> temporaryData = [
-  Mission(
-    userMissionId: 1,
-    title: 'Clover Mission 1',
-    missionStatus: MissionStatus.assigned,
-    missionDifficulty: MissionDifficulty.easy,
-    missionCategory: MissionCategory.health,
-  ),
-  Mission(
-    userMissionId: 1,
-    title: 'Clover Mission 1',
-    missionStatus: MissionStatus.assigned,
-    missionDifficulty: MissionDifficulty.easy,
-    missionCategory: MissionCategory.health,
-  ),
-  Mission(
-    userMissionId: 1,
-    title: 'Clover Mission 1',
-    missionStatus: MissionStatus.assigned,
-    missionDifficulty: MissionDifficulty.easy,
-    missionCategory: MissionCategory.health,
-  ),
-];
-
 class NewCloverMissionModal extends StatelessWidget {
-  const NewCloverMissionModal({super.key});
+  final List<Mission> missionList;
+
+  const NewCloverMissionModal({super.key, required this.missionList});
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +44,7 @@ class NewCloverMissionModal extends StatelessWidget {
                   height: 52.w,
                 ),
                 Gap(24.h),
-                ...temporaryData.asMap().entries.map((entry) {
+                ...missionList.asMap().entries.map((entry) {
                   final idx = entry.key;
                   final data = entry.value;
                   return Column(
