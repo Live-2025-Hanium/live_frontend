@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:live_frontend/models/clover_mission_model.dart';
 import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission/clover_mission_list.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission/new_clover_mission_modal.dart';
@@ -10,27 +11,27 @@ import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-List<Mission> temporaryData = [
-  Mission(
+List<CloverMissionModel> temporaryData = [
+  CloverMissionModel(
     userMissionId: 1,
     title: 'Clover Mission 1',
     missionStatus: MissionStatus.assigned,
-    missionDifficulty: MissionDifficulty.easy,
-    missionCategory: MissionCategory.health,
+    missionDifficulty: CloverMissionDifficulty.easy,
+    missionCategory: CloverMissionCategory.health,
   ),
-  Mission(
+  CloverMissionModel(
     userMissionId: 1,
     title: 'Clover Mission 1',
     missionStatus: MissionStatus.assigned,
-    missionDifficulty: MissionDifficulty.easy,
-    missionCategory: MissionCategory.health,
+    missionDifficulty: CloverMissionDifficulty.easy,
+    missionCategory: CloverMissionCategory.health,
   ),
-  Mission(
+  CloverMissionModel(
     userMissionId: 1,
     title: 'Clover Mission 1',
     missionStatus: MissionStatus.assigned,
-    missionDifficulty: MissionDifficulty.easy,
-    missionCategory: MissionCategory.health,
+    missionDifficulty: CloverMissionDifficulty.easy,
+    missionCategory: CloverMissionCategory.health,
   ),
 ];
 

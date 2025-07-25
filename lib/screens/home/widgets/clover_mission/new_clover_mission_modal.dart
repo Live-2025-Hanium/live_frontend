@@ -5,9 +5,10 @@ import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission/clover_sub_content.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
+import 'package:live_frontend/models/clover_mission_model.dart';
 
 class NewCloverMissionModal extends StatelessWidget {
-  final List<Mission> missionList;
+  final List<CloverMissionModel> missionList;
 
   const NewCloverMissionModal({super.key, required this.missionList});
 
@@ -80,8 +81,8 @@ class NewCloverMissionModal extends StatelessWidget {
     BuildContext context,
     int index,
     String title,
-    MissionDifficulty difficulty,
-    MissionCategory category,
+    CloverMissionDifficulty difficulty,
+    CloverMissionCategory category,
   ) {
     return Container(
       height: 80.h,
