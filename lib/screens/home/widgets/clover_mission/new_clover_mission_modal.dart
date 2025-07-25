@@ -53,7 +53,7 @@ class NewCloverMissionModal extends StatelessWidget {
                       _buildTitle(
                         context,
                         idx,
-                        data.title,
+                        data.missionTitle,
                         data.missionDifficulty,
                         data.missionCategory,
                       ),

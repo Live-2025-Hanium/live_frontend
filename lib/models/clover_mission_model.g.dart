@@ -9,7 +9,7 @@ part of 'clover_mission_model.dart';
 CloverMissionModel _$CloverMissionModelFromJson(Map<String, dynamic> json) =>
     CloverMissionModel(
       userMissionId: (json['userMissionId'] as num).toInt(),
-      title: json['missionTitle'] as String,
+      missionTitle: json['missionTitle'] as String,
       missionStatus: $enumDecode(_$MissionStatusEnumMap, json['missionStatus']),
       missionDifficulty: $enumDecode(
         _$CloverMissionDifficultyEnumMap,
@@ -25,7 +25,7 @@ Map<String, dynamic> _$CloverMissionModelToJson(
   CloverMissionModel instance,
 ) => <String, dynamic>{
   'userMissionId': instance.userMissionId,
-  'missionTitle': instance.title,
+  'missionTitle': instance.missionTitle,
   'missionStatus': _$MissionStatusEnumMap[instance.missionStatus]!,
   'missionDifficulty':
       _$CloverMissionDifficultyEnumMap[instance.missionDifficulty]!,
@@ -61,7 +61,7 @@ CloverMissionDetailModel _$CloverMissionDetailModelFromJson(
 ) => CloverMissionDetailModel(
   userMissionId: (json['userMissionId'] as num).toInt(),
   cloverType: $enumDecode(_$CloverMissionTypeEnumMap, json['cloverType']),
-  title: json['missionTitle'] as String,
+  missionTitle: json['missionTitle'] as String,
   description: json['description'] as String,
   missionStatus: $enumDecode(_$MissionStatusEnumMap, json['missionStatus']),
   missionDifficulty: $enumDecode(
@@ -82,7 +82,7 @@ Map<String, dynamic> _$CloverMissionDetailModelToJson(
   CloverMissionDetailModel instance,
 ) => <String, dynamic>{
   'userMissionId': instance.userMissionId,
-  'missionTitle': instance.title,
+  'missionTitle': instance.missionTitle,
   'missionStatus': _$MissionStatusEnumMap[instance.missionStatus]!,
   'missionDifficulty':
       _$CloverMissionDifficultyEnumMap[instance.missionDifficulty]!,

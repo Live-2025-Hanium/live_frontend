@@ -78,8 +78,7 @@ enum CloverMissionType {
 class CloverMissionModel {
   final int userMissionId;
 
-  @JsonKey(name: 'missionTitle')
-  final String title;
+  final String missionTitle;
 
   final MissionStatus missionStatus;
   final CloverMissionDifficulty missionDifficulty;
@@ -87,7 +86,7 @@ class CloverMissionModel {
 
   CloverMissionModel({
     required this.userMissionId,
-    required this.title,
+    required this.missionTitle,
     required this.missionStatus,
     required this.missionDifficulty,
     required this.missionCategory,
@@ -112,7 +111,7 @@ class CloverMissionDetailModel extends CloverMissionModel {
   CloverMissionDetailModel({
     required super.userMissionId,
     required this.cloverType,
-    required super.title,
+    required super.missionTitle,
     required this.description,
     required super.missionStatus,
     required super.missionDifficulty,

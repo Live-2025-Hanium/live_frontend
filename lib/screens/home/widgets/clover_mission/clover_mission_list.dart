@@ -65,7 +65,7 @@ class _CloverMissionListState extends State<CloverMissionList> {
               children: [
                 MissionTile(
                   missionStatus: mission.missionStatus,
-                  missionTitle: mission.title,
+                  missionTitle: mission.missionTitle,
                   subContent: CloverSubContent(
                     category: mission.missionCategory,
                     difficulty: mission.missionDifficulty,

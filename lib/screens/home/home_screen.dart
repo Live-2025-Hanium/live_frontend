@@ -14,21 +14,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 List<CloverMissionModel> temporaryData = [
   CloverMissionModel(
     userMissionId: 1,
-    title: 'Clover Mission 1',
+    missionTitle: 'Clover Mission 1',
     missionStatus: MissionStatus.assigned,
     missionDifficulty: CloverMissionDifficulty.easy,
     missionCategory: CloverMissionCategory.health,
   ),
   CloverMissionModel(
     userMissionId: 1,
-    title: 'Clover Mission 1',
+    missionTitle: 'Clover Mission 1',
     missionStatus: MissionStatus.assigned,
     missionDifficulty: CloverMissionDifficulty.easy,
     missionCategory: CloverMissionCategory.health,
   ),
   CloverMissionModel(
     userMissionId: 1,
-    title: 'Clover Mission 1',
+    missionTitle: 'Clover Mission 1',
     missionStatus: MissionStatus.assigned,
     missionDifficulty: CloverMissionDifficulty.easy,
     missionCategory: CloverMissionCategory.health,
