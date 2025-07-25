@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission/clover_sub_content.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
@@ -9,8 +8,13 @@ import 'package:live_frontend/models/clover_mission_model.dart';
 
 class NewCloverMissionModal extends StatelessWidget {
   final List<CloverMissionModel> missionList;
+  final bool isAdditional;
 
-  const NewCloverMissionModal({super.key, required this.missionList});
+  const NewCloverMissionModal({
+    super.key,
+    required this.missionList,
+    this.isAdditional = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +34,7 @@ class NewCloverMissionModal extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  '클로버 미션 도착!',
+                  isAdditional ? '추가 클로버 미션' : '클로버 미션 도착!',
                   style: AppTextStyles.titleMedium(
                     context,
                     color: Colors.black,
