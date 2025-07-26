@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:live_frontend/theme/app_colors.dart';
 
 class NicknameField extends StatelessWidget {
   const NicknameField({super.key});
 
-  /// 모의 중복 확인 함수 (서버와 연동 시 이 부분만 교체)
+  /// 모의 중복 확인 함수 (API 호출 연동 필요)
   Future<bool> _checkNickname(String nickname) async {
     await Future.delayed(const Duration(milliseconds: 500));
-    return nickname != '일이삼사오육칠팔구십'; // 이 닉네임만 중복 처리
+    return nickname != '일이삼사오육칠팔구십';
   }
 
   @override
