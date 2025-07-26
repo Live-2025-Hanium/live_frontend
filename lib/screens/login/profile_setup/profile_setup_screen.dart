@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/screens/login/widgets/nickname_field.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:gap/gap.dart';
+import 'package:live_frontend/providers/auth_provider.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
-class ProfileSetupScreen extends StatefulWidget {
+class ProfileSetupScreen extends ConsumerStatefulWidget {
   const ProfileSetupScreen({super.key});
 
   @override
-  State<ProfileSetupScreen> createState() => _ProfileSetupScreenState();
+  ProfileSetupScreenState createState() => ProfileSetupScreenState();
 }
 
-class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
+class ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   final _nicknameController = TextEditingController();
 
@@ -26,6 +28,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
+    final userProfilePicture = authState.user?.profileImageUrl ?? null;
+
     return Scaffold(
       appBar: SaeipAppBar(),
       body: SafeArea(
@@ -36,11 +41,63 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Center(
-                  child: CircleAvatar(
-                    radius: 48,
-                    backgroundColor: Colors.grey,
-                    child: Text('변경', style: TextStyle(color: Colors.white)),
+                Center(
+                  child: GestureDetector(
+                    onTap: () {
+                      // TODO: 프로필 이미지 변경 기능 연결
+                    },
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 44.w,
+                          backgroundColor: Colors.grey[200],
+                          backgroundImage:
+                              userProfilePicture != null
+                                  ? NetworkImage(userProfilePicture)
+                                  : null,
+                          child:
+                              userProfilePicture == null
+                                  ? const Icon(
+                                    Icons.person,
+                                    size: 44,
+                                    color: Colors.grey,
+                                  )
+                                  : null,
+                        ),
+                        // 변경 버튼
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.grey[300]!),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: const Text(
+                              '변경',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.green,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Gap(24),
