@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
@@ -53,13 +54,14 @@ class SaeipModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
         ),
         padding: const EdgeInsets.fromLTRB(16, 36, 16, 12),
-        width: 300,
+        width: double.infinity,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

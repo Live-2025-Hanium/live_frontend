@@ -9,7 +9,7 @@ class StatisticsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: SaeipAppBar(title: 'Statistics'),
-      body: const Center(child: Text('통계 화면')),
+      body: Center(child: Text('통계화면')),
       bottomNavigationBar: const SaeipNavigationBar(initialIndex: 1),
     );
   }
