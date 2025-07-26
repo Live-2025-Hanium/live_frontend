@@ -4,6 +4,8 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/screens/login/widgets/nickname_field.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
+import 'package:gap/gap.dart';
+
 
 class ProfileSetupScreen extends StatefulWidget {
   const ProfileSetupScreen({super.key});
@@ -25,7 +27,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SaeipAppBar(lastPage: '/terms'),
+      appBar: SaeipAppBar(),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
@@ -41,10 +43,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     child: Text('변경', style: TextStyle(color: Colors.white)),
                   ),
                 ),
-                const SizedBox(height: 24),
+                Gap(24),
                 NicknameField(),
 
-                const SizedBox(height: 20),
+                Gap(20),
                 FormBuilderRadioGroup(
                   name: 'gender',
                   decoration: const InputDecoration(labelText: '성별'),

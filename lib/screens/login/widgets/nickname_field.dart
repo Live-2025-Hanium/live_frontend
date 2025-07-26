@@ -47,7 +47,6 @@ class NicknameField extends StatelessWidget {
                   nicknameField?.invalidate('이미 사용 중인 닉네임입니다.');
                 } else {
                   // 사용 가능할 경우 다시 유효화 + 메시지 출력
-                  nicknameField?.validate();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('사용 가능한 닉네임입니다.')),
                   );
