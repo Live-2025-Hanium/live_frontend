@@ -33,7 +33,7 @@ class _CloverMissionListState extends State<CloverMissionList> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -52,7 +52,7 @@ class _CloverMissionListState extends State<CloverMissionList> {
                   side: BorderSide(color: AppColors.greenDark, width: 1),
                 ),
                 backgroundColor: Colors.white,
-                minimumSize: Size(double.infinity, 80.h),
+                minimumSize: Size(double.infinity, 80.w),
               ),
               child: Text(
                 '+ 새로운 클로버 미션',
@@ -70,6 +70,7 @@ class _CloverMissionListState extends State<CloverMissionList> {
                     category: mission.missionCategory,
                     difficulty: mission.missionDifficulty,
                   ),
+                  onTap: () {},
                 ),
                 Gap(8),
               ],
