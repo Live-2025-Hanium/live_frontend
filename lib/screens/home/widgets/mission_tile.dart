@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
@@ -45,9 +44,7 @@ class _MissionTileState extends State<MissionTile> {
           // 클릭 기능
           onTap: isCompleted
               ? null // disabled 처리
-              : () {
-                  widget.onTap();
-                },
+              : () => widget.onTap(),
           borderRadius: BorderRadius.circular(8),
           child: IntrinsicHeight(
             child: Row(

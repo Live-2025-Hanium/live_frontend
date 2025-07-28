@@ -106,7 +106,6 @@ class CloverMissionDetailModel extends CloverMissionModel {
   final Duration? remainingTime;
   final String? targetAddress;
   final int? remainingDistance;
-  final String illustrationUrl;
 
   CloverMissionDetailModel({
     required super.userMissionId,
@@ -119,7 +118,6 @@ class CloverMissionDetailModel extends CloverMissionModel {
     this.remainingTime,
     this.targetAddress,
     this.remainingDistance,
-    required this.illustrationUrl,
   });
 
   factory CloverMissionDetailModel.fromJson(Map<String, dynamic> json) =>

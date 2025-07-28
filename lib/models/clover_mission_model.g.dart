@@ -75,7 +75,6 @@ CloverMissionDetailModel _$CloverMissionDetailModelFromJson(
   remainingTime: _parseDurationFromString(json['remainingTime'] as String),
   targetAddress: json['targetAddress'] as String?,
   remainingDistance: (json['remainingDistance'] as num?)?.toInt(),
-  illustrationUrl: json['illustrationUrl'] as String,
 );
 
 Map<String, dynamic> _$CloverMissionDetailModelToJson(
@@ -92,7 +91,6 @@ Map<String, dynamic> _$CloverMissionDetailModelToJson(
   'remainingTime': _formatDurationToString(instance.remainingTime),
   'targetAddress': instance.targetAddress,
   'remainingDistance': instance.remainingDistance,
-  'illustrationUrl': instance.illustrationUrl,
 };
 
 const _$CloverMissionTypeEnumMap = {

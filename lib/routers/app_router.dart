@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/screens/404/not_found_screen.dart';
 import 'package:live_frontend/screens/forum/forum_screen.dart';
+import 'package:live_frontend/screens/home/execute/execute_screen.dart';
 import 'package:live_frontend/screens/map/map_screen.dart';
 import 'package:live_frontend/screens/mypage/mypage_screen.dart';
 import 'package:live_frontend/screens/statistics/statistics_screen.dart';
@@ -89,6 +90,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'home',
         path: '/home',
         builder: (context, state) => const HomeScreen(),
+        routes: [
+          GoRoute(
+            name: 'execute',
+            path: '/execute',
+            builder: (context, state) => ExecuteScreen(),
+          ),
+        ],
       ),
       GoRoute(
         name: 'statistics',

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
 import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission/clover_sub_content.dart';
@@ -70,7 +71,9 @@ class _CloverMissionListState extends State<CloverMissionList> {
                     category: mission.missionCategory,
                     difficulty: mission.missionDifficulty,
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    context.pushNamed('execute');
+                  },
                 ),
                 Gap(8),
               ],
