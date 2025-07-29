@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
 import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/screens/home/execute/widgets/sub_content.dart';
@@ -114,14 +115,20 @@ class ExecuteScreen extends StatelessWidget {
                     child: SaeipButton.outlined(
                       text: '일시정지',
                       outlineColor: AppColors.blackBlack2,
-                      onPressed: () {},
+                      onPressed: () {
+                        // 일시정지 모달 띄우기
+                        // 일시정지 api 보내기
+                      },
                     ),
                   ),
                   Gap(8.w),
                   Expanded(
                     child: SaeipButton(
                       text: buttonRightLabel,
-                      onPressed: () {},
+                      onPressed: () {
+                        // 인증샷 촬영
+                        // 완료 모달 띄우기
+                      },
                     ),
                   ),
                 ],

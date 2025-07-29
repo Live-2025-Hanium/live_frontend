@@ -31,8 +31,8 @@ class SubContent extends StatelessWidget {
           style: AppTextStyles.bodyRegular(context, color: Colors.black),
         ),
         Gap(16.h),
-        if (cloverType == CloverMissionType.timer)
-          CountdownTimer(remainingTime: remainingTime ?? Duration.zero),
+        if (cloverType == CloverMissionType.timer && remainingTime != null)
+          CountdownTimer(remainingTime: remainingTime!),
         Gap(24.h),
         Text(
           '클로버가 눈 앞에! 조금씩 나아가는 중이에요.',
