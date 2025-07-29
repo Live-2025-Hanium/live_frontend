@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
 import 'package:live_frontend/models/mission_models.dart';
+import 'package:live_frontend/screens/home/execute/widgets/sub_content.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
@@ -46,7 +46,7 @@ final CloverMissionDetailModel photoMission = CloverMissionDetailModel(
 );
 
 class ExecuteScreen extends StatelessWidget {
-  final data = photoMission; // 임시로 timerMission을 사용
+  final data = timerMission; // 임시로 timerMission을 사용
 
   ExecuteScreen({super.key});
   @override
@@ -98,6 +98,13 @@ class ExecuteScreen extends StatelessWidget {
                     Gap(16.h),
                     SizedBox(width: double.infinity, child: Image.asset(image)),
                     Gap(24.h),
+                    if (data.cloverType != CloverMissionType.photo)
+                      SubContent(
+                        cloverType: data.cloverType,
+                        remainingTime: data.remainingTime,
+                        targetAddress: data.targetAddress,
+                        remainingDistance: data.remainingDistance,
+                      ),
                   ],
                 ),
               ),
