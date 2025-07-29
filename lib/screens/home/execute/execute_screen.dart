@@ -9,6 +9,8 @@ import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
+import 'package:live_frontend/widgets/saeip_modal.dart';
+import 'dart:async';
 
 // 아래는 임시 데이터들... api 연결 이후 삭제
 // 1. TIMER 타입 미션
@@ -46,16 +48,65 @@ final CloverMissionDetailModel photoMission = CloverMissionDetailModel(
   missionCategory: CloverMissionCategory.relationship,
 );
 
-class ExecuteScreen extends StatelessWidget {
+class ExecuteScreen extends StatefulWidget {
   final data = timerMission; // 임시로 timerMission을 사용
-
   ExecuteScreen({super.key});
+
+  @override
+  State<ExecuteScreen> createState() => _ExecuteScreenState();
+}
+
+class _ExecuteScreenState extends State<ExecuteScreen> {
+  late Duration _remaining;
+  Timer? _timer;
+  bool _isPaused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _remaining = widget.data.remainingTime ?? Duration.zero;
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!_isPaused && _remaining.inSeconds > 0) {
+        setState(() {
+          _remaining -= const Duration(seconds: 1);
+        });
+      }
+      if (_remaining.inSeconds == 0) {
+        _timer?.cancel();
+      }
+    });
+  }
+
+  void _togglePause() {
+    setState(() {
+      _isPaused = !_isPaused;
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  String _twoDigits(int n) => n.toString().padLeft(2, '0');
+
+  String get _formattedTime {
+    final m = _remaining.inMinutes;
+    final s = _remaining.inSeconds.remainder(60);
+    return '${_twoDigits(m)}:${_twoDigits(s)}';
+  }
+
   @override
   Widget build(BuildContext context) {
     String image = '';
     String buttonRightLabel = '완료';
 
-    switch (data.cloverType) {
+    switch (widget.data.cloverType) {
       case CloverMissionType.timer:
         image = 'assets/images/clover_mission/timer.png';
         break;
@@ -87,7 +138,7 @@ class ExecuteScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      data.missionTitle,
+                      widget.data.missionTitle,
                       style: AppTextStyles.titleMedium(
                         context,
                         color: AppColors.greenNormal,
@@ -99,12 +150,12 @@ class ExecuteScreen extends StatelessWidget {
                     Gap(16.h),
                     SizedBox(width: double.infinity, child: Image.asset(image)),
                     Gap(24.h),
-                    if (data.cloverType != CloverMissionType.photo)
+                    if (widget.data.cloverType != CloverMissionType.photo)
                       SubContent(
-                        cloverType: data.cloverType,
-                        remainingTime: data.remainingTime,
-                        targetAddress: data.targetAddress,
-                        remainingDistance: data.remainingDistance,
+                        cloverType: widget.data.cloverType,
+                        formattedTime: _formattedTime,
+                        targetAddress: widget.data.targetAddress,
+                        remainingDistance: widget.data.remainingDistance,
                       ),
                   ],
                 ),
@@ -116,8 +167,11 @@ class ExecuteScreen extends StatelessWidget {
                       text: '일시정지',
                       outlineColor: AppColors.blackBlack2,
                       onPressed: () {
-                        // 일시정지 모달 띄우기
-                        // 일시정지 api 보내기
+                        _togglePause();
+                        showDialog(
+                          context: context,
+                          builder: (context) => _buildPauseModal(context),
+                        );
                       },
                     ),
                   ),
@@ -137,6 +191,25 @@ class ExecuteScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPauseModal(BuildContext context) {
+    return SaeipModal(
+      title: '미션 중단',
+      message: '괜찮아요. 다음에 다시 시작할 수 있어요.',
+      onConfirm: () {
+        // 일시정지 api 보내기
+        context.goNamed('home'); // 홈으로 이동
+      },
+      onCancel: () {
+        // 일시정지 취소
+        _togglePause(); // 일시정지 상태 되돌리기
+        context.pop();
+      },
+      confirmText: '다음에 하기',
+      cancelText: '다시 시작',
+      confirmBackgroundColor: AppColors.errorError3,
     );
   }
 }

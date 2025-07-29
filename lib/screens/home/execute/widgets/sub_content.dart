@@ -9,14 +9,14 @@ import 'package:live_frontend/theme/app_text_styles.dart';
 
 class SubContent extends StatelessWidget {
   final CloverMissionType cloverType;
-  final Duration? remainingTime;
+  final String? formattedTime;
   final String? targetAddress;
   final int? remainingDistance;
 
   const SubContent({
     super.key,
     required this.cloverType,
-    this.remainingTime,
+    this.formattedTime,
     this.targetAddress,
     this.remainingDistance,
   });
@@ -31,8 +31,8 @@ class SubContent extends StatelessWidget {
           style: AppTextStyles.bodyRegular(context, color: Colors.black),
         ),
         Gap(16.h),
-        if (cloverType == CloverMissionType.timer && remainingTime != null)
-          CountdownTimer(remainingTime: remainingTime!),
+        if (cloverType == CloverMissionType.timer && formattedTime != null)
+          CountdownTimer(formattedTime: formattedTime!),
         Gap(24.h),
         Text(
           '클로버가 눈 앞에! 조금씩 나아가는 중이에요.',

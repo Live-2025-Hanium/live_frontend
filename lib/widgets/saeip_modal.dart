@@ -15,7 +15,7 @@ class SaeipModalType {
 class SaeipModal extends StatelessWidget {
   final String? title;
   final String message;
-  final String? cancelMessage;
+  final String? cancelText;
   final void Function()? onCancel;
   final void Function() onConfirm;
   final String confirmText;
@@ -33,7 +33,7 @@ class SaeipModal extends StatelessWidget {
     required this.confirmText,
     this.onClose,
     this.confirmBackgroundColor = AppColors.greenDark,
-    this.cancelMessage = '취소',
+    this.cancelText = '취소',
     this.type = SaeipModalType.text,
     this.image,
   });
@@ -41,7 +41,7 @@ class SaeipModal extends StatelessWidget {
   const SaeipModal.image({
     super.key,
     required this.message,
-    this.cancelMessage = '취소',
+    this.cancelText = '취소',
     required this.onConfirm,
     this.title,
     this.onCancel,
@@ -88,7 +88,7 @@ class SaeipModal extends StatelessWidget {
                 if (onCancel != null) ...[
                   Expanded(
                     child: SaeipButton(
-                      text: cancelMessage!,
+                      text: cancelText!,
                       onPressed: onCancel!,
                       backgroundColor: AppColors.blackBlack1,
                       textStyle: AppTextStyles.bodyRegular(
