@@ -52,6 +52,7 @@ class ExecuteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String image = '';
+    String buttonRightLabel = '완료';
 
     switch (data.cloverType) {
       case CloverMissionType.timer:
@@ -66,6 +67,7 @@ class ExecuteScreen extends StatelessWidget {
         break;
       case CloverMissionType.photo:
         image = 'assets/images/clover_mission/photo.png';
+        buttonRightLabel = '인증샷 촬영';
         break;
     }
     return Scaffold(
@@ -102,11 +104,18 @@ class ExecuteScreen extends StatelessWidget {
               Row(
                 children: <Widget>[
                   Expanded(
-                    child: SaeipButton.outlined(text: '취소', onPressed: () {}),
+                    child: SaeipButton.outlined(
+                      text: '일시정지',
+                      outlineColor: AppColors.blackBlack2,
+                      onPressed: () {},
+                    ),
                   ),
                   Gap(8.w),
                   Expanded(
-                    child: SaeipButton(text: '시작하기', onPressed: () {}),
+                    child: SaeipButton(
+                      text: buttonRightLabel,
+                      onPressed: () {},
+                    ),
                   ),
                 ],
               ),
