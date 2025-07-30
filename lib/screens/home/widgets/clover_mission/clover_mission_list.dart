@@ -72,7 +72,14 @@ class _CloverMissionListState extends State<CloverMissionList> {
                     difficulty: mission.missionDifficulty,
                   ),
                   onTap: () {
-                    context.pushNamed('execute');
+                    if (mission.cloverType == CloverMissionType.timer) {
+                      context.pushNamed(
+                        'timer_mission',
+                        extra: mission.userMissionId,
+                      );
+                    } else {
+                      // 다른 타입의 미션 처리 로직
+                    }
                   },
                 ),
                 Gap(8),

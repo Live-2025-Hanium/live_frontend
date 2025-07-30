@@ -1,25 +1,13 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:live_frontend/models/clover_mission_model.dart';
-import 'package:live_frontend/screens/home/execute/widgets/countdown_timer.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
 class SubContent extends StatelessWidget {
-  final CloverMissionType cloverType;
-  final String? formattedTime;
-  final String? targetAddress;
-  final int? remainingDistance;
+  final Widget? child;
+  final String subtitle;
 
-  const SubContent({
-    super.key,
-    required this.cloverType,
-    this.formattedTime,
-    this.targetAddress,
-    this.remainingDistance,
-  });
+  const SubContent({super.key, this.child, required this.subtitle});
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +15,11 @@ class SubContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '앞으로 남은 시간',
+          subtitle,
           style: AppTextStyles.bodyRegular(context, color: Colors.black),
         ),
         Gap(16.h),
-        if (cloverType == CloverMissionType.timer && formattedTime != null)
-          CountdownTimer(formattedTime: formattedTime!),
+        if (child != null) child!,
         Gap(24.h),
         Text(
           '클로버가 눈 앞에! 조금씩 나아가는 중이에요.',
