@@ -30,15 +30,17 @@ class ExecuteScreenTemplate extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: SaeipAppBar(title: '미션 수행'),
-      body: Padding(
+      body: Container(
+        width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // 상단 컨텐츠
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
                     missionTitle,
@@ -50,9 +52,10 @@ class ExecuteScreenTemplate extends StatelessWidget {
                   Gap(4.h),
                   Text('미션을 진행 중이에요.'),
                   Gap(16.h),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Image.asset(imagePath),
+                  Align(
+                    alignment: Alignment.center,
+                    widthFactor: 1.0,
+                    child: Image.asset(imagePath, fit: BoxFit.scaleDown),
                   ),
                   Gap(24.h),
                   child,
