@@ -9,6 +9,7 @@ import 'package:live_frontend/screens/login/profile_setup/widgets/job_selector.d
 import 'package:live_frontend/widgets/saeip_button.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:gap/gap.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   const ProfileSetupScreen({super.key});
@@ -43,7 +44,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     final payload = {
       'nickname': data['nickname'],
       'gender': data['gender'],
-      'birthDate': '${data['year']}-${data['month'].toString().padLeft(2,'0')}-${data['day'].toString().padLeft(2,'0')}',
+      'birthDate':
+          '${data['year']}-${data['month'].toString().padLeft(2, '0')}-${data['day'].toString().padLeft(2, '0')}',
       'job': data['job'],
     };
     // TODO: API 호출
@@ -66,8 +68,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               children: [
                 const ProfileImagePicker(),
                 const Gap(16),
-                const NicknameField(), // NicknameField는 수정하지 않아도 됩니다.
-                const Gap(20),
+                const NicknameField(),
+                const Gap(28),
                 const GenderSelector(),
                 const Gap(20),
                 const BirthdaySelector(),
