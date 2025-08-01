@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/screens/login/profile_setup/widgets/nickname_field.dart';
 import 'package:live_frontend/screens/login/profile_setup/widgets/profile_image_picker.dart';
@@ -20,14 +19,23 @@ class ProfileSetupScreen extends StatefulWidget {
 
 class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
-  bool allResponded = false;
+  final ValueNotifier<bool> _isFormValidNotifier = ValueNotifier(false);
+
+  @override
+  void dispose() {
+    _isFormValidNotifier.dispose();
+    super.dispose();
+  }
 
   void updateButtonState() {
-    final isValid = _formKey.currentState?.validate() ?? false;
-    setState(() => allResponded = isValid);
+    // *** 여기가 핵심 수정사항입니다! ***
+    // UI를 다시 그리게 만드는 .validate() 메소드 대신,
+    // 현재 유효성 상태 값만 가져오는 .isValid 속성을 사용합니다.
+    _isFormValidNotifier.value = _formKey.currentState?.isValid ?? false;
   }
 
   void profileSetupSubmit() {
+    // '확인' 버튼을 눌렀을 때처럼, 최종 제출 시점에는 saveAndValidate()를 사용합니다.
     final isValid = _formKey.currentState?.saveAndValidate() ?? false;
     if (!isValid) return;
 
@@ -58,7 +66,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               children: [
                 const ProfileImagePicker(),
                 const Gap(16),
-                const NicknameField(),
+                const NicknameField(), // NicknameField는 수정하지 않아도 됩니다.
                 const Gap(20),
                 const GenderSelector(),
                 const Gap(20),
@@ -66,10 +74,15 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 const Gap(20),
                 const JobSelector(),
                 const Gap(30),
-                SaeipButton(
-                  text: '확인',
-                  onPressed: profileSetupSubmit,
-                  disabled: !allResponded,
+                ValueListenableBuilder<bool>(
+                  valueListenable: _isFormValidNotifier,
+                  builder: (context, isFormValid, child) {
+                    return SaeipButton(
+                      text: '확인',
+                      onPressed: profileSetupSubmit,
+                      disabled: !isFormValid,
+                    );
+                  },
                 ),
               ],
             ),
