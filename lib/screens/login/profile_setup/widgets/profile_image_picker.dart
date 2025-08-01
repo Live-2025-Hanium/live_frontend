@@ -8,7 +8,7 @@ class ProfileImagePicker extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final imageUrl = ref.watch(authProvider).user?.profileImageUrl;
+    final imageUrl = ref.watch(authProvider).socialUser?.profileImageUrl;
     return GestureDetector(
       onTap: () {
         // TODO: 이미지 변경 처리

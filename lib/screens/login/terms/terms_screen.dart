@@ -45,7 +45,7 @@ class TermsScreenState extends ConsumerState<TermsScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
-    final userName = authState.user?.name ?? "유저";
+    final userName = authState.socialUser?.name ?? "유저";
     return Scaffold(
       appBar: SaeipAppBar(lastPage: 'home'), // 임시로 이전페이지는 홈으로 돌아가도록,,
       body: SafeArea(
