@@ -5,6 +5,8 @@ import 'package:gap/gap.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
+import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
+import 'package:live_frontend/widgets/utils/show_saeip_modal.dart';
 
 class NicknameField extends StatefulWidget {
   const NicknameField({super.key});
@@ -48,11 +50,15 @@ class _NicknameFieldState extends State<NicknameField> {
 
     if (!available) {
       nicknameField?.invalidate('이미 사용 중인 닉네임입니다.');
+      SaeipModalController.showText(
+        context: context,
+        message: '이미 사용 중인 닉네임입니다.',
+        confirmBackgroundColor: AppColors.errorError3,
+        cancelText: null,
+      );
     } else {
       nicknameField?.setValue(nickname);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('사용 가능한 닉네임입니다.')),
-      );
+      SaeipToastController.showMessage(context, '사용 가능한 닉네임입니다.');
     }
   }
 
@@ -92,11 +98,14 @@ class _NicknameFieldState extends State<NicknameField> {
                   Expanded(
                     child: Text(
                       errorText ?? '',
-                      style: AppTextStyles.smallMedium(context, color: errorColor),
+                      style: AppTextStyles.smallMedium(
+                        context,
+                        color: errorColor,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                ]
+                ],
               ],
             ),
             const Gap(4),
@@ -150,7 +159,10 @@ class _NicknameFieldState extends State<NicknameField> {
                 const Gap(8),
                 OutlinedButton(
                   style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
                     minimumSize: Size(76.w, 40.h),
                     side: BorderSide(color: labelColor),
                     shape: RoundedRectangleBorder(
