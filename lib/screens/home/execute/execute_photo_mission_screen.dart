@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:live_frontend/screens/home/execute/widgets/complete_modal.dart';
 import 'package:live_frontend/screens/home/execute/widgets/execute_screen_template.dart';
 import 'package:live_frontend/screens/home/execute/widgets/pause_modal.dart';
 
@@ -21,9 +22,9 @@ class _ExecutePhotoMissionScreenState extends State<ExecutePhotoMissionScreen> {
   Future<void> _takePhoto() async {
     final XFile? photo = await _picker.pickImage(
       source: ImageSource.camera,
-      maxWidth: 1024, // (선택) 리사이즈
-      maxHeight: 1024, // (선택) 리사이즈
-      imageQuality: 80, // (선택) 압축 퀄리티 (0-100)
+      maxWidth: 1024,
+      maxHeight: 1024,
+      imageQuality: 80,
     );
 
     if (photo != null) {
@@ -38,9 +39,14 @@ class _ExecutePhotoMissionScreenState extends State<ExecutePhotoMissionScreen> {
   @override
   Widget build(BuildContext context) {
     if (_imageFile != null) {
-      if (GoRouter.of(context).canPop()) {
-        context.pop();
-      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return CompleteModal();
+          },
+        );
+      });
     }
     return ExecuteScreenTemplate(
       imagePath: 'assets/images/clover_mission/photo.png',

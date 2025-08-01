@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
 import 'package:live_frontend/models/mission_models.dart';
+import 'package:live_frontend/screens/home/execute/widgets/complete_modal.dart';
 import 'package:live_frontend/screens/home/execute/widgets/countdown_timer.dart';
 import 'package:live_frontend/screens/home/execute/widgets/pause_modal.dart';
 import 'package:live_frontend/screens/home/execute/widgets/sub_content.dart';
@@ -93,7 +94,12 @@ class _ExecuteTimerMissionScreenState extends State<ExecuteTimerMissionScreen> {
       },
       rightLabel: '완료',
       onRightPressed: () {
-        // 완료 처리 로직
+        showDialog(
+          context: context,
+          builder: (context) {
+            return CompleteModal();
+          },
+        );
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
