@@ -1,5 +1,6 @@
 // lib/widgets/pause_modal.dart
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 
@@ -11,8 +12,8 @@ class PauseModal extends StatelessWidget {
 
   const PauseModal({
     super.key,
-    required this.onConfirm,
-    required this.onCancel,
+    this.onConfirm,
+    this.onCancel,
     required this.userMissionId,
   });
 
@@ -21,19 +22,24 @@ class PauseModal extends StatelessWidget {
     return SaeipModal(
       title: '미션 중단',
       message: '괜찮아요. 다음에 다시 시작할 수 있어요.',
-      onConfirm: () {
-        if (onConfirm != null) {
-          onConfirm!();
-        }
-        // 미션 중단 로직
-        Navigator.pop(context);
-      },
       onCancel: () {
         if (onCancel != null) {
           onCancel!();
         }
         Navigator.pop(context);
       },
+      onConfirm: () {
+        if (onConfirm != null) {
+          onConfirm!();
+        }
+        // 미션 중단 로직
+        // 이전 화면으로 돌아가기
+        if (GoRouter.of(context).canPop()) {
+          context.pop();
+        }
+        Navigator.pop(context);
+      },
+
       confirmText: '다음에 하기',
       cancelText: '다시 시작',
       confirmBackgroundColor: AppColors.errorError3,

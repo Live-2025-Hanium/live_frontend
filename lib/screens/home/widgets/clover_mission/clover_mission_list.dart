@@ -77,7 +77,11 @@ class _CloverMissionListState extends State<CloverMissionList> {
                         'timer_mission',
                         extra: mission.userMissionId,
                       );
-                    } else {
+                    } else if (mission.cloverType == CloverMissionType.photo) {
+                      context.pushNamed(
+                        'photo_mission',
+                        extra: mission.userMissionId,
+                      );
                       // 다른 타입의 미션 처리 로직
                     }
                   },

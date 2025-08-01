@@ -72,9 +72,6 @@ class _ExecuteTimerMissionScreenState extends State<ExecuteTimerMissionScreen> {
       context: context,
       builder: (_) => PauseModal(
         userMissionId: widget.data.userMissionId,
-        onConfirm: () {
-          context.goNamed('home');
-        },
         onCancel: () {
           _togglePause();
         },

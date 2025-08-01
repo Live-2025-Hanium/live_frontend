@@ -25,7 +25,7 @@ List<CloverMissionModel> temporaryData = [
     missionTitle: 'Clover Mission 1',
     missionStatus: MissionStatus.assigned,
     missionDifficulty: CloverMissionDifficulty.easy,
-    cloverType: CloverMissionType.timer,
+    cloverType: CloverMissionType.photo,
     missionCategory: CloverMissionCategory.health,
   ),
   CloverMissionModel(

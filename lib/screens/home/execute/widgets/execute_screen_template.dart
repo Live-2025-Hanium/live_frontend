@@ -8,7 +8,7 @@ import 'package:live_frontend/widgets/saeip_button.dart';
 
 class ExecuteScreenTemplate extends StatelessWidget {
   final String imagePath;
-  final Widget child;
+  final Widget? child;
   final String leftLabel;
   final VoidCallback onLeftPressed;
   final String rightLabel;
@@ -18,7 +18,7 @@ class ExecuteScreenTemplate extends StatelessWidget {
   const ExecuteScreenTemplate({
     super.key,
     required this.imagePath,
-    required this.child,
+    this.child,
     this.leftLabel = '일시정지',
     required this.onLeftPressed,
     this.rightLabel = '완료',
@@ -58,10 +58,9 @@ class ExecuteScreenTemplate extends StatelessWidget {
                     child: Image.asset(imagePath, fit: BoxFit.scaleDown),
                   ),
                   Gap(24.h),
-                  child,
+                  if (child != null) child!,
                 ],
               ),
-
               // 하단 버튼
               Row(
                 children: [

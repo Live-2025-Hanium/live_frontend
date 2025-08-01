@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/screens/404/not_found_screen.dart';
 import 'package:live_frontend/screens/forum/forum_screen.dart';
+import 'package:live_frontend/screens/home/execute/execute_photo_mission_screen.dart';
 import 'package:live_frontend/screens/home/execute/execute_timer_mission_screen.dart';
 import 'package:live_frontend/screens/map/map_screen.dart';
 import 'package:live_frontend/screens/mypage/mypage_screen.dart';
@@ -85,7 +86,6 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
-
       GoRoute(
         name: 'home',
         path: '/home',
@@ -93,9 +93,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             name: 'timer_mission',
-            path: '/execute',
+            path: '/execute/timer_mission',
             builder: (context, state) =>
                 ExecuteTimerMissionScreen(id: state.extra as int),
+          ),
+          GoRoute(
+            name: 'photo_mission',
+            path: '/execute/photo_mission',
+            builder: (context, state) =>
+                ExecutePhotoMissionScreen(id: state.extra as int),
           ),
         ],
       ),
