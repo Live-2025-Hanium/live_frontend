@@ -12,7 +12,7 @@ class ExecuteScreenTemplate extends StatelessWidget {
   final String leftLabel;
   final VoidCallback onLeftPressed;
   final String rightLabel;
-  final VoidCallback onRightPressed;
+  final VoidCallback? onRightPressed;
   final String missionTitle;
 
   const ExecuteScreenTemplate({
@@ -77,9 +77,8 @@ class ExecuteScreenTemplate extends StatelessWidget {
                   Expanded(
                     child: SaeipButton(
                       text: rightLabel,
-                      onPressed: () {
-                        onRightPressed();
-                      },
+                      disabled: onRightPressed == null,
+                      onPressed: onRightPressed ?? () {},
                     ),
                   ),
                 ],

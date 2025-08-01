@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
 import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/screens/home/execute/widgets/complete_modal.dart';
@@ -12,11 +11,11 @@ import 'dart:async';
 final CloverMissionDetailModel timerMission = CloverMissionDetailModel(
   userMissionId: 1001,
   cloverType: CloverMissionType.timer,
-  missionTitle: '30분 독서하기',
+  missionTitle: '30초 독서하기',
   missionStatus: MissionStatus.started,
   missionDifficulty: CloverMissionDifficulty.normal,
   missionCategory: CloverMissionCategory.hobby,
-  remainingTime: const Duration(minutes: 30),
+  remainingTime: const Duration(seconds: 30),
   targetAddress: null,
   remainingDistance: null,
 );
@@ -83,24 +82,26 @@ class _ExecuteTimerMissionScreenState extends State<ExecuteTimerMissionScreen> {
   @override
   Widget build(BuildContext context) {
     final mission = widget.data;
-
+    // 타이머가 아직 진행중인 경우 onRightPressed를 null로 설정
+    final onRightPressed = _remaining.inSeconds > 0
+        ? null
+        : () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return CompleteModal();
+              },
+            );
+          };
     return ExecuteScreenTemplate(
       missionTitle: mission.missionTitle,
       imagePath: 'assets/images/clover_mission/timer.png',
-      leftLabel: _isPaused ? '다시 시작' : '일시정지',
       onLeftPressed: () {
         _togglePause();
         _showPauseModal();
       },
       rightLabel: '완료',
-      onRightPressed: () {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return CompleteModal();
-          },
-        );
-      },
+      onRightPressed: onRightPressed,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
