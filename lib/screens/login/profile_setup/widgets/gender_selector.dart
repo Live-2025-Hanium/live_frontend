@@ -9,12 +9,15 @@ import 'package:live_frontend/theme/app_text_styles.dart';
 class GenderSelector extends StatelessWidget {
   const GenderSelector({super.key});
 
+  static const List<String> genders = ['남자', '여자'];
+
   @override
   Widget build(BuildContext context) {
     return FormBuilderField<String>(
       name: 'gender',
       validator: FormBuilderValidators.required(errorText: ''),
-      builder: (FormFieldState<String?> field) {
+      builder: (field) {
+        final selectedGender = field.value;
         final hasError = field.hasError;
         const errorColor = AppColors.errorError3;
         final labelColor = hasError ? errorColor : AppColors.greenNormal;
@@ -29,11 +32,22 @@ class GenderSelector extends StatelessWidget {
             ),
             const Gap(12),
 
-            // 선택 UI
+            // 선택 UI (가로 2개 배치)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: ['남자', '여자'].map((gender) {
-                final isSelected = field.value == gender;
+              children: genders.map((gender) {
+                final isSelected = selectedGender == gender;
+
+                // 색상/밑줄 로직
+                final textColor = isSelected
+                    ? Colors.black
+                    : (selectedGender == null
+                        ? Colors.black
+                        : AppColors.blackBlack4);
+                final underlineColor = isSelected || selectedGender == null
+                    ? AppColors.blackBlack1
+                    : Colors.transparent;
+
                 return Expanded(
                   child: GestureDetector(
                     onTap: () => field.didChange(gender),
@@ -42,16 +56,24 @@ class GenderSelector extends StatelessWidget {
                         minWidth: 160.w,
                         minHeight: 48.h,
                       ),
-                      child: Center(
-                        child: Text(
-                          gender,
-                          style: AppTextStyles.bodyRegular(
-                            context,
-                            color: isSelected
-                                ? Colors.black
-                                : AppColors.blackBlack4,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // 텍스트
+                          Text(
+                            gender,
+                            style: AppTextStyles.bodyRegular(
+                              context,
+                              color: textColor,
+                            ),
                           ),
-                        ),
+                          const Gap(6),
+                          // 밑줄
+                          Container(
+                            height: 1,
+                            color: underlineColor,
+                          ),
+                        ],
                       ),
                     ),
                   ),
