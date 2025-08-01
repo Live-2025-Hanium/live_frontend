@@ -32,7 +32,7 @@ class ExecuteScreenTemplate extends StatelessWidget {
       appBar: SaeipAppBar(title: '미션 수행'),
       body: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 40.h),
         child: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
