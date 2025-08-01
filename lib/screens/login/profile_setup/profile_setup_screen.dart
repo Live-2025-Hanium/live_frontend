@@ -20,6 +20,7 @@ class ProfileSetupScreen extends StatefulWidget {
 
 class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
+  final _nicknameKey = GlobalKey<NicknameFieldState>();
   final ValueNotifier<bool> _isFormValidNotifier = ValueNotifier(false);
 
   @override
@@ -36,34 +37,23 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     final isValid = _formKey.currentState?.saveAndValidate() ?? false;
     if (!isValid) return;
 
+    final nicknameState = _nicknameKey.currentState;
+    if (nicknameState == null || !nicknameState.isNicknameValid) {
+      // 닉네임 필드에 직접 에러 메시지 세팅
+      _formKey.currentState?.fields['nickname']?.invalidate(
+        '닉네임 중복 확인을 완료해주세요.',
+      );
+      return;
+    }
+
     final formData = _formKey.currentState!.value;
     final saeipUser = SaeipUser.fromFormData(formData);
-    final payload = saeipUser.toJson();
 
     try {
-      // TODO: API 호출
       context.pushNamed('home');
     } catch (e) {
       debugPrint('❌ 네트워크 오류: $e');
-      _showErrorDialog('네트워크 오류가 발생했습니다.');
     }
-  }
-
-  void _showErrorDialog(String message) {
-    showDialog<void>(
-      context: context,
-      builder:
-          (ctx) => AlertDialog(
-            title: const Text('오류'),
-            content: Text(message),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('확인'),
-              ),
-            ],
-          ),
-    );
   }
 
   @override
@@ -81,7 +71,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               children: [
                 const ProfileImagePicker(),
                 const Gap(16),
-                const NicknameField(),
+                NicknameField(key: _nicknameKey),
                 const Gap(28),
                 const GenderSelector(),
                 const Gap(28),

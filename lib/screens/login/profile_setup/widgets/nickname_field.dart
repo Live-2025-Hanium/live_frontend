@@ -12,11 +12,20 @@ class NicknameField extends StatefulWidget {
   const NicknameField({super.key});
 
   @override
-  State<NicknameField> createState() => _NicknameFieldState();
+  NicknameFieldState createState() => NicknameFieldState(); // ✅ public state
 }
 
-class _NicknameFieldState extends State<NicknameField> {
+class NicknameFieldState extends State<NicknameField> {
   late final TextEditingController _controller;
+
+  // 중복 확인 버튼 클릭 여부
+  bool _isDuplicateChecked = false;
+
+  // 중복 확인 성공 여부
+  bool _isAvailable = false;
+
+  // 외부에서 접근 가능한 getter
+  bool get isNicknameValid => _isDuplicateChecked && _isAvailable;
 
   @override
   void initState() {
@@ -31,6 +40,7 @@ class _NicknameFieldState extends State<NicknameField> {
   }
 
   Future<bool> _checkNickname(String nickname) async {
+    // TODO: API 연동
     await Future.delayed(const Duration(milliseconds: 500));
     return nickname != '일이삼사오육칠팔구십';
   }
@@ -39,7 +49,7 @@ class _NicknameFieldState extends State<NicknameField> {
     final formState = FormBuilder.of(context);
     final nicknameField = formState?.fields['nickname'];
 
-    // 1차 유효성 검사 -- 미통과시 서버로 요청하지 않음
+    // 1차 유효성 검사
     final isValid = nicknameField?.validate() ?? false;
     if (!isValid) return;
 
@@ -47,6 +57,11 @@ class _NicknameFieldState extends State<NicknameField> {
     final available = await _checkNickname(nickname);
 
     if (!mounted) return;
+
+    setState(() {
+      _isDuplicateChecked = true;
+      _isAvailable = available;
+    });
 
     if (!available) {
       nicknameField?.invalidate('이미 사용 중인 닉네임입니다.');
@@ -87,7 +102,6 @@ class _NicknameFieldState extends State<NicknameField> {
           children: [
             // 라벨 + 에러 메시지
             Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   '닉네임',
@@ -118,10 +132,18 @@ class _NicknameFieldState extends State<NicknameField> {
                   child: TextField(
                     controller: _controller,
                     cursorColor: AppColors.blackBlack4,
-                    textAlignVertical: TextAlignVertical.center,
                     maxLength: 10,
                     onChanged: (value) {
                       field.didChange(value);
+
+                      // 닉네임이 변경되면 중복확인 상태 초기화
+                      if (_isDuplicateChecked || _isAvailable) {
+                        setState(() {
+                          _isDuplicateChecked = false;
+                          _isAvailable = false;
+                        });
+                      }
+
                       if (field.errorText == '이미 사용 중인 닉네임입니다.') {
                         field.validate();
                       }
@@ -168,7 +190,6 @@ class _NicknameFieldState extends State<NicknameField> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.r),
                     ),
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
                   onPressed: _handleDuplicateCheck,
                   child: Text(
