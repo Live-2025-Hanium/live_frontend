@@ -84,7 +84,6 @@ class _ExecuteTimerMissionScreenState extends State<ExecuteTimerMissionScreen> {
   @override
   Widget build(BuildContext context) {
     final mission = widget.data;
-    // 타이머가 아직 진행중인 경우 onRightPressed를 null로 설정
     final onRightPressed = _remaining.inSeconds > 0
         ? () {
             _togglePause();
