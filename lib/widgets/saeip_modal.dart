@@ -14,6 +14,7 @@ class SaeipModalType {
 
 class SaeipModal extends StatelessWidget {
   final String? title;
+  final Color titleTextColor;
   final String message;
   final String? cancelText;
   final void Function()? onCancel;
@@ -27,6 +28,7 @@ class SaeipModal extends StatelessWidget {
   const SaeipModal({
     super.key,
     this.title,
+    this.titleTextColor = AppColors.blackBlack6,
     required this.message,
     this.onCancel,
     required this.onConfirm,
@@ -44,6 +46,7 @@ class SaeipModal extends StatelessWidget {
     this.cancelText = '취소',
     required this.onConfirm,
     this.title,
+    this.titleTextColor = AppColors.blackBlack6,
     this.onCancel,
     this.confirmText = '확인',
     this.onClose,
@@ -70,7 +73,7 @@ class SaeipModal extends StatelessWidget {
                 title!,
                 style: AppTextStyles.titleSemibold(
                   context,
-                  color: AppColors.blackBlack6,
+                  color: titleTextColor,
                 ),
                 textAlign: TextAlign.center,
               ),

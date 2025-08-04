@@ -8,6 +8,7 @@ class MissionTile extends StatefulWidget {
   final String missionTitle;
   final Widget subContent;
   final VoidCallback onTap;
+  final VoidCallback onCheckBoxTap;
 
   const MissionTile({
     super.key,
@@ -15,6 +16,7 @@ class MissionTile extends StatefulWidget {
     required this.missionTitle,
     required this.subContent,
     required this.onTap,
+    required this.onCheckBoxTap,
   });
 
   @override
@@ -88,8 +90,7 @@ class _MissionTileState extends State<MissionTile> {
                           onTap: isCompleted
                               ? null
                               : () {
-                                  // 완료 모달 띄우기
-                                  _showCompletionModal();
+                                  widget.onCheckBoxTap();
                                 },
                           child: SizedBox(
                             height: 48,
@@ -120,34 +121,6 @@ class _MissionTileState extends State<MissionTile> {
           ),
         ),
       ),
-    );
-  }
-
-  // 완료 모달 함수
-  void _showCompletionModal() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('미션 완료'),
-          content: Text('미션을 완료하시겠습니까?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('취소'),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  isCompleted = true;
-                });
-                Navigator.of(context).pop();
-              },
-              child: Text('완료'),
-            ),
-          ],
-        );
-      },
     );
   }
 }
