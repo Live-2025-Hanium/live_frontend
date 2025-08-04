@@ -8,6 +8,8 @@ import 'package:live_frontend/screens/home/execute/widgets/sub_content.dart';
 import 'package:live_frontend/screens/home/execute/widgets/execute_screen_template.dart';
 import 'dart:async';
 
+import 'package:live_frontend/widgets/saeip_modal.dart';
+
 final CloverMissionDetailModel timerMission = CloverMissionDetailModel(
   userMissionId: 1001,
   cloverType: CloverMissionType.timer,
@@ -84,7 +86,15 @@ class _ExecuteTimerMissionScreenState extends State<ExecuteTimerMissionScreen> {
     final mission = widget.data;
     // 타이머가 아직 진행중인 경우 onRightPressed를 null로 설정
     final onRightPressed = _remaining.inSeconds > 0
-        ? null
+        ? () {
+            _togglePause();
+            showDialog(
+              context: context,
+              builder: (context) {
+                return _buildEarlyCompletionModal();
+              },
+            );
+          }
         : () {
             showDialog(
               context: context,
@@ -118,5 +128,27 @@ class _ExecuteTimerMissionScreenState extends State<ExecuteTimerMissionScreen> {
     final minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
     final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
     return '$minutes:$seconds';
+  }
+
+  Widget _buildEarlyCompletionModal() {
+    return SaeipModal(
+      title: '아직 시간이 남았어요!',
+      message: '미션을 일찍 완료하셨나요?',
+      confirmText: '완료',
+      onConfirm: () {
+        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (context) {
+            return CompleteModal();
+          },
+        );
+      },
+      cancelText: '취소',
+      onCancel: () {
+        _togglePause();
+        Navigator.of(context).pop();
+      },
+    );
   }
 }
