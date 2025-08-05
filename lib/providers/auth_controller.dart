@@ -60,6 +60,7 @@ class AuthController extends StateNotifier<AuthState> {
         token.accessToken,
       );
 
+      debugPrint('✅ 백엔드 로그인 성공: ${saeipUser.toJson()}');
       state = AuthState(
         status: AuthStatus.authenticated,
         user: user,
@@ -67,6 +68,7 @@ class AuthController extends StateNotifier<AuthState> {
         token: token.accessToken,
       );
     } catch (e) {
+      debugPrint('❌ Kakao 로그인 실패: $e');
       state = state.copyWith(status: AuthStatus.error, error: e.toString());
     }
   }

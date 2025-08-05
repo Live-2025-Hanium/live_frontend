@@ -1,5 +1,6 @@
 // lib/data/repositories/auth_repository.dart
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/models/saeip_user_model.dart';
 import 'package:live_frontend/providers/dio_provider.dart';
@@ -24,7 +25,12 @@ class AuthRepository {
       },
       options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
     );
-    return SaeipUserModel.fromJson(resp.data['user']);
+
+    final loginUser = SaeipUserModel.fromJson(
+      (resp.data['data'] as Map<String, dynamic>)['user']
+          as Map<String, dynamic>,
+    );
+    return loginUser;
   }
 
   /// Google idToken을 백엔드로 전달하고, 회원 정보를 받아옵니다.
