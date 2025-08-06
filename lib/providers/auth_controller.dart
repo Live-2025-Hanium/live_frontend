@@ -5,6 +5,7 @@ import 'package:live_frontend/models/user.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 import 'package:live_frontend/providers/auth_repository_provider.dart';
 import 'package:live_frontend/providers/google_signin_provider.dart';
+import 'package:live_frontend/providers/secure_storage_provider.dart';
 
 class AuthController extends StateNotifier<AuthState> {
   final Ref ref;
@@ -52,7 +53,7 @@ class AuthController extends StateNotifier<AuthState> {
       final user = AppUser.fromKakao(kakaoUser);
 
       debugPrint('✅ Kakao 로그인 성공');
-      debugPrint('accessToken: ${token.accessToken}');
+      // debugPrint('accessToken: ${token.accessToken}');
 
       final repo = ref.read(authRepositoryProvider);
       final saeipUser = await repo.loginWithKakaoOnBackend(
@@ -60,7 +61,9 @@ class AuthController extends StateNotifier<AuthState> {
         token.accessToken,
       );
 
-      debugPrint('✅ 백엔드 로그인 성공: ${saeipUser.toJson()}');
+      debugPrint('✅ 백엔드 로그인 성공');
+
+      final storage = ref.read(secureStorageProvider);
       state = AuthState(
         status: AuthStatus.authenticated,
         user: user,
