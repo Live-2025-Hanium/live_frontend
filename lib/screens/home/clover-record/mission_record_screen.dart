@@ -1,10 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
+import 'package:live_frontend/models/clover_mission_model.dart';
+import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
+import 'package:live_frontend/widgets/rating_bar.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
 
+final CloverMissionDetailModel data = CloverMissionDetailModel(
+  userMissionId: 100,
+  cloverType: CloverMissionType.photo,
+  missionTitle: '오늘의 점심 인증샷 찍기',
+  description: '오늘 먹은 점심을 사진으로 남겨보세요!',
+  missionStatus: MissionStatus.assigned,
+  missionDifficulty: CloverMissionDifficulty.normal,
+  missionCategory: CloverMissionCategory.hobby,
+  illustrationUrl: 'https://example.com/photo_mission.png',
+);
+
+// 나중에 extra로 미션 데이터 받아오기!
 class MissionRecordScreen extends StatelessWidget {
   const MissionRecordScreen({super.key});
 
@@ -62,11 +78,26 @@ class MissionRecordScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '미션 제목',
+                    data.missionTitle,
                     style: AppTextStyles.titleMedium(
                       context,
                       color: Colors.black,
                     ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      RatingBar(rating: data.missionDifficulty.value),
+                      Gap(8.w),
+                      Text(
+                        data.missionCategory.koreanLabel,
+                        style: AppTextStyles.bodyRegular(
+                          context,
+                          color: AppColors.blackBlack4,
+                        ),
+                      ),
+                    ],
                   ),
                   TextField(
                     maxLines: 5,

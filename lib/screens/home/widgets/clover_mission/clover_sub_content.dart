@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
+import 'package:live_frontend/widgets/rating_bar.dart';
 
 class CloverSubContent extends StatelessWidget {
   final CloverMissionDifficulty difficulty;
@@ -17,15 +17,9 @@ class CloverSubContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const totalStars = 5;
-    final emptyStars = totalStars - difficulty.value;
     return Row(
       children: [
-        for (var i = 0; i < difficulty.value; i++)
-          Icon(Icons.star, size: 16.h, color: Color(0xFFFFC800)),
-        // 빈 별
-        for (var i = 0; i < emptyStars; i++)
-          Icon(Icons.star_border, size: 16.h, color: Color(0xFFFFC800)),
+        RatingBar(rating: difficulty.value),
         Gap(8),
         Text(
           category.koreanLabel,
