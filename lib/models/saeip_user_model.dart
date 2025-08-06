@@ -43,10 +43,6 @@ class LoginData {
 class SaeipUserModel {
   final int id;
 
-  /// OAuth 구분자 (예: "google_12345", "kakao_67890").
-  @JsonKey(defaultValue: '')
-  final String oauthId;
-
   final String email;
   final String nickname;
 
@@ -57,7 +53,6 @@ class SaeipUserModel {
 
   SaeipUserModel({
     required this.id,
-    required this.oauthId,
     required this.email,
     required this.nickname,
     this.profileImageUrl,

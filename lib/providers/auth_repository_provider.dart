@@ -26,11 +26,10 @@ class AuthRepository {
       options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
     );
 
-    final loginUser = SaeipUserModel.fromJson(
+    return SaeipUserModel.fromJson(
       (resp.data['data'] as Map<String, dynamic>)['user']
           as Map<String, dynamic>,
     );
-    return loginUser;
   }
 
   /// Google idToken을 백엔드로 전달하고, 회원 정보를 받아옵니다.

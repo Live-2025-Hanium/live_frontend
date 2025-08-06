@@ -27,7 +27,6 @@ Map<String, dynamic> _$LoginDataToJson(LoginData instance) => <String, dynamic>{
 SaeipUserModel _$SaeipUserModelFromJson(Map<String, dynamic> json) =>
     SaeipUserModel(
       id: (json['id'] as num).toInt(),
-      oauthId: json['oauthId'] as String? ?? '',
       email: json['email'] as String,
       nickname: json['nickname'] as String,
       profileImageUrl: json['profileImageUrl'] as String?,
@@ -37,7 +36,6 @@ SaeipUserModel _$SaeipUserModelFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$SaeipUserModelToJson(SaeipUserModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'oauthId': instance.oauthId,
       'email': instance.email,
       'nickname': instance.nickname,
       'profileImageUrl': instance.profileImageUrl,
