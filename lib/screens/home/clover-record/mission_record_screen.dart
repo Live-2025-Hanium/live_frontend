@@ -100,8 +100,17 @@ class MissionRecordScreen extends StatelessWidget {
                     ],
                   ),
                   TextField(
-                    maxLines: 5,
+                    maxLines: 6,
+                    maxLength: 200,
+                    style: AppTextStyles.bodyRegular(
+                      context,
+                      color: Colors.black,
+                    ),
                     decoration: InputDecoration(
+                      counterStyle: AppTextStyles.smallMedium(
+                        context,
+                        color: AppColors.blackBlack4,
+                      ),
                       contentPadding: EdgeInsets.symmetric(
                         vertical: 12.h,
                         horizontal: 16.w,
