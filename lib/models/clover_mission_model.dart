@@ -31,6 +31,13 @@ enum CloverMissionDifficulty {
 
   final int value;
   const CloverMissionDifficulty(this.value);
+
+  static CloverMissionDifficulty fromValue(int value) {
+    return CloverMissionDifficulty.values.firstWhere(
+      (difficulty) => difficulty.value == value,
+      orElse: () => CloverMissionDifficulty.normal,
+    );
+  }
 }
 
 enum CloverMissionCategory {

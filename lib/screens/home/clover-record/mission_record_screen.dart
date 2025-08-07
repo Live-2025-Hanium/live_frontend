@@ -3,11 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
 import 'package:live_frontend/models/mission_models.dart';
+import 'package:live_frontend/screens/home/clover-record/widget/slider.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/rating_bar.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 final CloverMissionDetailModel data = CloverMissionDetailModel(
   userMissionId: 100,
@@ -21,8 +23,22 @@ final CloverMissionDetailModel data = CloverMissionDetailModel(
 );
 
 // 나중에 extra로 미션 데이터 받아오기!
-class MissionRecordScreen extends StatelessWidget {
+class MissionRecordScreen extends StatefulWidget {
   const MissionRecordScreen({super.key});
+
+  @override
+  State<MissionRecordScreen> createState() => _MissionRecordScreenState();
+}
+
+class _MissionRecordScreenState extends State<MissionRecordScreen> {
+  final double _position = 0;
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +115,9 @@ class MissionRecordScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+                  BipolarRangeSlider(),
                   TextField(
+                    controller: _controller,
                     maxLines: 6,
                     maxLength: 200,
                     style: AppTextStyles.bodyRegular(
