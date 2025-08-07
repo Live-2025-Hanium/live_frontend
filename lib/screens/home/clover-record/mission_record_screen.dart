@@ -9,7 +9,6 @@ import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/rating_bar.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 final CloverMissionDetailModel data = CloverMissionDetailModel(
   userMissionId: 100,
@@ -116,6 +115,7 @@ class _MissionRecordScreenState extends State<MissionRecordScreen> {
                     ],
                   ),
                   BipolarRangeSlider(),
+                  Gap(32.h),
                   TextField(
                     controller: _controller,
                     maxLines: 6,
