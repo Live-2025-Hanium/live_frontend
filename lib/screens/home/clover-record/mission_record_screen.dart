@@ -30,7 +30,6 @@ class MissionRecordScreen extends StatefulWidget {
 }
 
 class _MissionRecordScreenState extends State<MissionRecordScreen> {
-  final double _position = 0;
   final TextEditingController _controller = TextEditingController();
 
   @override
