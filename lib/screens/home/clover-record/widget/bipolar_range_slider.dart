@@ -3,7 +3,9 @@ import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
 class BipolarRangeSlider extends StatefulWidget {
-  const BipolarRangeSlider({super.key});
+  final ValueChanged<int>? onChanged;
+
+  const BipolarRangeSlider({super.key, this.onChanged});
 
   @override
   State<BipolarRangeSlider> createState() => _BipolarRangeSliderState();
@@ -53,6 +55,7 @@ class _BipolarRangeSliderState extends State<BipolarRangeSlider> {
                   // 실제 어려움 영역으로
                   final newStart = values.start.clamp(_min, _center);
                   _range = RangeValues(newStart, _center);
+                  widget.onChanged?.call(5 - newStart.toInt());
                 }
               }
               // 2) end thumb 를 움직이는 경우 (어려움→쉬움)
@@ -65,6 +68,7 @@ class _BipolarRangeSliderState extends State<BipolarRangeSlider> {
                   // 실제 쉬움 영역으로
                   final newEnd = values.end.clamp(_center, _max);
                   _range = RangeValues(_center, newEnd);
+                  widget.onChanged?.call(5 - newEnd.toInt());
                 }
               }
             });

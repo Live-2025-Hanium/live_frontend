@@ -101,3 +101,25 @@ const _$CloverMissionTypeEnumMap = {
   CloverMissionType.visit: 'VISIT',
   CloverMissionType.photo: 'PHOTO',
 };
+
+CloverMissionFeedbackModel _$CloverMissionFeedbackModelFromJson(
+  Map<String, dynamic> json,
+) => CloverMissionFeedbackModel(
+  userMissionId: (json['userMissionId'] as num).toInt(),
+  feedbackComment: json['feedbackComment'] as String,
+  feedbackDifficulty: $enumDecode(
+    _$CloverMissionDifficultyEnumMap,
+    json['feedbackDifficulty'],
+  ),
+  imageUrl: json['imageUrl'] as String?,
+);
+
+Map<String, dynamic> _$CloverMissionFeedbackModelToJson(
+  CloverMissionFeedbackModel instance,
+) => <String, dynamic>{
+  'userMissionId': instance.userMissionId,
+  'feedbackComment': instance.feedbackComment,
+  'feedbackDifficulty':
+      _$CloverMissionDifficultyEnumMap[instance.feedbackDifficulty]!,
+  'imageUrl': instance.imageUrl,
+};

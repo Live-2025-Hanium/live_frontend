@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
 import 'package:live_frontend/models/mission_models.dart';
-import 'package:live_frontend/screens/home/clover-record/widget/slider.dart';
+import 'package:live_frontend/screens/home/clover-record/widget/bipolar_range_slider.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/rating_bar.dart';
@@ -31,11 +31,32 @@ class MissionRecordScreen extends StatefulWidget {
 
 class _MissionRecordScreenState extends State<MissionRecordScreen> {
   final TextEditingController _controller = TextEditingController();
+  int _sliderCurrentValue = 3; // 초기값은 중립 상태
+  CloverMissionFeedbackModel? _feedback;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void onSaveTap() {
+    _feedback = CloverMissionFeedbackModel(
+      userMissionId: data.userMissionId,
+      feedbackComment: _controller.text,
+      feedbackDifficulty: CloverMissionDifficulty.fromValue(
+        _sliderCurrentValue,
+      ),
+    );
+    if (_feedback != null) {
+      // 서버에 피드백 저장 로직 추가
+      debugPrint(_feedback!.toJson().toString());
+    }
   }
 
   @override
@@ -113,7 +134,15 @@ class _MissionRecordScreenState extends State<MissionRecordScreen> {
                       ),
                     ],
                   ),
-                  BipolarRangeSlider(),
+                  BipolarRangeSlider(
+                    key: const Key('bipolar_range_slider'),
+                    onChanged: (values) {
+                      setState(() {
+                        // 슬라이더 값 변경 시 상태 업데이트
+                        _sliderCurrentValue = values;
+                      });
+                    },
+                  ),
                   Gap(32.h),
                   TextField(
                     controller: _controller,
@@ -146,7 +175,7 @@ class _MissionRecordScreenState extends State<MissionRecordScreen> {
               ),
               SizedBox(
                 width: double.infinity,
-                child: SaeipButton(text: '저장', onPressed: () {}),
+                child: SaeipButton(text: '저장', onPressed: onSaveTap),
               ),
             ],
           ),
