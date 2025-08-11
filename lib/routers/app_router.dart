@@ -60,12 +60,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             name: 'profile_setup',
-            path: '/profile_setup',
+            path: 'profile_setup',
             builder: (context, state) => const ProfileSetupScreen(),
           ),
           GoRoute(
             name: 'terms',
-            path: '/terms',
+            path: 'terms',
             builder: (context, state) {
               return TermsScreen();
             },
@@ -93,13 +93,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             name: 'timer_mission',
-            path: '/execute/timer_mission',
+            path: 'execute/timer_mission',
             builder: (context, state) =>
                 ExecuteTimerMissionScreen(id: state.extra as int),
           ),
           GoRoute(
             name: 'photo_mission',
-            path: '/execute/photo_mission',
+            path: 'execute/photo_mission',
             builder: (context, state) =>
                 ExecutePhotoMissionScreen(id: state.extra as int),
           ),
