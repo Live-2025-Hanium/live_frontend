@@ -18,12 +18,14 @@ List<CloverMissionModel> temporaryData = [
     missionStatus: MissionStatus.assigned,
     missionDifficulty: CloverMissionDifficulty.easy,
     missionCategory: CloverMissionCategory.health,
+    cloverType: CloverMissionType.timer,
   ),
   CloverMissionModel(
     userMissionId: 1,
     missionTitle: 'Clover Mission 1',
     missionStatus: MissionStatus.assigned,
     missionDifficulty: CloverMissionDifficulty.easy,
+    cloverType: CloverMissionType.photo,
     missionCategory: CloverMissionCategory.health,
   ),
   CloverMissionModel(
@@ -32,6 +34,7 @@ List<CloverMissionModel> temporaryData = [
     missionStatus: MissionStatus.assigned,
     missionDifficulty: CloverMissionDifficulty.easy,
     missionCategory: CloverMissionCategory.health,
+    cloverType: CloverMissionType.timer,
   ),
 ];
 
