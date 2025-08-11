@@ -96,7 +96,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             name: 'mission_record',
             path: 'mission_record',
             builder: (context, state) => const MissionRecordScreen(),
-        routes: [
+          ),
           GoRoute(
             name: 'timer_mission',
             path: 'execute/timer_mission',
