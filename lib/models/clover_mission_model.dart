@@ -31,6 +31,13 @@ enum CloverMissionDifficulty {
 
   final int value;
   const CloverMissionDifficulty(this.value);
+
+  static CloverMissionDifficulty fromValue(int value) {
+    return CloverMissionDifficulty.values.firstWhere(
+      (difficulty) => difficulty.value == value,
+      orElse: () => CloverMissionDifficulty.normal,
+    );
+  }
 }
 
 enum CloverMissionCategory {
@@ -125,4 +132,22 @@ class CloverMissionDetailModel extends CloverMissionModel {
 
   @override
   Map<String, dynamic> toJson() => _$CloverMissionDetailModelToJson(this);
+}
+
+@JsonSerializable()
+class CloverMissionFeedbackModel {
+  final int userMissionId;
+  final String feedbackComment;
+  final CloverMissionDifficulty feedbackDifficulty;
+  final String? imageUrl;
+
+  CloverMissionFeedbackModel({
+    required this.userMissionId,
+    required this.feedbackComment,
+    required this.feedbackDifficulty,
+    this.imageUrl,
+  });
+  factory CloverMissionFeedbackModel.fromJson(Map<String, dynamic> json) =>
+      _$CloverMissionFeedbackModelFromJson(json);
+  Map<String, dynamic> toJson() => _$CloverMissionFeedbackModelToJson(this);
 }
