@@ -54,7 +54,7 @@ class SaeipButton extends StatelessWidget {
               : BorderSide.none,
         ),
         backgroundColor: backgroundColor,
-        minimumSize: Size(height.w, height.h),
+        minimumSize: Size(height.h, height.h),
       ),
       child: Text(
         text,
