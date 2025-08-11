@@ -92,7 +92,13 @@ class SaeipModal extends StatelessWidget {
                   Expanded(
                     child: SaeipButton(
                       text: cancelText!,
-                      onPressed: onCancel!,
+                      onPressed: () {
+                        onCancel!();
+                        if (onClose != null) {
+                          onClose!();
+                          Navigator.of(context).pop();
+                        }
+                      },
                       backgroundColor: AppColors.blackBlack1,
                       textStyle: AppTextStyles.bodyRegular(
                         context,
