@@ -83,6 +83,7 @@ class CloverMissionModel {
   final MissionStatus missionStatus;
   final CloverMissionDifficulty missionDifficulty;
   final CloverMissionCategory missionCategory;
+  final CloverMissionType cloverType;
 
   CloverMissionModel({
     required this.userMissionId,
@@ -90,6 +91,7 @@ class CloverMissionModel {
     required this.missionStatus,
     required this.missionDifficulty,
     required this.missionCategory,
+    required this.cloverType,
   });
 
   factory CloverMissionModel.fromJson(Map<String, dynamic> json) =>
@@ -100,26 +102,22 @@ class CloverMissionModel {
 
 @JsonSerializable()
 class CloverMissionDetailModel extends CloverMissionModel {
-  final String description;
-  final CloverMissionType cloverType;
+  // final CloverMissionType cloverType;
   @JsonKey(fromJson: _parseDurationFromString, toJson: _formatDurationToString)
   final Duration? remainingTime;
   final String? targetAddress;
   final int? remainingDistance;
-  final String illustrationUrl;
 
   CloverMissionDetailModel({
     required super.userMissionId,
-    required this.cloverType,
+    required super.cloverType,
     required super.missionTitle,
-    required this.description,
     required super.missionStatus,
     required super.missionDifficulty,
     required super.missionCategory,
     this.remainingTime,
     this.targetAddress,
     this.remainingDistance,
-    required this.illustrationUrl,
   });
 
   factory CloverMissionDetailModel.fromJson(Map<String, dynamic> json) =>

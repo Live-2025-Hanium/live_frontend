@@ -54,7 +54,7 @@ class NewCloverMissionModal extends StatelessWidget {
                   final data = entry.value;
                   return Column(
                     children: [
-                      _buildTitle(
+                      _buildTile(
                         context,
                         idx,
                         data.missionTitle,
@@ -81,7 +81,7 @@ class NewCloverMissionModal extends StatelessWidget {
     );
   }
 
-  Widget _buildTitle(
+  Widget _buildTile(
     BuildContext context,
     int index,
     String title,
@@ -96,7 +96,7 @@ class NewCloverMissionModal extends StatelessWidget {
         border: Border.all(color: AppColors.blackBlack1, width: 1.0),
       ),
       child: Padding(
-        padding: EdgeInsetsGeometry.symmetric(horizontal: 22.w),
+        padding: EdgeInsets.symmetric(horizontal: 22.w),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
