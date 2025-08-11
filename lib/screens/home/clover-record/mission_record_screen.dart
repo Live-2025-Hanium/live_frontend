@@ -14,11 +14,9 @@ final CloverMissionDetailModel data = CloverMissionDetailModel(
   userMissionId: 100,
   cloverType: CloverMissionType.photo,
   missionTitle: '오늘의 점심 인증샷 찍기',
-  description: '오늘 먹은 점심을 사진으로 남겨보세요!',
   missionStatus: MissionStatus.assigned,
   missionDifficulty: CloverMissionDifficulty.normal,
   missionCategory: CloverMissionCategory.hobby,
-  illustrationUrl: 'https://example.com/photo_mission.png',
 );
 
 // 나중에 extra로 미션 데이터 받아오기!
