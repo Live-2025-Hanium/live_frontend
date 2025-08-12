@@ -25,7 +25,7 @@ List<CloverMissionModel> temporaryData = [
   CloverMissionModel(
     userMissionId: 1,
     missionTitle: 'Clover Mission 1',
-    missionStatus: MissionStatus.assigned,
+    missionStatus: MissionStatus.completed,
     missionDifficulty: CloverMissionDifficulty.easy,
     cloverType: CloverMissionType.photo,
     missionCategory: CloverMissionCategory.health,
@@ -42,22 +42,28 @@ List<CloverMissionModel> temporaryData = [
 
 List<MyMissionModel> myMissionList = [
   MyMissionModel(
-    myMissionId: 1,
+    userMissionId: 1,
+    missionType: MissionType.my,
     missionTitle: 'My Mission 1',
-    startDate: DateTime.now(),
-    endDate: DateTime.now().add(Duration(days: 7)),
-    scheduledTime: ['08:00', '20:00'],
-    repeatDays: [RepeatDay.monday, RepeatDay.wednesday],
-    active: true,
+    missionStatus: MissionStatus.started,
+    scheduledTime: ['08:30', '21:00'],
+    repeatDays: [RepeatDay.monday, RepeatDay.wednesday, RepeatDay.friday],
   ),
   MyMissionModel(
-    myMissionId: 2,
+    userMissionId: 2,
+    missionType: MissionType.my,
     missionTitle: 'My Mission 2',
-    startDate: DateTime.now(),
-    endDate: DateTime.now().add(Duration(days: 14)),
+    missionStatus: MissionStatus.completed,
     scheduledTime: ['09:00', '21:00'],
     repeatDays: [RepeatDay.tuesday, RepeatDay.thursday],
-    active: false,
+  ),
+  MyMissionModel(
+    userMissionId: 3,
+    missionType: MissionType.my,
+    missionTitle: 'My Mission 3',
+    missionStatus: MissionStatus.started,
+    scheduledTime: ['10:00', '22:00'],
+    repeatDays: [RepeatDay.saturday, RepeatDay.sunday],
   ),
 ];
 

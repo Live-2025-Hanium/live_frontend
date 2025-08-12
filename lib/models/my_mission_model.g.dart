@@ -8,29 +8,40 @@ part of 'my_mission_model.dart';
 
 MyMissionModel _$MyMissionModelFromJson(Map<String, dynamic> json) =>
     MyMissionModel(
-      myMissionId: (json['myMissionId'] as num).toInt(),
+      userMissionId: (json['userMissionId'] as num).toInt(),
+      missionType: $enumDecode(_$MissionTypeEnumMap, json['missionType']),
       missionTitle: json['missionTitle'] as String,
-      startDate: _dateFromYMD(json['startDate'] as String),
-      endDate: _dateFromYMD(json['endDate'] as String),
+      missionStatus: $enumDecode(_$MissionStatusEnumMap, json['missionStatus']),
       scheduledTime: (json['scheduledTime'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
       repeatDays: (json['repeatDays'] as List<dynamic>)
           .map((e) => $enumDecode(_$RepeatDayEnumMap, e))
           .toList(),
-      active: json['active'] as bool,
     );
 
 Map<String, dynamic> _$MyMissionModelToJson(
   MyMissionModel instance,
 ) => <String, dynamic>{
-  'myMissionId': instance.myMissionId,
+  'userMissionId': instance.userMissionId,
+  'missionType': _$MissionTypeEnumMap[instance.missionType]!,
   'missionTitle': instance.missionTitle,
-  'startDate': _dateToYMD(instance.startDate),
-  'endDate': _dateToYMD(instance.endDate),
+  'missionStatus': _$MissionStatusEnumMap[instance.missionStatus]!,
   'scheduledTime': instance.scheduledTime,
   'repeatDays': instance.repeatDays.map((e) => _$RepeatDayEnumMap[e]!).toList(),
-  'active': instance.active,
+};
+
+const _$MissionTypeEnumMap = {
+  MissionType.my: 'MY',
+  MissionType.clover: 'CLOVER',
+};
+
+const _$MissionStatusEnumMap = {
+  MissionStatus.assigned: 'ASSIGNED',
+  MissionStatus.started: 'STARTED',
+  MissionStatus.paused: 'PAUSED',
+  MissionStatus.completed: 'COMPLETED',
+  MissionStatus.skipped: 'SKIPPED',
 };
 
 const _$RepeatDayEnumMap = {

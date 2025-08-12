@@ -1,5 +1,6 @@
 // lib/models/my_mission_model.dart
 import 'package:json_annotation/json_annotation.dart';
+import 'package:live_frontend/models/mission_models.dart';
 
 part 'my_mission_model.g.dart';
 
@@ -28,33 +29,33 @@ DateTime _dateFromYMD(String v) => DateTime.parse(v);
 /// DateTime → 'yyyy-MM-dd'
 String _dateToYMD(DateTime d) => d.toIso8601String().split('T').first;
 
+enum MissionType {
+  @JsonValue('MY')
+  my,
+  @JsonValue('CLOVER')
+  clover,
+}
+
 @JsonSerializable(explicitToJson: true)
 class MyMissionModel {
-  final int myMissionId;
+  final int userMissionId;
+  final MissionType missionType; // "MY" / "CLOVER"
+
   final String missionTitle;
-
-  /// 서버는 'yyyy-MM-dd' 문자열을 주고받는다고 가정
-  @JsonKey(fromJson: _dateFromYMD, toJson: _dateToYMD)
-  final DateTime startDate;
-
-  @JsonKey(fromJson: _dateFromYMD, toJson: _dateToYMD)
-  final DateTime endDate;
+  final MissionStatus missionStatus;
 
   /// 예시: ["08:30", "21:00"] (24시간 기준 권장)
   final List<String> scheduledTime;
 
   final List<RepeatDay> repeatDays;
 
-  final bool active;
-
   const MyMissionModel({
-    required this.myMissionId,
+    required this.userMissionId,
+    required this.missionType,
     required this.missionTitle,
-    required this.startDate,
-    required this.endDate,
+    required this.missionStatus,
     required this.scheduledTime,
     required this.repeatDays,
-    required this.active,
   });
 
   factory MyMissionModel.fromJson(Map<String, dynamic> json) =>
@@ -72,13 +73,12 @@ class MyMissionModel {
     bool? active,
   }) {
     return MyMissionModel(
-      myMissionId: myMissionId ?? this.myMissionId,
+      userMissionId: myMissionId ?? userMissionId,
+      missionType: missionType,
       missionTitle: missionTitle ?? this.missionTitle,
-      startDate: startDate ?? this.startDate,
-      endDate: endDate ?? this.endDate,
+      missionStatus: missionStatus,
       scheduledTime: scheduledTime ?? this.scheduledTime,
       repeatDays: repeatDays ?? this.repeatDays,
-      active: active ?? this.active,
     );
   }
 }
