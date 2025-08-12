@@ -3,9 +3,11 @@ import 'package:gap/gap.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
 import 'package:live_frontend/models/mission_models.dart';
+import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission_list.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission/new_clover_mission_modal.dart';
 import 'package:live_frontend/screens/home/widgets/home_profile.dart';
+import 'package:live_frontend/screens/home/widgets/my_mission_list.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
@@ -35,6 +37,27 @@ List<CloverMissionModel> temporaryData = [
     missionDifficulty: CloverMissionDifficulty.easy,
     missionCategory: CloverMissionCategory.health,
     cloverType: CloverMissionType.timer,
+  ),
+];
+
+List<MyMissionModel> myMissionList = [
+  MyMissionModel(
+    myMissionId: 1,
+    missionTitle: 'My Mission 1',
+    startDate: DateTime.now(),
+    endDate: DateTime.now().add(Duration(days: 7)),
+    scheduledTime: ['08:00', '20:00'],
+    repeatDays: [RepeatDay.monday, RepeatDay.wednesday],
+    active: true,
+  ),
+  MyMissionModel(
+    myMissionId: 2,
+    missionTitle: 'My Mission 2',
+    startDate: DateTime.now(),
+    endDate: DateTime.now().add(Duration(days: 14)),
+    scheduledTime: ['09:00', '21:00'],
+    repeatDays: [RepeatDay.tuesday, RepeatDay.thursday],
+    active: false,
   ),
 ];
 
@@ -85,9 +108,8 @@ class _HomeScreenState extends State<HomeScreen> {
         color: AppColors.blackBlack0, // 이게 진짜 색상
         // color: Colors.yellow, // 디버깅용으로 노란색 배경
         child: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
+            padding: EdgeInsets.zero,
             children: [
               HomeProfile(
                 profileImageSrc: 'https://picsum.photos/84',
@@ -97,6 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Gap(16),
               CloverMissionList(missionList: temporaryData),
               Gap(16),
+              MyMissionList(missionList: myMissionList),
             ],
           ),
         ),
