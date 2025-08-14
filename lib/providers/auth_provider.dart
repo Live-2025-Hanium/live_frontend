@@ -3,8 +3,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:flutter/foundation.dart';
 import 'package:live_frontend/providers/google_signin_provider.dart';
-import '../models/social_user.dart';
-import '../models/saeip_user.dart';
+import '../models/social_user_model.dart';
+import '../models/saeip_user_model.dart';
 
 enum AuthStatus { initial, loading, authenticated, error }
 
