@@ -37,7 +37,7 @@ class JobSelector extends StatelessWidget {
                 color: AppColors.greenNormal,
               ),
             ),
-            const Gap(18),
+            Gap(18.h),
 
             // 2열 고정 Grid
             GridView.count(
@@ -71,7 +71,7 @@ class JobSelector extends StatelessWidget {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const Gap(6),
+                        Gap(6.h),
                         // 밑줄
                         Container(
                           height: 1,

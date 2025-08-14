@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:go_router/go_router.dart';
-import 'package:live_frontend/models/saeip_user.dart';
+import 'package:live_frontend/models/saeip_user_model.dart';
 import 'package:live_frontend/screens/login/profile_setup/widgets/nickname_field.dart';
 import 'package:live_frontend/screens/login/profile_setup/widgets/profile_image_picker.dart';
 import 'package:live_frontend/screens/login/profile_setup/widgets/gender_selector.dart';
@@ -10,6 +10,7 @@ import 'package:live_frontend/screens/login/profile_setup/widgets/job_selector.d
 import 'package:live_frontend/widgets/saeip_button.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:gap/gap.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   const ProfileSetupScreen({super.key});
@@ -70,15 +71,15 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const ProfileImagePicker(),
-                const Gap(16),
+                Gap(16.h),
                 NicknameField(key: _nicknameKey),
-                const Gap(28),
+                Gap(28.h),
                 const GenderSelector(),
-                const Gap(28),
+                Gap(28.h),
                 const BirthdaySelector(),
-                const Gap(28),
+                Gap(28.h),
                 const JobSelector(),
-                const Gap(20),
+                Gap(20.h),
                 ValueListenableBuilder<bool>(
                   valueListenable: _isFormValidNotifier,
                   builder: (context, isFormValid, _) {
