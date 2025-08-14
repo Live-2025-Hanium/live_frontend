@@ -6,13 +6,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
-import 'package:live_frontend/widgets/utils/show_saeip_modal.dart';
+import 'package:live_frontend/widgets/saeip_button.dart';
+import 'package:live_frontend/widgets/saeip_modal.dart';
 
 class NicknameField extends StatefulWidget {
   const NicknameField({super.key});
 
   @override
-  NicknameFieldState createState() => NicknameFieldState(); // ✅ public state
+  NicknameFieldState createState() => NicknameFieldState();
 }
 
 class NicknameFieldState extends State<NicknameField> {
@@ -65,11 +66,16 @@ class NicknameFieldState extends State<NicknameField> {
 
     if (!available) {
       nicknameField?.invalidate('이미 사용 중인 닉네임입니다.');
-      SaeipModalController.showText(
+      await showDialog<void>(
         context: context,
-        message: '이미 사용 중인 닉네임입니다.',
-        confirmBackgroundColor: AppColors.errorError3,
-        cancelText: null,
+        builder: (ctx) => SaeipModal(
+          message: '이미 사용 중인 닉네임입니다.',
+          confirmText: '확인',
+          confirmBackgroundColor: AppColors.errorError3,
+          onConfirm: () {
+            Navigator.of(ctx).pop();
+          },
+        ),
       );
     } else {
       nicknameField?.setValue(nickname);
@@ -178,23 +184,15 @@ class NicknameFieldState extends State<NicknameField> {
                     ),
                   ),
                 ),
-                const Gap(8),
-                OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 12.h,
-                    ),
-                    minimumSize: Size(76.w, 40.h),
-                    side: BorderSide(color: labelColor),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                  ),
-                  onPressed: _handleDuplicateCheck,
-                  child: Text(
-                    '중복 확인',
-                    style: AppTextStyles.smallMedium(
+                Gap(8.w),
+                SizedBox(
+                  width: 76.w,
+                  height: 40.h,
+                  child: SaeipButton.outlined(
+                    text: '중복 확인',
+                    onPressed: _handleDuplicateCheck,
+                    outlineColor: labelColor,
+                    textStyle: AppTextStyles.smallMedium(
                       context,
                       color: Colors.black,
                     ),
