@@ -54,10 +54,13 @@ class SaeipButton extends StatelessWidget {
               : BorderSide.none,
         ),
         backgroundColor: backgroundColor,
-        minimumSize: Size(height.w, height.h),
+        minimumSize: Size(0, height.h),
+
+        padding: EdgeInsets.symmetric(horizontal: 8.w),
       ),
       child: Text(
         text,
+        maxLines: 1,
         style:
             textStyle ?? AppTextStyles.bodySemibold(context, color: textColor),
       ),
