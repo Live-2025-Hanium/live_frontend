@@ -46,7 +46,7 @@ List<MyMissionModel> myMissionList = [
     missionType: MissionType.my,
     missionTitle: 'My Mission 1',
     missionStatus: MissionStatus.started,
-    scheduledTime: ['08:30', '21:00'],
+    scheduledTime: '08:00',
     repeatDays: [RepeatDay.monday, RepeatDay.wednesday, RepeatDay.friday],
   ),
   MyMissionModel(
@@ -54,7 +54,7 @@ List<MyMissionModel> myMissionList = [
     missionType: MissionType.my,
     missionTitle: 'My Mission 2',
     missionStatus: MissionStatus.completed,
-    scheduledTime: ['09:00', '21:00'],
+    scheduledTime: '10:00',
     repeatDays: [RepeatDay.tuesday, RepeatDay.thursday],
   ),
   MyMissionModel(
@@ -62,7 +62,7 @@ List<MyMissionModel> myMissionList = [
     missionType: MissionType.my,
     missionTitle: 'My Mission 3',
     missionStatus: MissionStatus.started,
-    scheduledTime: ['10:00', '22:00'],
+    scheduledTime: '22:00',
     repeatDays: [RepeatDay.saturday, RepeatDay.sunday],
   ),
 ];

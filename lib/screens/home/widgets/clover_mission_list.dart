@@ -71,7 +71,7 @@ class _CloverMissionListState extends State<CloverMissionList> {
             'Clover',
             style: AppTextStyles.titleMedium(context, color: Colors.black),
           ),
-          Gap(8),
+          Gap(8.h),
           if (showNewCloverMission)
             ElevatedButton(
               onPressed: () => {},
@@ -89,7 +89,7 @@ class _CloverMissionListState extends State<CloverMissionList> {
                 style: AppTextStyles.bodyRegular(context, color: Colors.black),
               ),
             ),
-          Gap(8),
+          Gap(8.h),
           ..._sortedMissions.map((mission) {
             return Column(
               children: [

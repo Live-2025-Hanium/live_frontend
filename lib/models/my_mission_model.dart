@@ -5,6 +5,7 @@ import 'package:live_frontend/models/mission_models.dart';
 part 'my_mission_model.g.dart';
 
 /// 요일 enum (서버 값과 1:1 매핑)
+/// 한글 label 변경 메서드 만들기
 @JsonEnum(alwaysCreate: true)
 enum RepeatDay {
   @JsonValue('MONDAY')
@@ -23,11 +24,26 @@ enum RepeatDay {
   sunday,
 }
 
-/// 'yyyy-MM-dd' → DateTime
-DateTime _dateFromYMD(String v) => DateTime.parse(v);
-
-/// DateTime → 'yyyy-MM-dd'
-String _dateToYMD(DateTime d) => d.toIso8601String().split('T').first;
+extension RepeatDayLabel on RepeatDay {
+  String get label {
+    switch (this) {
+      case RepeatDay.monday:
+        return '월요일';
+      case RepeatDay.tuesday:
+        return '화요일';
+      case RepeatDay.wednesday:
+        return '수요일';
+      case RepeatDay.thursday:
+        return '목요일';
+      case RepeatDay.friday:
+        return '금요일';
+      case RepeatDay.saturday:
+        return '토요일';
+      case RepeatDay.sunday:
+        return '일요일';
+    }
+  }
+}
 
 enum MissionType {
   @JsonValue('MY')
@@ -45,7 +61,7 @@ class MyMissionModel {
   final MissionStatus missionStatus;
 
   /// 예시: ["08:30", "21:00"] (24시간 기준 권장)
-  final List<String> scheduledTime;
+  final String scheduledTime;
 
   final List<RepeatDay> repeatDays;
 
@@ -68,7 +84,7 @@ class MyMissionModel {
     String? missionTitle,
     DateTime? startDate,
     DateTime? endDate,
-    List<String>? scheduledTime,
+    String? scheduledTime,
     List<RepeatDay>? repeatDays,
     bool? active,
   }) {

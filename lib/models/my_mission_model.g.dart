@@ -12,9 +12,7 @@ MyMissionModel _$MyMissionModelFromJson(Map<String, dynamic> json) =>
       missionType: $enumDecode(_$MissionTypeEnumMap, json['missionType']),
       missionTitle: json['missionTitle'] as String,
       missionStatus: $enumDecode(_$MissionStatusEnumMap, json['missionStatus']),
-      scheduledTime: (json['scheduledTime'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
+      scheduledTime: json['scheduledTime'] as String,
       repeatDays: (json['repeatDays'] as List<dynamic>)
           .map((e) => $enumDecode(_$RepeatDayEnumMap, e))
           .toList(),
