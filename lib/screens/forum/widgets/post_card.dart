@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
+import 'package:live_frontend/theme/app_colors.dart';
+import 'package:live_frontend/theme/app_text_styles.dart';
 
 class ForumPost {
   final String id;
@@ -15,11 +19,7 @@ class ForumPost {
 }
 
 class PostCard extends StatelessWidget {
-  const PostCard({
-    super.key,
-    required this.post,
-    this.onTap,
-  });
+  const PostCard({super.key, required this.post, this.onTap});
 
   final ForumPost post;
   final VoidCallback? onTap;
@@ -29,42 +29,42 @@ class PostCard extends StatelessWidget {
     final dateStr =
         '${post.date.year}.${post.date.month.toString().padLeft(2, '0')}.${post.date.day.toString().padLeft(2, '0')}';
 
-    return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AspectRatio(
-              aspectRatio: 1.3,
+    return InkWell(
+      borderRadius: BorderRadius.circular(8),
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 썸네일
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: AspectRatio(
+              aspectRatio: 1.33,
               child: Image.network(post.imageUrl, fit: BoxFit.cover),
             ),
-            const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Text(
-                post.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
+          ),
+
+          Gap(8.h),
+
+          // 제목
+          Text(
+            post.title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.bodyRegular(context),
+          ),
+
+          Gap(4.h),
+
+          // 날짜
+          Text(
+            dateStr,
+            style: AppTextStyles.smallMedium(
+              context,
+              color: AppColors.blackBlack4,
             ),
-            const Spacer(),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 10),
-              child: Text(
-                dateStr,
-                style: TextStyle(
-                  color: Colors.black.withOpacity(0.5),
-                  fontSize: 12,
-                ),
-              ),
-            )
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

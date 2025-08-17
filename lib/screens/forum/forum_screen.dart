@@ -34,7 +34,7 @@ class _ForumScreenState extends State<ForumScreen> {
 
   // 더미 데이터
   List<ForumPost> get _posts => List.generate(
-    12,
+    10,
     (i) => ForumPost(
       id: 'p$i',
       title: '2020 경기도 「청년 마인드케어」, 참여자 모집',
