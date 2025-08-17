@@ -132,8 +132,6 @@ class _ForumScreenState extends State<ForumScreen> {
               // context.pushNamed('postDetail', pathParameters: {'id': post.id});
             },
           ),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 24)),
         ],
       ),
       bottomNavigationBar: const SaeipNavigationBar(initialIndex: 3),

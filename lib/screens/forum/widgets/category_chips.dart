@@ -9,7 +9,7 @@ class CategoryChips extends StatelessWidget {
     required this.categories,
     required this.selectedIndex,
     required this.onSelected,
-    this.height = 56,
+    this.height = 48,
     this.padding = const EdgeInsets.symmetric(horizontal: 20),
     this.spacing = 20,
     this.showBottomDivider = true,
@@ -42,7 +42,7 @@ class CategoryChips extends StatelessWidget {
           return InkWell(
             onTap: () => onSelected(i),
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 14.h),
+              padding: EdgeInsets.symmetric(vertical: 14),
               child: IntrinsicWidth(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
