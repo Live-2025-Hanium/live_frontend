@@ -9,6 +9,8 @@ import 'package:live_frontend/screens/forum/widgets/category_chips.dart';
 import 'package:live_frontend/screens/forum/widgets/post_card.dart';
 import 'package:live_frontend/screens/forum/widgets/post_grid.dart';
 import 'package:live_frontend/screens/forum/widgets/sort_controls.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 
 class ForumScreen extends StatefulWidget {
   const ForumScreen({super.key});
@@ -50,17 +52,18 @@ class _ForumScreenState extends State<ForumScreen> {
         appBarStyle: AppBarStyle.common,
         actions: [
           IconButton(
-            icon: SvgPicture.asset('assets/icons/bookmark.svg', height: 20),
+            icon: SvgPicture.asset('assets/icons/bookmark.svg', height: 20.h),
             onPressed: () => debugPrint('bookmark tapped'),
           ),
         ],
       ),
       body: CustomScrollView(
+        clipBehavior: Clip.none,
         slivers: [
           // 검색창
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               child: SaeipSearchBar(
                 controller: _searchCtrl,
                 hintText: '지원 사업, 생활 꿀팁',
@@ -72,22 +75,30 @@ class _ForumScreenState extends State<ForumScreen> {
             ),
           ),
 
+          SliverGap(16.h),
+
           // 메인 배너
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: BannerCarousel(
                 itemCount: 10,
                 index: _bannerIndex,
                 onPageChanged: (i) => setState(() => _bannerIndex = i),
                 itemBuilder: (_, i) => Image.network(
-                  'https://picsum.photos/seed/banner$i/1200/675',
+                  'https://picsum.photos/id/${30 + i}/1200/675',
                   fit: BoxFit.cover,
+                ),
+                overlayBuilder: (_, i) => BannerOverlay(
+                  // TODO : 추후 API 연동 예정
+                  title: '“네가 있어 행복해” 반려동물이 주는 정서적 효과',
+                  subtitle: '서울 유기 동물 입양 센터',
                 ),
               ),
             ),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 12)),
+
+          SliverGap(24.h),
 
           // 카테고리 칩
           SliverToBoxAdapter(
