@@ -86,6 +86,7 @@ class _ForumScreenState extends State<ForumScreen> {
                 index: _bannerIndex,
                 onPageChanged: (i) => setState(() => _bannerIndex = i),
                 itemBuilder: (_, i) => Image.network(
+                  // TODO : 추후 API 연동 예정
                   'https://picsum.photos/id/${30 + i}/1200/675',
                   fit: BoxFit.cover,
                 ),
@@ -103,7 +104,7 @@ class _ForumScreenState extends State<ForumScreen> {
           // 카테고리 칩
           SliverToBoxAdapter(
             child: CategoryChips(
-              categories: const ['지원 사업', '마음 챙김', '생활 습관', '방문지 추천', '진로·직업'],
+              categories: const ['지원 사업', '마음 챙김', '생활 습관', '사회 연결', '진로·직업'],
               selectedIndex: _selectedCategory,
               onSelected: (i) => setState(() => _selectedCategory = i),
             ),
