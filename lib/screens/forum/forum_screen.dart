@@ -109,15 +109,17 @@ class _ForumScreenState extends State<ForumScreen> {
               onSelected: (i) => setState(() => _selectedCategory = i),
             ),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 8)),
 
           // 정렬 옵션
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-              child: SortControls(
-                value: _sort,
-                onChanged: (v) => setState(() => _sort = v),
+              padding: const EdgeInsets.all(16),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: SortControls(
+                  value: _sort,
+                  onChanged: (v) => setState(() => _sort = v),
+                ),
               ),
             ),
           ),
