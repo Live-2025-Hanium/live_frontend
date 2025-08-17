@@ -64,7 +64,7 @@ class _ForumScreenState extends State<ForumScreen> {
               child: SaeipSearchBar(
                 controller: _searchCtrl,
                 hintText: '지원 사업, 생활 꿀팁',
-                onSubmitted: (q) {
+                onSubmit: (q) {
                   // TODO: 검색 실행
                   debugPrint('search: $q');
                 },
