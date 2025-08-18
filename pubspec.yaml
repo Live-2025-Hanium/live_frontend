@@ -59,6 +59,7 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   flutter_localizations:
     sdk: flutter
+  carousel_slider: ^5.1.1
 
 dev_dependencies:
   flutter_test:

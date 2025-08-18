@@ -8,9 +8,9 @@ class PostGridSliver extends StatelessWidget {
     this.onTapPost,
     this.crossAxisCount = 2,
     this.mainAxisSpacing = 12,
-    this.crossAxisSpacing = 12,
+    this.crossAxisSpacing = 8,
     this.childAspectRatio = 0.78,
-    this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
   });
 
   final List<ForumPost> posts;

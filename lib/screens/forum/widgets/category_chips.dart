@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:live_frontend/theme/app_colors.dart';
+import 'package:live_frontend/theme/app_text_styles.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CategoryChips extends StatelessWidget {
   const CategoryChips({
@@ -6,46 +9,60 @@ class CategoryChips extends StatelessWidget {
     required this.categories,
     required this.selectedIndex,
     required this.onSelected,
-    this.accentColor = const Color(0xFF1A9C5F),
-    this.height = 40,
-    this.padding = const EdgeInsets.symmetric(horizontal: 12),
-    this.spacing = 6,
+    this.height = 48,
+    this.padding = const EdgeInsets.symmetric(horizontal: 20),
+    this.spacing = 20,
+    this.showBottomDivider = true,
   });
 
   final List<String> categories;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
-
-  final Color accentColor;
   final double height;
   final EdgeInsets padding;
   final double spacing;
+  final bool showBottomDivider;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
+    final divider = BorderSide(color: AppColors.greenLight, width: 1);
+
+    return Container(
+      height: height.h,
+      decoration: showBottomDivider
+          ? BoxDecoration(border: Border(bottom: divider))
+          : null,
       child: ListView.separated(
-        padding: padding,
+        padding: padding.w,
         scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
         itemBuilder: (_, i) {
           final selected = i == selectedIndex;
-          return ChoiceChip(
-            label: Text(categories[i]),
-            selected: selected,
-            onSelected: (_) => onSelected(i),
-            labelStyle: TextStyle(
-              color: selected ? accentColor : Colors.black87,
-              fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+
+          return InkWell(
+            onTap: () => onSelected(i),
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 14),
+              child: IntrinsicWidth(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      categories[i],
+                      style: selected
+                          ? AppTextStyles.bodySemibold(context,
+                              color: AppColors.greenNormal,
+                            )
+                          : AppTextStyles.bodyRegular(context),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            side: BorderSide(
-              color: selected ? accentColor : Colors.transparent,
-              width: 1.4,
-            ),
-            backgroundColor: Colors.transparent,
           );
         },
-        separatorBuilder: (_, __) => SizedBox(width: spacing),
+        separatorBuilder: (_, __) => SizedBox(width: spacing.w),
         itemCount: categories.length,
       ),
     );
