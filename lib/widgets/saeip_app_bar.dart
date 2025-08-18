@@ -54,6 +54,7 @@ class SaeipAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         centerTitle: false,
         actions: [
+          ...(actions ?? []),
           IconButton(
             iconSize: 22.h,
             padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 14.h),
