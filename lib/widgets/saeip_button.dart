@@ -55,7 +55,6 @@ class SaeipButton extends StatelessWidget {
         ),
         backgroundColor: backgroundColor,
         minimumSize: Size(0, height.h),
-
         padding: EdgeInsets.symmetric(horizontal: 8.w),
       ),
       child: Text(
