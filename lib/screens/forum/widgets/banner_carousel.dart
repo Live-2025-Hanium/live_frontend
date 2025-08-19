@@ -160,12 +160,15 @@ class _BannerCarouselState extends State<BannerCarousel> {
                           child: Stack(
                             fit: StackFit.expand,
                             children: [
-                              InkWell(
-                                onTap: widget.onTap == null
-                                    ? null
-                                    : () => widget.onTap!(i),
-                                child: widget.itemBuilder(context, i),
+                              Material(
+                                child: InkWell(
+                                  onTap: widget.onTap == null
+                                      ? null
+                                      : () => widget.onTap!(i),
+                                  child: widget.itemBuilder(context, i),
+                                ),
                               ),
+
                               if (widget.enableScrim)
                                 Align(
                                   alignment: Alignment.bottomCenter,
