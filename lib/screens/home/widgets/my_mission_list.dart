@@ -97,9 +97,7 @@ class _MyMissionListState extends State<MyMissionList> {
                             MissionTime(scheduledTime: mission.scheduledTime),
                             Gap(12.w),
                             MissionRepeat(
-                              repeatInterval: mission.repeatDays
-                                  .map((e) => e.label)
-                                  .join(', '),
+                              repeatInterval: mission.repeatDay.label,
                             ),
                           ],
                         ),

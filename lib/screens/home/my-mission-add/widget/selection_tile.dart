@@ -9,6 +9,7 @@ class SelectionTile extends StatelessWidget {
   final String? selected;
   final bool include;
   final ValueChanged<bool> onToggle;
+  final Widget child;
 
   const SelectionTile({
     super.key,
@@ -16,6 +17,7 @@ class SelectionTile extends StatelessWidget {
     this.selected,
     required this.include,
     required this.onToggle,
+    required this.child,
   });
 
   @override
@@ -27,7 +29,6 @@ class SelectionTile extends StatelessWidget {
           value: include,
           onChanged: onToggle,
           inactiveTrackColor: AppColors.blackBlack2,
-          // inactiveTrackColor: Colors.transparent, // 검정색 테두리 제거
           inactiveThumbColor: Colors.white,
         ),
         title: Row(
@@ -37,7 +38,7 @@ class SelectionTile extends StatelessWidget {
               style: AppTextStyles.bodyRegular(context, color: Colors.black),
             ),
             Gap(30.w),
-            if (selected != null)
+            if (selected != null && include)
               Text(
                 selected!,
                 style: AppTextStyles.bodyRegular(
@@ -50,7 +51,7 @@ class SelectionTile extends StatelessWidget {
         minTileHeight: 48.h,
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
-        children: <Widget>[ListTile(title: Text('This is tile number 1'))],
+        children: [child],
       ),
     );
   }

@@ -13,21 +13,18 @@ MyMissionModel _$MyMissionModelFromJson(Map<String, dynamic> json) =>
       missionTitle: json['missionTitle'] as String,
       missionStatus: $enumDecode(_$MissionStatusEnumMap, json['missionStatus']),
       scheduledTime: json['scheduledTime'] as String,
-      repeatDays: (json['repeatDays'] as List<dynamic>)
-          .map((e) => $enumDecode(_$RepeatDayEnumMap, e))
-          .toList(),
+      repeatDay: $enumDecode(_$RepeatDayEnumMap, json['repeatDay']),
     );
 
-Map<String, dynamic> _$MyMissionModelToJson(
-  MyMissionModel instance,
-) => <String, dynamic>{
-  'userMissionId': instance.userMissionId,
-  'missionType': _$MissionTypeEnumMap[instance.missionType]!,
-  'missionTitle': instance.missionTitle,
-  'missionStatus': _$MissionStatusEnumMap[instance.missionStatus]!,
-  'scheduledTime': instance.scheduledTime,
-  'repeatDays': instance.repeatDays.map((e) => _$RepeatDayEnumMap[e]!).toList(),
-};
+Map<String, dynamic> _$MyMissionModelToJson(MyMissionModel instance) =>
+    <String, dynamic>{
+      'userMissionId': instance.userMissionId,
+      'missionType': _$MissionTypeEnumMap[instance.missionType]!,
+      'missionTitle': instance.missionTitle,
+      'missionStatus': _$MissionStatusEnumMap[instance.missionStatus]!,
+      'scheduledTime': instance.scheduledTime,
+      'repeatDay': _$RepeatDayEnumMap[instance.repeatDay]!,
+    };
 
 const _$MissionTypeEnumMap = {
   MissionType.my: 'MY',
@@ -65,9 +62,7 @@ MyMissionAddModel _$MyMissionAddModelFromJson(Map<String, dynamic> json) =>
           ? null
           : DateTime.parse(json['endDate'] as String),
       scheduledTime: json['scheduledTime'] as String?,
-      repeatDays: (json['repeatDays'] as List<dynamic>?)
-          ?.map((e) => $enumDecode(_$RepeatDayEnumMap, e))
-          .toList(),
+      repeatDay: $enumDecodeNullable(_$RepeatDayEnumMap, json['repeatDay']),
     );
 
 Map<String, dynamic> _$MyMissionAddModelToJson(MyMissionAddModel instance) =>
@@ -76,7 +71,5 @@ Map<String, dynamic> _$MyMissionAddModelToJson(MyMissionAddModel instance) =>
       'startDate': instance.startDate?.toIso8601String(),
       'endDate': instance.endDate?.toIso8601String(),
       'scheduledTime': instance.scheduledTime,
-      'repeatDays': instance.repeatDays
-          ?.map((e) => _$RepeatDayEnumMap[e]!)
-          .toList(),
+      'repeatDay': _$RepeatDayEnumMap[instance.repeatDay],
     };

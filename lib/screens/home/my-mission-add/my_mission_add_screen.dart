@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/screens/home/my-mission-add/widget/selection_tile.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
+import 'package:live_frontend/screens/home/my-mission-add/widget/date_picker.dart';
 
 class MyMissionAddScreen extends StatefulWidget {
   const MyMissionAddScreen({super.key});
@@ -16,24 +18,20 @@ class MyMissionAddScreen extends StatefulWidget {
 }
 
 class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
-  final MyMissionAddModel _mission = MyMissionAddModel(
-    missionTitle: null,
-    startDate: null,
-    endDate: null,
-    scheduledTime: null,
-    repeatDays: null,
-  );
-  // 선택 여부
-  final List<bool> _included = [
-    false, // 시작일
-    false, // 종료일
-    false, // 시간
-    false, // 반복
-  ];
+  late MyMissionAddModel _mission;
+  late List<bool> _included;
 
   @override
   void initState() {
     super.initState();
+    _mission = MyMissionAddModel(
+      missionTitle: null,
+      startDate: null,
+      endDate: null,
+      scheduledTime: null,
+      repeatDay: null,
+    );
+    _included = [false, false, false, false]; // 초기 선택 여부 설정
   }
 
   @override
@@ -44,7 +42,7 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
         child: Container(
           color: AppColors.blackBlack0,
           padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 40.h),
-          child: Column(
+          child: ListView(
             children: [
               TextField(
                 style: AppTextStyles.bodyRegular(context, color: Colors.black),
@@ -74,24 +72,47 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
               Gap(16.h),
               SelectionTile(
                 title: '시작일',
-                selected: _mission.startDate?.toString(),
+                // jiffy 사용해서 m월 d일로 표기하기. 오늘이면 오늘로 표기
+                selected: _dateToFormat(_mission.startDate),
                 include: _included[0],
                 onToggle: (value) {
                   setState(() {
                     _included[0] = value;
                   });
                 },
+                child: DatePicker(
+                  type: DatePickerType.start,
+                  startDate: _mission.startDate,
+                  endDate: _mission.endDate,
+                  selectedDate: _mission.startDate,
+                  onDateSelected: (date) {
+                    setState(() {
+                      _mission.startDate = date;
+                    });
+                  },
+                ),
               ),
               Gap(16.h),
               SelectionTile(
                 title: '종료일',
-                selected: _mission.endDate?.toString(),
+                selected: _dateToFormat(_mission.endDate),
                 include: _included[1],
                 onToggle: (value) {
                   setState(() {
                     _included[1] = value;
                   });
                 },
+                child: DatePicker(
+                  type: DatePickerType.end,
+                  startDate: _mission.startDate,
+                  endDate: _mission.endDate,
+                  selectedDate: _mission.endDate,
+                  onDateSelected: (date) {
+                    setState(() {
+                      _mission.endDate = date;
+                    });
+                  },
+                ),
               ),
               Gap(16.h),
               SelectionTile(
@@ -103,22 +124,41 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
                     _included[2] = value;
                   });
                 },
+                child: Text(
+                  _mission.scheduledTime ?? '선택 안함',
+                  style: AppTextStyles.bodyRegular(context),
+                ),
               ),
               Gap(16.h),
               SelectionTile(
                 title: '반복',
-                selected: _mission.repeatDays?.map((e) => e.label).join(', '),
+                selected: _mission.repeatDay?.label,
                 include: _included[3],
                 onToggle: (value) {
                   setState(() {
                     _included[3] = value;
                   });
                 },
+                child: Text(
+                  _mission.repeatDay?.label ?? '선택 안함',
+                  style: AppTextStyles.bodyRegular(context),
+                ),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  String? _dateToFormat(DateTime? date) {
+    if (date == null) {
+      return null;
+    } else if (Jiffy.parseFromDateTime(
+      date,
+    ).isSame(Jiffy.now(), unit: Unit.day)) {
+      return '오늘';
+    }
+    return Jiffy.parseFromDateTime(date).format(pattern: 'M월 d일');
   }
 }

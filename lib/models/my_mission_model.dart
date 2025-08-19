@@ -75,7 +75,7 @@ class MyMissionModel {
   /// 예시: ["08:30", "21:00"] (24시간 기준 권장)
   final String scheduledTime;
 
-  final List<RepeatDay> repeatDays;
+  final RepeatDay repeatDay;
 
   const MyMissionModel({
     required this.userMissionId,
@@ -83,7 +83,7 @@ class MyMissionModel {
     required this.missionTitle,
     required this.missionStatus,
     required this.scheduledTime,
-    required this.repeatDays,
+    required this.repeatDay,
   });
 
   factory MyMissionModel.fromJson(Map<String, dynamic> json) =>
@@ -97,7 +97,7 @@ class MyMissionModel {
     DateTime? startDate,
     DateTime? endDate,
     String? scheduledTime,
-    List<RepeatDay>? repeatDays,
+    RepeatDay? repeatDay,
     bool? active,
   }) {
     return MyMissionModel(
@@ -106,25 +106,25 @@ class MyMissionModel {
       missionTitle: missionTitle ?? this.missionTitle,
       missionStatus: missionStatus,
       scheduledTime: scheduledTime ?? this.scheduledTime,
-      repeatDays: repeatDays ?? this.repeatDays,
+      repeatDay: repeatDay ?? this.repeatDay,
     );
   }
 }
 
 @JsonSerializable()
 class MyMissionAddModel {
-  final String? missionTitle;
-  final DateTime? startDate;
-  final DateTime? endDate;
-  final String? scheduledTime;
-  final List<RepeatDay>? repeatDays;
+  String? missionTitle;
+  DateTime? startDate;
+  DateTime? endDate;
+  String? scheduledTime;
+  RepeatDay? repeatDay;
 
   MyMissionAddModel({
     this.missionTitle,
     this.startDate,
     this.endDate,
     this.scheduledTime,
-    this.repeatDays,
+    this.repeatDay,
   });
 
   factory MyMissionAddModel.fromJson(Map<String, dynamic> json) =>
