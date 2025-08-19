@@ -6,15 +6,30 @@ import 'package:live_frontend/theme/app_text_styles.dart';
 
 class SelectionTile extends StatelessWidget {
   final String title;
-  final String selected;
+  final String? selected;
+  final bool include;
+  final ValueChanged<bool> onToggle;
 
-  const SelectionTile({super.key, required this.title, required this.selected});
+  const SelectionTile({
+    super.key,
+    required this.title,
+    this.selected,
+    required this.include,
+    required this.onToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
       child: ExpansionTile(
+        trailing: Switch(
+          value: include,
+          onChanged: onToggle,
+          inactiveTrackColor: AppColors.blackBlack2,
+          // inactiveTrackColor: Colors.transparent, // 검정색 테두리 제거
+          inactiveThumbColor: Colors.white,
+        ),
         title: Row(
           children: [
             Text(
@@ -22,13 +37,14 @@ class SelectionTile extends StatelessWidget {
               style: AppTextStyles.bodyRegular(context, color: Colors.black),
             ),
             Gap(30.w),
-            Text(
-              selected,
-              style: AppTextStyles.bodyRegular(
-                context,
-                color: AppColors.greenNormal,
+            if (selected != null)
+              Text(
+                selected!,
+                style: AppTextStyles.bodyRegular(
+                  context,
+                  color: AppColors.greenNormal,
+                ),
               ),
-            ),
           ],
         ),
         minTileHeight: 48.h,

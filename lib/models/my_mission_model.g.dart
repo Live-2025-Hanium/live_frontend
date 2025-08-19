@@ -50,4 +50,33 @@ const _$RepeatDayEnumMap = {
   RepeatDay.friday: 'FRIDAY',
   RepeatDay.saturday: 'SATURDAY',
   RepeatDay.sunday: 'SUNDAY',
+  RepeatDay.everyday: 'EVERYDAY',
+  RepeatDay.weekdays: 'WEEKDAYS',
+  RepeatDay.weekend: 'WEEKEND',
 };
+
+MyMissionAddModel _$MyMissionAddModelFromJson(Map<String, dynamic> json) =>
+    MyMissionAddModel(
+      missionTitle: json['missionTitle'] as String?,
+      startDate: json['startDate'] == null
+          ? null
+          : DateTime.parse(json['startDate'] as String),
+      endDate: json['endDate'] == null
+          ? null
+          : DateTime.parse(json['endDate'] as String),
+      scheduledTime: json['scheduledTime'] as String?,
+      repeatDays: (json['repeatDays'] as List<dynamic>?)
+          ?.map((e) => $enumDecode(_$RepeatDayEnumMap, e))
+          .toList(),
+    );
+
+Map<String, dynamic> _$MyMissionAddModelToJson(MyMissionAddModel instance) =>
+    <String, dynamic>{
+      'missionTitle': instance.missionTitle,
+      'startDate': instance.startDate?.toIso8601String(),
+      'endDate': instance.endDate?.toIso8601String(),
+      'scheduledTime': instance.scheduledTime,
+      'repeatDays': instance.repeatDays
+          ?.map((e) => _$RepeatDayEnumMap[e]!)
+          .toList(),
+    };

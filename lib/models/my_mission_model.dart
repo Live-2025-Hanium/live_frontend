@@ -22,25 +22,37 @@ enum RepeatDay {
   saturday,
   @JsonValue('SUNDAY')
   sunday,
+  @JsonValue('EVERYDAY')
+  everyday,
+  @JsonValue('WEEKDAYS')
+  weekdays,
+  @JsonValue('WEEKEND')
+  weekend,
 }
 
 extension RepeatDayLabel on RepeatDay {
   String get label {
     switch (this) {
       case RepeatDay.monday:
-        return '월요일';
+        return '월요일마다';
       case RepeatDay.tuesday:
-        return '화요일';
+        return '화요일마다';
       case RepeatDay.wednesday:
-        return '수요일';
+        return '수요일마다';
       case RepeatDay.thursday:
-        return '목요일';
+        return '목요일마다';
       case RepeatDay.friday:
-        return '금요일';
+        return '금요일마다';
       case RepeatDay.saturday:
-        return '토요일';
+        return '토요일마다';
       case RepeatDay.sunday:
-        return '일요일';
+        return '일요일마다';
+      case RepeatDay.everyday:
+        return '매일마다';
+      case RepeatDay.weekdays:
+        return '평일마다';
+      case RepeatDay.weekend:
+        return '주말마다';
     }
   }
 }
@@ -97,4 +109,26 @@ class MyMissionModel {
       repeatDays: repeatDays ?? this.repeatDays,
     );
   }
+}
+
+@JsonSerializable()
+class MyMissionAddModel {
+  final String? missionTitle;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final String? scheduledTime;
+  final List<RepeatDay>? repeatDays;
+
+  MyMissionAddModel({
+    this.missionTitle,
+    this.startDate,
+    this.endDate,
+    this.scheduledTime,
+    this.repeatDays,
+  });
+
+  factory MyMissionAddModel.fromJson(Map<String, dynamic> json) =>
+      _$MyMissionAddModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MyMissionAddModelToJson(this);
 }

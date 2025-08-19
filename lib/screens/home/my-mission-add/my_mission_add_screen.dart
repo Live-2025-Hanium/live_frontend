@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/screens/home/my-mission-add/widget/selection_tile.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
@@ -15,6 +16,26 @@ class MyMissionAddScreen extends StatefulWidget {
 }
 
 class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
+  final MyMissionAddModel _mission = MyMissionAddModel(
+    missionTitle: null,
+    startDate: null,
+    endDate: null,
+    scheduledTime: null,
+    repeatDays: null,
+  );
+  // 선택 여부
+  final List<bool> _included = [
+    false, // 시작일
+    false, // 종료일
+    false, // 시간
+    false, // 반복
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,13 +72,49 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
                 inputFormatters: [LengthLimitingTextInputFormatter(20)],
               ),
               Gap(16.h),
-              SelectionTile(title: '시작일', selected: '2023-01-01'),
+              SelectionTile(
+                title: '시작일',
+                selected: _mission.startDate?.toString(),
+                include: _included[0],
+                onToggle: (value) {
+                  setState(() {
+                    _included[0] = value;
+                  });
+                },
+              ),
               Gap(16.h),
-              SelectionTile(title: '종료일', selected: '2023-01-01'),
+              SelectionTile(
+                title: '종료일',
+                selected: _mission.endDate?.toString(),
+                include: _included[1],
+                onToggle: (value) {
+                  setState(() {
+                    _included[1] = value;
+                  });
+                },
+              ),
               Gap(16.h),
-              SelectionTile(title: '시간', selected: '09:00'),
+              SelectionTile(
+                title: '시간',
+                selected: _mission.scheduledTime,
+                include: _included[2],
+                onToggle: (value) {
+                  setState(() {
+                    _included[2] = value;
+                  });
+                },
+              ),
               Gap(16.h),
-              SelectionTile(title: '반복', selected: '매일'),
+              SelectionTile(
+                title: '반복',
+                selected: _mission.repeatDays?.map((e) => e.label).join(', '),
+                include: _included[3],
+                onToggle: (value) {
+                  setState(() {
+                    _included[3] = value;
+                  });
+                },
+              ),
             ],
           ),
         ),
