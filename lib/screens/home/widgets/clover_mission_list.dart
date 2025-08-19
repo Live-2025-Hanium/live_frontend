@@ -19,11 +19,39 @@ class CloverMissionList extends StatefulWidget {
 
 class _CloverMissionListState extends State<CloverMissionList> {
   bool showNewCloverMission = false;
+  late List<CloverMissionModel> _sortedMissions;
 
   @override
   void initState() {
     super.initState();
+    _rebuildSorted();
     showNewCloverMission = isMissionAllCompleted();
+  }
+
+  @override
+  void didUpdateWidget(covariant CloverMissionList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // 외부에서 missionList가 바뀌면 다시 정렬
+    if (oldWidget.missionList != widget.missionList) {
+      _rebuildSorted();
+    }
+  }
+
+  void _rebuildSorted() {
+    _sortedMissions = List<CloverMissionModel>.of(widget.missionList)
+      ..sort(_missionComparator);
+  }
+
+  int _missionComparator(CloverMissionModel a, CloverMissionModel b) {
+    // null 안전: status가 null이면 가장 뒤로 밀기
+    final aRank = a.missionStatus.index;
+    final bRank = b.missionStatus.index;
+    if (aRank != bRank) return aRank - bRank;
+
+    // null/대소문자 안전한 제목 비교
+    final at = a.missionTitle.toLowerCase();
+    final bt = b.missionTitle.toLowerCase();
+    return at.compareTo(bt);
   }
 
   bool isMissionAllCompleted() {
@@ -43,7 +71,7 @@ class _CloverMissionListState extends State<CloverMissionList> {
             'Clover',
             style: AppTextStyles.titleMedium(context, color: Colors.black),
           ),
-          Gap(8),
+          Gap(8.h),
           if (showNewCloverMission)
             ElevatedButton(
               onPressed: () => {},
@@ -61,8 +89,8 @@ class _CloverMissionListState extends State<CloverMissionList> {
                 style: AppTextStyles.bodyRegular(context, color: Colors.black),
               ),
             ),
-          Gap(8),
-          ...widget.missionList.map((mission) {
+          Gap(8.h),
+          ..._sortedMissions.map((mission) {
             return Column(
               children: [
                 MissionTile(
