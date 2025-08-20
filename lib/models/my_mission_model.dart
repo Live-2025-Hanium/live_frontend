@@ -127,6 +127,29 @@ class MyMissionAddModel {
     this.repeatDay,
   });
 
+  static DateTime parseTime(String? time) {
+    if (time == null || time.isEmpty) {
+      return DateTime.now();
+    }
+    final parts = time.split(':');
+    if (parts.length != 2) {
+      throw FormatException('Invalid time format');
+    }
+    final hours = int.tryParse(parts[0]);
+    final minutes = int.tryParse(parts[1]);
+    if (hours == null || minutes == null) {
+      throw FormatException('Invalid time format');
+    }
+    return DateTime(0, 0, 0, hours, minutes);
+  }
+
+  static String formatTime(DateTime? dateTime) {
+    if (dateTime == null) {
+      return '00:00';
+    }
+    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+  }
+
   factory MyMissionAddModel.fromJson(Map<String, dynamic> json) =>
       _$MyMissionAddModelFromJson(json);
 

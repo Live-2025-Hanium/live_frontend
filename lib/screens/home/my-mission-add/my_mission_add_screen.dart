@@ -9,6 +9,7 @@ import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/screens/home/my-mission-add/widget/date_picker.dart';
+import 'package:time_picker_spinner/time_picker_spinner.dart';
 
 class MyMissionAddScreen extends StatefulWidget {
   const MyMissionAddScreen({super.key});
@@ -72,7 +73,6 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
               Gap(16.h),
               SelectionTile(
                 title: '시작일',
-                // jiffy 사용해서 m월 d일로 표기하기. 오늘이면 오늘로 표기
                 selected: _dateToFormat(_mission.startDate),
                 include: _included[0],
                 onToggle: (value) {
@@ -116,7 +116,7 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
               ),
               Gap(16.h),
               SelectionTile(
-                title: '시간',
+                title: '시간   ',
                 selected: _mission.scheduledTime,
                 include: _included[2],
                 onToggle: (value) {
@@ -124,9 +124,30 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
                     _included[2] = value;
                   });
                 },
-                child: Text(
-                  _mission.scheduledTime ?? '선택 안함',
-                  style: AppTextStyles.bodyRegular(context),
+                child: TimePickerSpinner(
+                  locale: const Locale('en', ''),
+                  time: MyMissionAddModel.parseTime(
+                    _mission.scheduledTime ?? '',
+                  ),
+                  is24HourMode: false,
+                  itemHeight: 70,
+                  spacing: 25,
+                  normalTextStyle: AppTextStyles.bodyMedium(
+                    context,
+                    color: AppColors.blackBlack5,
+                  ),
+                  highlightedTextStyle: AppTextStyles.subtitleMedium(
+                    context,
+                    color: Colors.black,
+                  ),
+                  isForce2Digits: true,
+                  onTimeChange: (time) {
+                    setState(() {
+                      _mission.scheduledTime = MyMissionAddModel.formatTime(
+                        time,
+                      );
+                    });
+                  },
                 ),
               ),
               Gap(16.h),

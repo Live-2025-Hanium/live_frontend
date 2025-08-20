@@ -37,7 +37,7 @@ class SelectionTile extends StatelessWidget {
               title,
               style: AppTextStyles.bodyRegular(context, color: Colors.black),
             ),
-            Gap(30.w),
+            Gap(16.w),
             if (selected != null && include)
               Text(
                 selected!,
