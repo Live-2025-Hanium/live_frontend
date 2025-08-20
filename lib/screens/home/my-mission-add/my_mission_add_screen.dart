@@ -10,6 +10,7 @@ import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/screens/home/my-mission-add/widget/date_picker.dart';
+import 'package:live_frontend/widgets/saeip_button.dart';
 import 'package:time_picker_spinner/time_picker_spinner.dart';
 import 'package:go_router/go_router.dart';
 
@@ -41,10 +42,23 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: SaeipAppBar(title: '마이 미션 추가'),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(
+          left: 16.w,
+          right: 16.w,
+          bottom: 24.h,
+        ), // 기본 하단 패딩이 16임
+        child: SizedBox(
+          width: double.infinity,
+          height: 48.h,
+          child: SaeipButton(text: '저장', onPressed: () {}),
+        ),
+      ),
       body: SafeArea(
         child: Container(
           color: AppColors.blackBlack0,
-          padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 40.h),
+          padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 120.h),
           child: ListView(
             children: [
               TextField(
