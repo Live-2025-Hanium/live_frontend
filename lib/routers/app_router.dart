@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/screens/404/not_found_screen.dart';
 import 'package:live_frontend/screens/forum/forum_screen.dart';
 import 'package:live_frontend/screens/home/clover-record/mission_record_screen.dart';
 import 'package:live_frontend/screens/home/execute/execute_photo_mission_screen.dart';
 import 'package:live_frontend/screens/home/execute/execute_timer_mission_screen.dart';
 import 'package:live_frontend/screens/home/my-mission-add/my_mission_add_screen.dart';
+import 'package:live_frontend/screens/home/my-mission-add/repeat/repeat_screen.dart';
 import 'package:live_frontend/screens/map/map_screen.dart';
 import 'package:live_frontend/screens/mypage/mypage_screen.dart';
 import 'package:live_frontend/screens/statistics/statistics_screen.dart';
@@ -116,6 +118,15 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) {
               return MyMissionAddScreen();
             },
+            routes: [
+              GoRoute(
+                path: 'repeat',
+                name: 'repeat',
+                builder: (context, state) {
+                  return RepeatScreen(initial: state.extra as RepeatDay?);
+                },
+              ),
+            ],
           ),
         ],
       ),

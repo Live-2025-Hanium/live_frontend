@@ -4,12 +4,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
+import 'package:live_frontend/screens/home/my-mission-add/widget/selection_button.dart';
 import 'package:live_frontend/screens/home/my-mission-add/widget/selection_tile.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/screens/home/my-mission-add/widget/date_picker.dart';
 import 'package:time_picker_spinner/time_picker_spinner.dart';
+import 'package:go_router/go_router.dart';
 
 class MyMissionAddScreen extends StatefulWidget {
   const MyMissionAddScreen({super.key});
@@ -151,7 +153,7 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
                 ),
               ),
               Gap(16.h),
-              SelectionTile(
+              SelectionButton(
                 title: '반복',
                 selected: _mission.repeatDay?.label,
                 include: _included[3],
@@ -160,10 +162,17 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
                     _included[3] = value;
                   });
                 },
-                child: Text(
-                  _mission.repeatDay?.label ?? '선택 안함',
-                  style: AppTextStyles.bodyRegular(context),
-                ),
+                onPressed: () async {
+                  final result = await context.pushNamed(
+                    'repeat',
+                    extra: _mission.repeatDay,
+                  );
+                  if (result != null && result is RepeatDay) {
+                    setState(() {
+                      _mission.repeatDay = result;
+                    });
+                  }
+                },
               ),
             ],
           ),
