@@ -73,3 +73,23 @@ Map<String, dynamic> _$MyMissionAddModelToJson(MyMissionAddModel instance) =>
       'scheduledTime': instance.scheduledTime,
       'repeatDay': _$RepeatDayEnumMap[instance.repeatDay],
     };
+
+MyMissionAddPayloadModel _$MyMissionAddPayloadModelFromJson(
+  Map<String, dynamic> json,
+) => MyMissionAddPayloadModel(
+  missionTitle: json['missionTitle'] as String,
+  startDate: json['startDate'] as String?,
+  endDate: json['endDate'] as String?,
+  scheduledTime: json['scheduledTime'] as String?,
+  repeatDay: $enumDecodeNullable(_$RepeatDayEnumMap, json['repeatDay']),
+);
+
+Map<String, dynamic> _$MyMissionAddPayloadModelToJson(
+  MyMissionAddPayloadModel instance,
+) => <String, dynamic>{
+  'missionTitle': instance.missionTitle,
+  'startDate': instance.startDate,
+  'endDate': instance.endDate,
+  'scheduledTime': instance.scheduledTime,
+  'repeatDay': _$RepeatDayEnumMap[instance.repeatDay],
+};

@@ -11,6 +11,7 @@ import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/screens/home/my-mission-add/widget/date_picker.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
+import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 import 'package:time_picker_spinner/time_picker_spinner.dart';
 import 'package:go_router/go_router.dart';
 
@@ -25,6 +26,9 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
   late MyMissionAddModel _mission;
   late List<bool> _included;
 
+  // 1) TextField controller로 값 관리
+  late final TextEditingController _titleController;
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +39,92 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
       scheduledTime: null,
       repeatDay: null,
     );
-    _included = [false, false, false, false]; // 초기 선택 여부 설정
+    _included = [false, false, false, false]; // 시작일, 종료일, 시간, 반복
+    _titleController = TextEditingController(text: _mission.missionTitle ?? '');
+    _titleController.addListener(() {
+      _mission.missionTitle = _titleController.text;
+    });
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    super.dispose();
+  }
+
+  // 3) _included에 따라 실제 존재하는지 판단하는 getter
+  bool get _effectiveStartPresent => _included[0] && _mission.startDate != null;
+  bool get _effectiveEndPresent => _included[1] && _mission.endDate != null;
+
+  void _showError(String message) {
+    SaeipToastController.showMessage(context, message);
+  }
+
+  // 2) 버튼 클릭 시 validation
+  bool _validateBeforeSave() {
+    final title = _titleController.text.trim();
+    if (title.length < 2) {
+      _showError('제목을 두 글자 이상 입력해주세요.');
+      return false;
+    }
+
+    // 시작/종료는 각각 _included가 false면 "없음"으로 간주
+    // 둘 중 하나만 존재하면 에러
+    if (_effectiveStartPresent != _effectiveEndPresent) {
+      if (!_effectiveStartPresent && _effectiveEndPresent) {
+        _showError('시작일을 선택해주세요.');
+      } else if (_effectiveStartPresent && !_effectiveEndPresent) {
+        _showError('종료일을 선택해주세요.');
+      }
+      return false;
+    }
+    if (_included[0] && _mission.startDate == null) {
+      _showError('시작일을 선택해주세요.');
+      return false;
+    }
+    if (_included[1] && _mission.endDate == null) {
+      _showError('종료일을 선택해주세요.');
+      return false;
+    }
+    if (_included[2] && _mission.scheduledTime == null) {
+      _showError('시간을 선택해주세요.');
+      return false;
+    }
+    if (_included[3] && _mission.repeatDay == null) {
+      _showError('반복 설정을 선택해주세요.');
+      return false;
+    }
+
+    // 시작일이 종료일보다 늦으면 에러
+    if (_effectiveStartPresent &&
+        _effectiveEndPresent &&
+        _mission.startDate!.isAfter(_mission.endDate!)) {
+      _showError('시작일은 종료일보다 이전이어야 합니다.');
+      return false;
+    }
+    return true;
+  }
+
+  void _onSavePressed() {
+    if (!_validateBeforeSave()) return;
+    MyMissionAddPayloadModel payload = MyMissionAddPayloadModel(
+      missionTitle: _titleController.text.trim(),
+      startDate: _mission.startDate != null && _included[0]
+          ? Jiffy.parseFromDateTime(
+              _mission.startDate!,
+            ).format(pattern: 'yyyy-MM-DD')
+          : null,
+      endDate: _mission.endDate != null && _included[1]
+          ? Jiffy.parseFromDateTime(
+              _mission.endDate!,
+            ).format(pattern: 'yyyy-MM-DD')
+          : null,
+      scheduledTime: _included[2] ? _mission.scheduledTime : null,
+      repeatDay: _included[3] ? _mission.repeatDay : null,
+    );
+
+    // 로그로 json 출력하기
+    debugPrint(payload.toJson().toString());
   }
 
   @override
@@ -52,7 +141,7 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
         child: SizedBox(
           width: double.infinity,
           height: 48.h,
-          child: SaeipButton(text: '저장', onPressed: () {}),
+          child: SaeipButton(text: '저장', onPressed: _onSavePressed),
         ),
       ),
       body: SafeArea(
@@ -61,7 +150,9 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
           padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 120.h),
           child: ListView(
             children: [
+              // 1) controller 연결된 TextField
               TextField(
+                controller: _titleController,
                 style: AppTextStyles.bodyRegular(context, color: Colors.black),
                 decoration: InputDecoration(
                   hintText: '제목',
@@ -72,14 +163,14 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(4.r),
                     borderSide: BorderSide(
-                      color: AppColors.greenLightActive, // 비활성(포커스X)일 때 색상
+                      color: AppColors.greenLightActive,
                       width: 1.w,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(4.r),
                     borderSide: BorderSide(
-                      color: AppColors.greenLightActive, // 포커스일 때 색상
+                      color: AppColors.greenLightActive,
                       width: 1.w,
                     ),
                   ),
@@ -94,6 +185,7 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
                 onToggle: (value) {
                   setState(() {
                     _included[0] = value;
+                    _included[1] = value;
                   });
                 },
                 child: DatePicker(
@@ -115,6 +207,7 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
                 include: _included[1],
                 onToggle: (value) {
                   setState(() {
+                    _included[0] = value;
                     _included[1] = value;
                   });
                 },

@@ -22,14 +22,19 @@ class DatePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final firstDay = type == DatePickerType.end && startDate != null
+        ? startDate!.add(const Duration(days: 1))
+        : DateTime.now();
+    final lastDay = type == DatePickerType.start && endDate != null
+        ? endDate!.subtract(const Duration(days: 1))
+        : DateTime.utc(2100, 12, 31);
+    DateTime focusedDay = selectedDate ?? DateTime.now();
+    if (focusedDay.isBefore(firstDay)) focusedDay = firstDay;
+    if (focusedDay.isAfter(lastDay)) focusedDay = lastDay;
     return TableCalendar(
-      firstDay: type == DatePickerType.start
-          ? DateTime.utc(2000, 1, 1)
-          : startDate ?? DateTime.utc(2000, 1, 1),
-      lastDay: type == DatePickerType.end
-          ? DateTime.utc(2100, 12, 31)
-          : endDate ?? DateTime.utc(2100, 12, 31),
-      focusedDay: selectedDate ?? DateTime.now(),
+      firstDay: firstDay,
+      lastDay: lastDay,
+      focusedDay: focusedDay,
       calendarFormat: CalendarFormat.month,
       selectedDayPredicate: (day) =>
           selectedDate != null && isSameDay(day, selectedDate),

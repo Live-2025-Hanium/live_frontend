@@ -155,3 +155,25 @@ class MyMissionAddModel {
 
   Map<String, dynamic> toJson() => _$MyMissionAddModelToJson(this);
 }
+
+@JsonSerializable()
+class MyMissionAddPayloadModel {
+  final String missionTitle;
+  final String? startDate;
+  final String? endDate;
+  final String? scheduledTime;
+  final RepeatDay? repeatDay;
+
+  MyMissionAddPayloadModel({
+    required this.missionTitle,
+    this.startDate,
+    this.endDate,
+    this.scheduledTime,
+    this.repeatDay,
+  });
+
+  factory MyMissionAddPayloadModel.fromJson(Map<String, dynamic> json) =>
+      _$MyMissionAddPayloadModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MyMissionAddPayloadModelToJson(this);
+}
