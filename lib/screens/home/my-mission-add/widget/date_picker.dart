@@ -5,32 +5,35 @@ import 'package:live_frontend/theme/app_colors.dart';
 enum DatePickerType { start, end }
 
 class DatePicker extends StatelessWidget {
-  final DateTime? selectedDate;
-  final ValueChanged<DateTime> onDateSelected;
+  final DatePickerType type;
   final DateTime? startDate;
   final DateTime? endDate;
-  final DatePickerType type;
+  final DateTime? selectedDate;
+  final ValueChanged<DateTime> onDateSelected;
 
   const DatePicker({
     super.key,
-    this.selectedDate,
-    required this.onDateSelected,
+    required this.type,
     this.startDate,
     this.endDate,
-    required this.type,
+    this.selectedDate,
+    required this.onDateSelected,
   });
 
   @override
   Widget build(BuildContext context) {
-    final firstDay = type == DatePickerType.end && startDate != null
-        ? startDate!.add(const Duration(days: 1))
+    // compute valid range
+    final firstDay = (type == DatePickerType.end && startDate != null)
+        ? startDate!
         : DateTime.now();
-    final lastDay = type == DatePickerType.start && endDate != null
-        ? endDate!.subtract(const Duration(days: 1))
+    final lastDay = (type == DatePickerType.start && endDate != null)
+        ? endDate!
         : DateTime.utc(2100, 12, 31);
+
     DateTime focusedDay = selectedDate ?? DateTime.now();
     if (focusedDay.isBefore(firstDay)) focusedDay = firstDay;
     if (focusedDay.isAfter(lastDay)) focusedDay = lastDay;
+
     return TableCalendar(
       firstDay: firstDay,
       lastDay: lastDay,
@@ -38,10 +41,12 @@ class DatePicker extends StatelessWidget {
       calendarFormat: CalendarFormat.month,
       selectedDayPredicate: (day) =>
           selectedDate != null && isSameDay(day, selectedDate),
-      onDaySelected: (selectedDay, focusedDay) {
-        onDateSelected(selectedDay);
-      },
-      headerStyle: HeaderStyle(formatButtonVisible: false, titleCentered: true),
+      onDaySelected: (selectedDay, _) => onDateSelected(selectedDay),
+      headerStyle: const HeaderStyle(
+        formatButtonVisible: false,
+        titleCentered: true,
+      ),
+      availableGestures: AvailableGestures.horizontalSwipe,
       calendarStyle: CalendarStyle(
         todayDecoration: BoxDecoration(
           color: AppColors.greenDarker,
