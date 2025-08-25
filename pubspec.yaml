@@ -60,6 +60,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   carousel_slider: ^5.1.1
+  table_calendar: ^3.2.0
+  time_picker_spinner: ^1.0.2
 
 dev_dependencies:
   flutter_test:

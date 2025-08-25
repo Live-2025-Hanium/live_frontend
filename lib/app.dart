@@ -36,6 +36,9 @@ class MyApp extends ConsumerWidget {
             checkboxTheme: CheckboxThemeData(
               side: const BorderSide(color: AppColors.greenNormal),
             ),
+            switchTheme: SwitchThemeData(
+              trackOutlineColor: WidgetStateProperty.all(AppColors.blackBlack2),
+            ),
             colorScheme: saeipColorScheme,
             useMaterial3: true,
           ),

@@ -9,7 +9,7 @@ class MyPageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: SaeipAppBar(title: 'My Page'),
-      body: const Center(child: Text('마이페이지')),
+      body: Center(child: Text('My Page Content')),
       bottomNavigationBar: const SaeipNavigationBar(initialIndex: 4),
     );
   }
