@@ -1,22 +1,25 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:live_frontend/screens/home/execute/widgets/complete_modal.dart';
 import 'package:live_frontend/screens/home/execute/widgets/execute_screen_template.dart';
 import 'package:live_frontend/screens/home/execute/widgets/pause_modal.dart';
 
-class ExecutePhotoMissionScreen extends StatefulWidget {
+class ExecutePhotoMissionScreen extends ConsumerStatefulWidget {
   const ExecutePhotoMissionScreen({super.key, required this.id});
 
   final int id;
   @override
-  State<ExecutePhotoMissionScreen> createState() =>
+  ConsumerState<ExecutePhotoMissionScreen> createState() =>
       _ExecutePhotoMissionScreenState();
 }
 
-class _ExecutePhotoMissionScreenState extends State<ExecutePhotoMissionScreen> {
+class _ExecutePhotoMissionScreenState
+    extends ConsumerState<ExecutePhotoMissionScreen> {
   final ImagePicker _picker = ImagePicker();
   File? _imageFile;
+  bool _shown = false;
 
   Future<void> _takePhoto() async {
     final XFile? photo = await _picker.pickImage(
@@ -29,6 +32,7 @@ class _ExecutePhotoMissionScreenState extends State<ExecutePhotoMissionScreen> {
     if (photo != null) {
       setState(() {
         _imageFile = File(photo.path);
+        _shown = false;
       });
       // 이후 백엔드에 이미지 전송
       // 예: await uploadImage(_imageFile);
@@ -37,12 +41,13 @@ class _ExecutePhotoMissionScreenState extends State<ExecutePhotoMissionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_imageFile != null) {
+    if (_imageFile != null && !_shown) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        _shown = true;
         showDialog(
           context: context,
           builder: (context) {
-            return CompleteModal();
+            return CompleteModal(userMissionId: widget.id);
           },
         );
       });
