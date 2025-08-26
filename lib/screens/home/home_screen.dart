@@ -2,19 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:jiffy/jiffy.dart';
-import 'package:live_frontend/models/clover_mission_model.dart';
 import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/providers/home_provider.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission_list.dart';
-import 'package:live_frontend/screens/home/widgets/clover_mission/new_clover_mission_modal.dart';
 import 'package:live_frontend/screens/home/widgets/home_profile.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission_list.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 List<MyMissionModel> myMissionList = [
   MyMissionModel(
@@ -71,7 +67,7 @@ class HomeScreen extends ConsumerWidget {
                 Gap(16.h),
                 CloverMissionList(),
                 Gap(16.h),
-                MyMissionList(missionList: myMissionList),
+                MyMissionList(),
               ],
             ),
           ),

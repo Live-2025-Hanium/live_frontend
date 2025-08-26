@@ -12,8 +12,6 @@ import 'package:live_frontend/screens/home/widgets/mission_tile.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
-import 'package:live_frontend/widgets/saeip_toast.dart';
-import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 
 class CloverMissionList extends ConsumerStatefulWidget {
   const CloverMissionList({super.key});

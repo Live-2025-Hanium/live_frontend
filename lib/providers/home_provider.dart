@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
 import 'package:live_frontend/models/mission_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:live_frontend/models/my_mission_model.dart';
 
 part 'home_provider.g.dart';
 
@@ -199,3 +201,73 @@ class CloverMissionNotifier extends _$CloverMissionNotifier {
     return newMission;
   }
 }
+
+// Manual StateNotifier-based provider for MyMissionModel list (no codegen)
+class MyMissionNotifier
+    extends StateNotifier<AsyncValue<List<MyMissionModel>>> {
+  MyMissionNotifier() : super(const AsyncValue.loading()) {
+    _init();
+  }
+
+  Future<void> _init() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    state = AsyncValue.data([
+      MyMissionModel(
+        userMissionId: 100,
+        missionType: MissionType.my,
+        missionTitle: '아침 스트레칭 10분',
+        missionStatus: MissionStatus.assigned,
+        scheduledTime: '08:30',
+        repeatDays: [RepeatDay.monday, RepeatDay.wednesday, RepeatDay.friday],
+      ),
+      MyMissionModel(
+        userMissionId: 100,
+        missionType: MissionType.my,
+        missionTitle: '아침 스트레칭 10분',
+        missionStatus: MissionStatus.assigned,
+        scheduledTime: '08:30',
+        repeatDays: [RepeatDay.monday, RepeatDay.wednesday, RepeatDay.friday],
+      ),
+    ]);
+  }
+
+  Future<void> addMyMission(MyMissionModel mission) async {
+    final current = state.valueOrNull ?? [];
+    await Future.delayed(const Duration(milliseconds: 200));
+    state = AsyncValue.data([...current, mission]);
+  }
+
+  Future<void> updateMyMission(MyMissionModel mission) async {
+    final current = state.valueOrNull;
+    if (current == null) return;
+    await Future.delayed(const Duration(milliseconds: 200));
+    state = AsyncValue.data([
+      for (final m in current)
+        if (m.userMissionId == mission.userMissionId) mission else m,
+    ]);
+  }
+
+  Future<void> removeMyMission(int userMissionId) async {
+    final current = state.valueOrNull;
+    if (current == null) return;
+    await Future.delayed(const Duration(milliseconds: 200));
+    state = AsyncValue.data(
+      current.where((m) => m.userMissionId != userMissionId).toList(),
+    );
+  }
+
+  MyMissionModel? getMyMissionById(int userMissionId) {
+    final current = state.valueOrNull;
+    if (current == null) return null;
+    try {
+      return current.firstWhere((m) => m.userMissionId == userMissionId);
+    } catch (_) {
+      return null;
+    }
+  }
+}
+
+final myMissionNotifierProvider =
+    StateNotifierProvider<MyMissionNotifier, AsyncValue<List<MyMissionModel>>>(
+      (ref) => MyMissionNotifier(),
+    );
