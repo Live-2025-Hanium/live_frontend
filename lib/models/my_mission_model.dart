@@ -22,25 +22,37 @@ enum RepeatDay {
   saturday,
   @JsonValue('SUNDAY')
   sunday,
+  @JsonValue('EVERYDAY')
+  everyday,
+  @JsonValue('WEEKDAYS')
+  weekdays,
+  @JsonValue('WEEKEND')
+  weekend,
 }
 
 extension RepeatDayLabel on RepeatDay {
   String get label {
     switch (this) {
       case RepeatDay.monday:
-        return '월요일';
+        return '월요일마다';
       case RepeatDay.tuesday:
-        return '화요일';
+        return '화요일마다';
       case RepeatDay.wednesday:
-        return '수요일';
+        return '수요일마다';
       case RepeatDay.thursday:
-        return '목요일';
+        return '목요일마다';
       case RepeatDay.friday:
-        return '금요일';
+        return '금요일마다';
       case RepeatDay.saturday:
-        return '토요일';
+        return '토요일마다';
       case RepeatDay.sunday:
-        return '일요일';
+        return '일요일마다';
+      case RepeatDay.everyday:
+        return '매일마다';
+      case RepeatDay.weekdays:
+        return '평일마다';
+      case RepeatDay.weekend:
+        return '주말마다';
     }
   }
 }
@@ -63,7 +75,7 @@ class MyMissionModel {
   /// 예시: ["08:30", "21:00"] (24시간 기준 권장)
   final String scheduledTime;
 
-  final List<RepeatDay> repeatDays;
+  final RepeatDay repeatDay;
 
   const MyMissionModel({
     required this.userMissionId,
@@ -71,7 +83,7 @@ class MyMissionModel {
     required this.missionTitle,
     required this.missionStatus,
     required this.scheduledTime,
-    required this.repeatDays,
+    required this.repeatDay,
   });
 
   factory MyMissionModel.fromJson(Map<String, dynamic> json) =>
@@ -85,7 +97,7 @@ class MyMissionModel {
     DateTime? startDate,
     DateTime? endDate,
     String? scheduledTime,
-    List<RepeatDay>? repeatDays,
+    RepeatDay? repeatDay,
     bool? active,
   }) {
     return MyMissionModel(
@@ -94,7 +106,74 @@ class MyMissionModel {
       missionTitle: missionTitle ?? this.missionTitle,
       missionStatus: missionStatus,
       scheduledTime: scheduledTime ?? this.scheduledTime,
-      repeatDays: repeatDays ?? this.repeatDays,
+      repeatDay: repeatDay ?? this.repeatDay,
     );
   }
+}
+
+@JsonSerializable()
+class MyMissionAddModel {
+  String? missionTitle;
+  DateTime? startDate;
+  DateTime? endDate;
+  String? scheduledTime;
+  RepeatDay? repeatDay;
+
+  MyMissionAddModel({
+    this.missionTitle,
+    this.startDate,
+    this.endDate,
+    this.scheduledTime,
+    this.repeatDay,
+  });
+
+  static DateTime parseTime(String? time) {
+    if (time == null || time.isEmpty) {
+      return DateTime.now();
+    }
+    final parts = time.split(':');
+    if (parts.length != 2) {
+      throw FormatException('Invalid time format');
+    }
+    final hours = int.tryParse(parts[0]);
+    final minutes = int.tryParse(parts[1]);
+    if (hours == null || minutes == null) {
+      throw FormatException('Invalid time format');
+    }
+    return DateTime(0, 0, 0, hours, minutes);
+  }
+
+  static String formatTime(DateTime? dateTime) {
+    if (dateTime == null) {
+      return '00:00';
+    }
+    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+  }
+
+  factory MyMissionAddModel.fromJson(Map<String, dynamic> json) =>
+      _$MyMissionAddModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MyMissionAddModelToJson(this);
+}
+
+@JsonSerializable()
+class MyMissionAddPayloadModel {
+  final String missionTitle;
+  final String? startDate;
+  final String? endDate;
+  final String? scheduledTime;
+  final RepeatDay? repeatDay;
+
+  MyMissionAddPayloadModel({
+    required this.missionTitle,
+    this.startDate,
+    this.endDate,
+    this.scheduledTime,
+    this.repeatDay,
+  });
+
+  factory MyMissionAddPayloadModel.fromJson(Map<String, dynamic> json) =>
+      _$MyMissionAddPayloadModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MyMissionAddPayloadModelToJson(this);
 }

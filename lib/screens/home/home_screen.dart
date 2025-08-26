@@ -19,7 +19,7 @@ List<MyMissionModel> myMissionList = [
     missionTitle: 'My Mission 1',
     missionStatus: MissionStatus.started,
     scheduledTime: '08:00',
-    repeatDays: [RepeatDay.monday, RepeatDay.wednesday, RepeatDay.friday],
+    repeatDay: RepeatDay.monday,
   ),
   MyMissionModel(
     userMissionId: 2,
@@ -27,7 +27,7 @@ List<MyMissionModel> myMissionList = [
     missionTitle: 'My Mission 2',
     missionStatus: MissionStatus.completed,
     scheduledTime: '10:00',
-    repeatDays: [RepeatDay.tuesday, RepeatDay.thursday],
+    repeatDay: RepeatDay.tuesday,
   ),
   MyMissionModel(
     userMissionId: 3,
@@ -35,7 +35,7 @@ List<MyMissionModel> myMissionList = [
     missionTitle: 'My Mission 3',
     missionStatus: MissionStatus.started,
     scheduledTime: '22:00',
-    repeatDays: [RepeatDay.saturday, RepeatDay.sunday],
+    repeatDay: RepeatDay.saturday,
   ),
 ];
 

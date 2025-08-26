@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/providers/home_provider.dart';
 import 'package:live_frontend/screens/home/widgets/mission_tile.dart';
@@ -54,13 +55,14 @@ class _MyMissionListState extends ConsumerState<MyMissionList> {
                       color: Colors.black,
                     ),
                   ),
-
                   SizedBox(
                     width: 48.w,
                     height: 48.w,
                     child: IconButton(
                       iconSize: 24.w,
-                      onPressed: () {},
+                      onPressed: () {
+                        context.pushNamed('my_mission_add');
+                      },
                       icon: const Icon(Icons.add),
                     ),
                   ),
