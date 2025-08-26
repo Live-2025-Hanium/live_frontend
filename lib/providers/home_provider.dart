@@ -218,7 +218,7 @@ class MyMissionNotifier
         missionTitle: '아침 스트레칭 10분',
         missionStatus: MissionStatus.assigned,
         scheduledTime: '08:30',
-        repeatDays: [RepeatDay.monday, RepeatDay.wednesday, RepeatDay.friday],
+        repeatDay: RepeatDay.monday,
       ),
       MyMissionModel(
         userMissionId: 100,
@@ -226,7 +226,7 @@ class MyMissionNotifier
         missionTitle: '아침 스트레칭 10분',
         missionStatus: MissionStatus.assigned,
         scheduledTime: '08:30',
-        repeatDays: [RepeatDay.monday, RepeatDay.wednesday, RepeatDay.friday],
+        repeatDay: RepeatDay.monday,
       ),
     ]);
   }
@@ -264,6 +264,31 @@ class MyMissionNotifier
     } catch (_) {
       return null;
     }
+  }
+
+  // 특정 MyMission을 완료 상태로 변경합니다.
+  Future<void> completeMyMission(int userMissionId) async {
+    final current = state.valueOrNull;
+    if (current == null) return;
+
+    final idx = current.indexWhere((m) => m.userMissionId == userMissionId);
+    if (idx == -1) return;
+
+    final mission = current[idx];
+    // copyWith doesn't accept missionStatus in the model, so build a new instance
+    final updated = MyMissionModel(
+      userMissionId: mission.userMissionId,
+      missionType: mission.missionType,
+      missionTitle: mission.missionTitle,
+      missionStatus: MissionStatus.completed,
+      scheduledTime: mission.scheduledTime,
+      repeatDay: mission.repeatDay,
+    );
+
+    await Future.delayed(const Duration(milliseconds: 200));
+    state = AsyncValue.data([
+      for (var i = 0; i < current.length; i++) i == idx ? updated : current[i],
+    ]);
   }
 }
 

@@ -11,6 +11,8 @@ class MissionTime extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('scheduledTime: $scheduledTime');
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,

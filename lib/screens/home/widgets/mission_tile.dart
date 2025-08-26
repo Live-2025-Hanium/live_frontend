@@ -6,7 +6,7 @@ import 'package:live_frontend/theme/app_text_styles.dart';
 class MissionTile extends StatefulWidget {
   final MissionStatus missionStatus;
   final String missionTitle;
-  final Widget subContent;
+  final Widget? subContent;
   final VoidCallback onTap;
   final VoidCallback onCheckBoxTap;
 
@@ -14,7 +14,7 @@ class MissionTile extends StatefulWidget {
     super.key,
     required this.missionStatus,
     required this.missionTitle,
-    required this.subContent,
+    this.subContent,
     required this.onTap,
     required this.onCheckBoxTap,
   });
@@ -30,6 +30,16 @@ class _MissionTileState extends State<MissionTile> {
   void initState() {
     super.initState();
     isCompleted = widget.missionStatus == MissionStatus.completed;
+  }
+
+  @override
+  void didUpdateWidget(covariant MissionTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.missionStatus != widget.missionStatus) {
+      setState(() {
+        isCompleted = widget.missionStatus == MissionStatus.completed;
+      });
+    }
   }
 
   @override
@@ -75,13 +85,14 @@ class _MissionTileState extends State<MissionTile> {
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 widget.missionTitle,
                                 style: AppTextStyles.bodyRegular(context),
                               ),
                               SizedBox(height: 4),
-                              widget.subContent,
+                              if (widget.subContent != null) widget.subContent!,
                             ],
                           ),
                         ),

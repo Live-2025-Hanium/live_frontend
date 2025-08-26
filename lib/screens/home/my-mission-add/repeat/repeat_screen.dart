@@ -33,18 +33,15 @@ class _RepeatScreenState extends State<RepeatScreen> {
         actions: [
           TextButton(
             onPressed: _onDone,
-            child: TextButton(
-              onPressed: _onDone,
-              style: TextButton.styleFrom(
-                minimumSize: Size(50.w, 40.h),
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
-              ),
-              child: Text(
-                '완료',
-                style: AppTextStyles.bodyMedium(
-                  context,
-                  color: AppColors.greenNormal,
-                ),
+            style: TextButton.styleFrom(
+              minimumSize: Size(50.w, 40.h),
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+            ),
+            child: Text(
+              '완료',
+              style: AppTextStyles.bodyMedium(
+                context,
+                color: AppColors.greenNormal,
               ),
             ),
           ),

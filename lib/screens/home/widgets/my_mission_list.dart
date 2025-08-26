@@ -79,19 +79,24 @@ class _MyMissionListState extends ConsumerState<MyMissionList> {
                         children: [
                           MissionTile(
                             missionStatus: mission.missionStatus,
-                            subContent: Row(
-                              children: [
-                                MissionTime(
-                                  scheduledTime: mission.scheduledTime,
-                                ),
-                                Gap(12.w),
-                                MissionRepeat(
-                                  repeatInterval: mission.repeatDays
-                                      .map((e) => e.label)
-                                      .join(', '),
-                                ),
-                              ],
-                            ),
+                            subContent:
+                                mission.repeatDay != null &&
+                                    mission.scheduledTime != null
+                                ? Row(
+                                    children: [
+                                      if (mission.scheduledTime != null)
+                                        MissionTime(
+                                          scheduledTime: mission.scheduledTime!,
+                                        ),
+                                      Gap(12.w),
+                                      if (mission.repeatDay != null)
+                                        MissionRepeat(
+                                          repeatInterval:
+                                              mission.repeatDay!.label,
+                                        ),
+                                    ],
+                                  )
+                                : null,
                             missionTitle: mission.missionTitle,
                             onTap: () => _onTap(context, mission),
                             onCheckBoxTap: () => _onTap(context, mission),
@@ -119,9 +124,12 @@ class _MyMissionListState extends ConsumerState<MyMissionList> {
           message: '미션을 수행했나요?',
           confirmText: '완료하기',
           cancelText: '닫기',
-          onConfirm: () {
-            // 미션 완료 처리
-            // 모달 닫기
+          onConfirm: () async {
+            // MyMission을 completed로 변경
+            await ref
+                .read(myMissionNotifierProvider.notifier)
+                .completeMyMission(mission.userMissionId);
+            if (!mounted) return;
             Navigator.of(context).pop();
           },
           onCancel: () {
