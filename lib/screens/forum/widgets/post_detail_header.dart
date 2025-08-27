@@ -9,8 +9,6 @@ class PostDetailHeader extends StatelessWidget {
     super.key,
     required this.categoryName,
     required this.orgName,
-    required this.bookmarked,
-    required this.onToggleBookmark,
     required this.authorNickname,
     required this.createdAt,
     required this.viewCount,
@@ -18,8 +16,6 @@ class PostDetailHeader extends StatelessWidget {
 
   final String categoryName;
   final String orgName;
-  final bool bookmarked;
-  final VoidCallback onToggleBookmark;
 
   final String authorNickname;
   final DateTime createdAt;
@@ -57,11 +53,6 @@ class PostDetailHeader extends StatelessWidget {
                     .copyWith(color: AppColors.blackBlack4),
                 overflow: TextOverflow.ellipsis,
               ),
-            ),
-            IconButton(
-              onPressed: onToggleBookmark,
-              icon: Icon(bookmarked ? Icons.bookmark : Icons.bookmark_border),
-              splashRadius: 22.w,
             ),
           ],
         ),

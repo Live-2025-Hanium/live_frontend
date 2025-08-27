@@ -1,3 +1,4 @@
+// lib/screens/forum/forum_post_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,7 +18,6 @@ import 'widgets/post_detail_comments.dart';
 
 class ForumPostScreen extends ConsumerWidget {
   const ForumPostScreen({super.key, required this.postId});
-
   final int postId;
 
   @override
@@ -26,10 +26,12 @@ class ForumPostScreen extends ConsumerWidget {
 
     return detailAsync.when(
       loading: () => const Scaffold(
-        appBar: SaeipAppBar(),
         body: Center(child: CircularProgressIndicator()),
       ),
-      error: (e, _) => NotFoundScreen(),
+      error: (error, stack) => Scaffold(
+        body: Center(child: Text('Error: $error')),
+      ),
+      // ⚠️ 여기서 Scaffold로 감싸지 말고 뷰를 그대로 반환
       data: (detail) => _ForumPostView(detail: detail),
     );
   }
@@ -47,11 +49,14 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
   final ScrollController _scroll = ScrollController();
   final TextEditingController _commentInput = TextEditingController();
 
+  // 스크랩 on/off
   late bool _bookmarked;
-  late bool _reactedEmpathy;
-  late int _empathyCount;
 
-  // 간단한 로컬 댓글 목업(실제 API 연결 전)
+  // 반응 상태(부모에서 관리해 내려주기)
+  late Map<ForumReaction, int> _counts;
+  late Set<ForumReaction> _selected;
+
+  // 간단한 로컬 댓글 목업
   final List<PostComment> _comments = <PostComment>[
     PostComment(
       id: 1,
@@ -79,10 +84,23 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
   @override
   void initState() {
     super.initState();
-    final d = widget.detail;
     _bookmarked = false;
-    _empathyCount = d.reactionCounts[ReactionType.empathy] ?? 0;
-    _reactedEmpathy = d.userReactions.contains(ReactionType.empathy);
+    _initReactions(widget.detail);
+  }
+
+  void _initReactions(PostDetail d) {
+    // 기본 0으로 채우고, 스펙에 있는 항목만 매핑 (현재 empathy만 존재)
+    _counts = {
+      ForumReaction.useful: 0,
+      ForumReaction.encourage: 0,
+      ForumReaction.willTry: 0,
+      ForumReaction.empathy: d.reactionCounts[ReactionType.empathy] ?? 0,
+      ForumReaction.thanks: 0,
+    };
+    _selected = <ForumReaction>{};
+    if (d.userReactions.contains(ReactionType.empathy)) {
+      _selected.add(ForumReaction.empathy);
+    }
   }
 
   @override
@@ -92,22 +110,28 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
     super.dispose();
   }
 
-
+  // ---- interactions ----
   void _toggleBookmark() {
     setState(() => _bookmarked = !_bookmarked);
     _toast(_bookmarked ? '스크랩했습니다.' : '스크랩을 취소했습니다.');
   }
 
-  void _toggleEmpathy() {
+  void _onToggleReaction(ForumReaction r) {
+    final was = _selected.contains(r);
     setState(() {
-      if (_reactedEmpathy) {
-        _reactedEmpathy = false;
-        _empathyCount = (_empathyCount - 1).clamp(0, 1 << 31);
+      if (was) {
+        _selected.remove(r);
+        _counts[r] = (_counts[r] ?? 0) - 1;
+        if (_counts[r]! < 0) _counts[r] = 0;
       } else {
-        _reactedEmpathy = true;
-        _empathyCount++;
+        _selected.add(r);
+        _counts[r] = (_counts[r] ?? 0) + 1;
       }
     });
+
+    // TODO(API): 서버 요청 & 실패 시 롤백
+    // try { await api.setReaction(postId: widget.detail.id, type: r, enable: !was); }
+    // catch (_) { setState(() { ...롤백... }); }
   }
 
   void _onSendComment() {
@@ -143,12 +167,24 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
     );
   }
 
+  // ---- UI ----
   @override
   Widget build(BuildContext context) {
     final d = widget.detail;
 
     return Scaffold(
-      appBar: SaeipAppBar(),
+      appBar: SaeipAppBar(
+        actions: [
+          IconButton(
+            // 북마크 토글
+            icon: SvgPicture.asset(
+              _bookmarked ? 'assets/icons/bookmark_green_filled.svg' : 'assets/icons/bookmark_green_border.svg',
+              height:20.h,
+            ),
+            onPressed: _toggleBookmark,
+          ),
+        ],
+      ),
       bottomNavigationBar: _PostCommentInputBar(
         controller: _commentInput,
         onSend: _onSendComment,
@@ -165,8 +201,6 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
                   PostDetailHeader(
                     categoryName: d.category.name,
                     orgName: d.relatedOrganization,
-                    bookmarked: _bookmarked,
-                    onToggleBookmark: _toggleBookmark,
                     authorNickname: d.authorNickname,
                     createdAt: d.createdAt,
                     viewCount: d.viewCount,
@@ -178,31 +212,28 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
                     date: d.createdAt,
                     views: d.viewCount,
                     comments: d.commentCount,
-                    scraps: 0, // 스펙에 스크랩 카운트가 없으므로 0 유지(추후 API 반영)
+                    scraps: 0,
                   ),
                   const Divider(height: 24),
                   if (d.images.isNotEmpty) ...[
-                    _ImagesCarousel(
-                      urls: d.images.map((e) => e.s3Url).toList(),
-                    ),
+                    _ImagesCarousel(urls: d.images.map((e) => e.s3Url).toList()),
                     Gap(16.h),
                   ],
                   _PostContent(content: d.content),
                   const Divider(height: 24),
+
+                  // ✅ 부모가 가진 상태를 내려줌
                   PostDetailReactions(
-                    empathyCount: _empathyCount,
-                    reactedEmpathy: _reactedEmpathy,
-                    onToggleEmpathy: _toggleEmpathy,
-                    onCommentTap: _scrollToComments,
-                    onShare: () => _toast('공유 준비 중이에요.'),
-                    onScrap: _toggleBookmark,
+                    counts: _counts,
+                    selected: _selected,
+                    onToggle: _onToggleReaction,
                   ),
                   Gap(12.h),
                 ]),
               ),
             ),
 
-            // 댓글 영역 (비었으면 플레이스홀더)
+            // 댓글 영역
             if (_comments.isEmpty)
               SliverFillRemaining(hasScrollBody: false, child: _EmptyComments())
             else
@@ -263,14 +294,8 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
           builder: (_) => AlertDialog(
             title: const Text('댓글을 삭제할까요?'),
             actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('취소'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text('삭제'),
-              ),
+              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('취소')),
+              TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('삭제')),
             ],
           ),
         );
@@ -300,18 +325,13 @@ class _PostMetaRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final d =
-        '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}.';
+    final d = '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}.';
     final sub = AppTextStyles.smallMedium(context);
 
     Widget iconText(IconData i, String t) => Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(i, size: 16.sp, color: AppColors.blackBlack3),
-        Gap(4.w),
-        Text(t, style: sub),
-      ],
-    );
+          mainAxisSize: MainAxisSize.min,
+          children: [Icon(i, size: 16.sp, color: AppColors.blackBlack3), Gap(4.w), Text(t, style: sub)],
+        );
 
     return Row(
       children: [
@@ -374,9 +394,7 @@ class _ImagesCarouselState extends State<_ImagesCarousel> {
               margin: EdgeInsets.symmetric(horizontal: 3.w),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: i == _index
-                    ? AppColors.blackBlack3
-                    : AppColors.blackBlack1,
+                color: i == _index ? AppColors.blackBlack3 : AppColors.blackBlack1,
               ),
             ),
           ),
@@ -396,12 +414,10 @@ class _PostContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: paragraphs
-          .map(
-            (p) => Padding(
-              padding: EdgeInsets.only(bottom: 12.h),
-              child: Text(p, style: AppTextStyles.bodyRegular(context)),
-            ),
-          )
+          .map((p) => Padding(
+                padding: EdgeInsets.only(bottom: 12.h),
+                child: Text(p, style: AppTextStyles.bodyRegular(context)),
+              ))
           .toList(),
     );
   }
@@ -411,29 +427,16 @@ class _EmptyComments extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SvgPicture.asset(
-            'assets/icons/comment_empty.svg',
-            width: 88.w,
-            height: 88.w,
-            fit: BoxFit.contain,
-          ),
-          Gap(12.h),
-          Text(
-            '첫 댓글을 남겨주세요.',
-            style: AppTextStyles.bodyRegular(
-              context,
-            ).copyWith(color: AppColors.blackBlack4),
-          ),
-        ],
-      ),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        SvgPicture.asset('assets/icons/comment_empty.svg', width: 88.w, height: 88.w, fit: BoxFit.contain),
+        Gap(12.h),
+        Text('첫 댓글을 남겨주세요.', style: AppTextStyles.bodyRegular(context).copyWith(color: AppColors.blackBlack4)),
+      ]),
     );
   }
 }
 
-// 하단 입력바(별도 파일로 빼도 OK)
+// 하단 입력바
 class _PostCommentInputBar extends StatelessWidget {
   const _PostCommentInputBar({required this.controller, required this.onSend});
   final TextEditingController controller;
@@ -447,9 +450,7 @@ class _PostCommentInputBar extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(16.w, 8.h, 12.w, 8.h),
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border(
-            top: BorderSide(color: AppColors.blackBlack1, width: 0.5),
-          ),
+          border: Border(top: BorderSide(color: AppColors.blackBlack1, width: 0.5)),
         ),
         child: Row(
           children: [
@@ -464,11 +465,7 @@ class _PostCommentInputBar extends StatelessWidget {
                 ),
               ),
             ),
-            IconButton(
-              onPressed: onSend,
-              icon: const Icon(Icons.send),
-              splashRadius: 22.w,
-            ),
+            IconButton(onPressed: onSend, icon: const Icon(Icons.send), splashRadius: 22.w),
           ],
         ),
       ),

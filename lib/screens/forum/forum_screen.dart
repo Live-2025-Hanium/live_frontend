@@ -118,6 +118,7 @@ class _ForumScreenState extends State<ForumScreen> {
                 itemCount: 10,
                 index: _bannerIndex,
                 onPageChanged: (i) => setState(() => _bannerIndex = i),
+                onTap: (index) => context.pushNamed('forum_post', pathParameters: {'id': '1'}),
                 itemBuilder: (_, i) => Image.network(
                   // TODO : 추후 API 연동 예정
                   'https://picsum.photos/id/${30 + i}/1200/675',
@@ -161,8 +162,7 @@ class _ForumScreenState extends State<ForumScreen> {
           PostGridSliver(
             posts: _posts,
             onTapPost: (post) {
-              // TODO: 상세 화면 이동
-              // context.pushNamed('postDetail', pathParameters: {'id': post.id});
+              context.pushNamed('forum_post', pathParameters: {'id': '1'});
             },
           ),
         ],
