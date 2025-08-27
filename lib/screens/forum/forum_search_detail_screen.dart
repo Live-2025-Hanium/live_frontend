@@ -1,5 +1,3 @@
-// 수정 필요함
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -11,6 +9,7 @@ import 'package:live_frontend/widgets/utils/recent_search_repo.dart';
 import 'package:live_frontend/screens/forum/widgets/sort_controls.dart';
 import 'package:live_frontend/screens/forum/widgets/post_card.dart';
 import 'package:live_frontend/screens/forum/widgets/post_grid.dart';
+import 'package:live_frontend/models/forum_post_model.dart';
 
 class ForumSearchDetailScreen extends StatefulWidget {
   const ForumSearchDetailScreen({
@@ -311,21 +310,21 @@ class _ForumSearchDetailScreenState extends State<ForumSearchDetailScreen> {
 
   // -------------------- Results (Slivers) --------------------
   List<Widget> _buildResultSlivers(BuildContext context) {
-    // _items -> ForumPost 매핑 (이미지는 데모용)
-    final posts = _items
-        .map(
-          (it) => ForumPost(
-            id: it.id,
-            title: it.title,
-            date: DateTime.now(),
-            imageUrl:
-                'https://picsum.photos/id/${it.hashCode % 60 + 20}/800/600',
-          ),
-        )
-        .toList();
+    // _BoardItem을 ForumPost로 변환 (임시 데이터 포함)
+    final posts = _items.map((item) => ForumPost(
+      id: item.id,
+      title: item.title,
+      category: Category(id: 0, name: '전체'),  // 임시 카테고리
+      relatedOrganization: '관련기관',         // 임시 기관명
+      createdAt: DateTime.tryParse(item.createdAt ?? '') ?? DateTime.now(),
+      thumbnailImageUrl: 'https://picsum.photos/id/${item.hashCode % 60 + 20}/800/600',
+      authorNickname: '작성자',  
+      viewCount: 0,    
+      totalReactionCount: 0,  
+    )).toList();
 
-    final slivers = <Widget>[
-      // 우측 정렬 SortControls
+    return [
+      // 정렬 컨트롤
       SliverPadding(
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         sliver: SliverToBoxAdapter(
@@ -341,10 +340,9 @@ class _ForumSearchDetailScreenState extends State<ForumSearchDetailScreen> {
         ),
       ),
       SliverToBoxAdapter(child: SizedBox(height: 8.h)),
-    ];
 
-    if (_error != null) {
-      slivers.add(
+      // 에러 표시
+      if (_error != null)
         SliverPadding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           sliver: SliverToBoxAdapter(
@@ -360,38 +358,33 @@ class _ForumSearchDetailScreenState extends State<ForumSearchDetailScreen> {
               ],
             ),
           ),
-        ),
-      );
-    } else if (_loading && posts.isEmpty) {
-      slivers.add(
+        )
+      // 로딩 중
+      else if (_loading && posts.isEmpty)
         const SliverToBoxAdapter(
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 24),
             child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
           ),
-        ),
-      );
-    } else if (posts.isEmpty) {
-      slivers.add(const SliverToBoxAdapter(child: _EmptyResult()));
-    } else {
-      // ✅ 기존 PostGridSliver 재사용
-      slivers.add(
+        )
+      // 검색 결과 없음
+      else if (posts.isEmpty)
+        const SliverToBoxAdapter(child: _EmptyResult())
+      // 검색 결과 그리드
+      else
         PostGridSliver(
           posts: posts,
-          onTapPost: (p) {
-            // TODO: 상세 이동
+          onTapPost: (post) {
+            // TODO: 상세 페이지로 이동
           },
-          mainAxisSpacing: 24, // 세로 간격
-          crossAxisSpacing: 8, // 가로 간격
+          mainAxisSpacing: 24,
+          crossAxisSpacing: 8,
           childAspectRatio: 0.78,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
         ),
-      );
-    }
 
-    // 하단 로딩/마지막
-    if (_loadingMore) {
-      slivers.add(
+      // 더 로딩 중 또는 마지막 표시
+      if (_loadingMore)
         const SliverToBoxAdapter(
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
@@ -403,13 +396,11 @@ class _ForumSearchDetailScreenState extends State<ForumSearchDetailScreen> {
               ),
             ),
           ),
-        ),
-      );
-    } else if (!_loading && _nextCursor == null && posts.isNotEmpty) {
-      slivers.add(
+        )
+      else if (!_loading && _nextCursor == null && posts.isNotEmpty)
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
+            padding: EdgeInsets.symmetric(vertical: 12),
             child: Center(
               child: Text(
                 '마지막 결과입니다',
@@ -418,10 +409,7 @@ class _ForumSearchDetailScreenState extends State<ForumSearchDetailScreen> {
             ),
           ),
         ),
-      );
-    }
-
-    return slivers;
+    ];
   }
 }
 
@@ -507,16 +495,26 @@ class _EmptyResult extends StatelessWidget {
 
 // =================== Stub models / data source ===========
 class _BoardItem {
-  final String id;
+  final int id;  // String -> int
   final String title;
-  final String? snippet; // 미사용 (리스트형일 때 활용)
+  final Category category;  // 추가
+  final String relatedOrganization;  // 추가
+  final String? snippet;
   final String? createdAt;
+  final String? authorNickname;
+  final int? viewCount;
+  final int? totalReactionCount;
 
   const _BoardItem({
     required this.id,
     required this.title,
+    required this.category,
+    required this.relatedOrganization,
     this.snippet,
     this.createdAt,
+    this.authorNickname,
+    this.viewCount,
+    this.totalReactionCount,
   });
 }
 
@@ -542,10 +540,15 @@ class _BoardSearchDataSource {
     final gen = List.generate(10, (i) {
       final idx = (page - 1) * 10 + i + 1;
       return _BoardItem(
-        id: 'post_$idx',
+        id: idx,
         title: '[$idx] $query 검색 결과 제목',
-        snippet: '검색어 "$query" 를 포함하는 게시글의 요약 텍스트입니다. 상세는 API 데이터로 교체하세요.',
+        category: Category(id: idx % 5, name: 'Category ${idx % 5}'),
+        relatedOrganization: '관련기관 $idx',
+        snippet: '검색어 "$query" 를 포함하는 게시글의 요약 텍스트입니다.',
         createdAt: '2025-08-18',
+        authorNickname: '작성자$idx',
+        viewCount: 100 + idx,
+        totalReactionCount: 10 + idx,
       );
     });
 
