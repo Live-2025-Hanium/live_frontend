@@ -54,6 +54,10 @@ class ForumSearchNotifier extends StateNotifier<ForumSearchState> {
     searchFirst(state.query);
   }
 
+  void reset() {
+    state = ForumSearchState();  // 상태를 초기 상태로 리셋
+  }
+
   Future<void> searchFirst(String query) async {
     state = state.copyWith(
       query: query,
