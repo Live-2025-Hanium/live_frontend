@@ -8,24 +8,42 @@ import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 
-import 'package:live_frontend/models/forum_post_detail_model.dart'; // PostDetail / ReactionType
+import 'package:live_frontend/screens/404/not_found_screen.dart';
+import 'package:live_frontend/models/forum_post_detail_model.dart';
+import 'package:live_frontend/providers/forum_post_detail_provider.dart';
 import 'widgets/post_detail_header.dart';
 import 'widgets/post_detail_reactions.dart';
 import 'widgets/post_detail_comments.dart';
 
-class ForumPostScreen extends ConsumerStatefulWidget {
-  const ForumPostScreen({
-    super.key,
-    required this.detail,
-  });
+class ForumPostScreen extends ConsumerWidget {
+  const ForumPostScreen({super.key, required this.postId});
 
+  final int postId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final detailAsync = ref.watch(postDetailProvider(postId));
+
+    return detailAsync.when(
+      loading: () => const Scaffold(
+        appBar: SaeipAppBar(),
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (e, _) => NotFoundScreen(),
+      data: (detail) => _ForumPostView(detail: detail),
+    );
+  }
+}
+
+class _ForumPostView extends ConsumerStatefulWidget {
+  const _ForumPostView({super.key, required this.detail});
   final PostDetail detail;
 
   @override
-  ConsumerState<ForumPostScreen> createState() => _ForumPostScreenState();
+  ConsumerState<_ForumPostView> createState() => _ForumPostViewState();
 }
 
-class _ForumPostScreenState extends ConsumerState<ForumPostScreen> {
+class _ForumPostViewState extends ConsumerState<_ForumPostView> {
   final ScrollController _scroll = ScrollController();
   final TextEditingController _commentInput = TextEditingController();
 
@@ -62,7 +80,7 @@ class _ForumPostScreenState extends ConsumerState<ForumPostScreen> {
   void initState() {
     super.initState();
     final d = widget.detail;
-    _bookmarked = false; // 북마크(스크랩) 별도 API 스펙에 맞춰 이후 연동
+    _bookmarked = false;
     _empathyCount = d.reactionCounts[ReactionType.empathy] ?? 0;
     _reactedEmpathy = d.userReactions.contains(ReactionType.empathy);
   }
@@ -73,6 +91,7 @@ class _ForumPostScreenState extends ConsumerState<ForumPostScreen> {
     _commentInput.dispose();
     super.dispose();
   }
+
 
   void _toggleBookmark() {
     setState(() => _bookmarked = !_bookmarked);
@@ -163,7 +182,9 @@ class _ForumPostScreenState extends ConsumerState<ForumPostScreen> {
                   ),
                   const Divider(height: 24),
                   if (d.images.isNotEmpty) ...[
-                    _ImagesCarousel(urls: d.images.map((e) => e.s3Url).toList()),
+                    _ImagesCarousel(
+                      urls: d.images.map((e) => e.s3Url).toList(),
+                    ),
                     Gap(16.h),
                   ],
                   _PostContent(content: d.content),
@@ -183,10 +204,7 @@ class _ForumPostScreenState extends ConsumerState<ForumPostScreen> {
 
             // 댓글 영역 (비었으면 플레이스홀더)
             if (_comments.isEmpty)
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: _EmptyComments(),
-              )
+              SliverFillRemaining(hasScrollBody: false, child: _EmptyComments())
             else
               PostDetailComments(
                 comments: _comments,
@@ -245,8 +263,14 @@ class _ForumPostScreenState extends ConsumerState<ForumPostScreen> {
           builder: (_) => AlertDialog(
             title: const Text('댓글을 삭제할까요?'),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('취소')),
-              TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('삭제')),
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('취소'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('삭제'),
+              ),
             ],
           ),
         );
@@ -276,13 +300,18 @@ class _PostMetaRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final d = '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}.';
+    final d =
+        '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}.';
     final sub = AppTextStyles.smallMedium(context);
 
     Widget iconText(IconData i, String t) => Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [Icon(i, size: 16.sp, color: AppColors.blackBlack3), Gap(4.w), Text(t, style: sub)],
-        );
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(i, size: 16.sp, color: AppColors.blackBlack3),
+        Gap(4.w),
+        Text(t, style: sub),
+      ],
+    );
 
     return Row(
       children: [
@@ -345,7 +374,9 @@ class _ImagesCarouselState extends State<_ImagesCarousel> {
               margin: EdgeInsets.symmetric(horizontal: 3.w),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: i == _index ? AppColors.blackBlack3 : AppColors.blackBlack1,
+                color: i == _index
+                    ? AppColors.blackBlack3
+                    : AppColors.blackBlack1,
               ),
             ),
           ),
@@ -365,10 +396,12 @@ class _PostContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: paragraphs
-          .map((p) => Padding(
-                padding: EdgeInsets.only(bottom: 12.h),
-                child: Text(p, style: AppTextStyles.bodyRegular(context)),
-              ))
+          .map(
+            (p) => Padding(
+              padding: EdgeInsets.only(bottom: 12.h),
+              child: Text(p, style: AppTextStyles.bodyRegular(context)),
+            ),
+          )
           .toList(),
     );
   }
@@ -378,11 +411,24 @@ class _EmptyComments extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        SvgPicture.asset('assets/icons/comment_empty.svg', width: 88.w, height: 88.w, fit: BoxFit.contain),
-        Gap(12.h),
-        Text('첫 댓글을 남겨주세요.', style: AppTextStyles.bodyRegular(context).copyWith(color: AppColors.blackBlack4)),
-      ]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            'assets/icons/comment_empty.svg',
+            width: 88.w,
+            height: 88.w,
+            fit: BoxFit.contain,
+          ),
+          Gap(12.h),
+          Text(
+            '첫 댓글을 남겨주세요.',
+            style: AppTextStyles.bodyRegular(
+              context,
+            ).copyWith(color: AppColors.blackBlack4),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -401,7 +447,9 @@ class _PostCommentInputBar extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(16.w, 8.h, 12.w, 8.h),
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border(top: BorderSide(color: AppColors.blackBlack1, width: 0.5)),
+          border: Border(
+            top: BorderSide(color: AppColors.blackBlack1, width: 0.5),
+          ),
         ),
         child: Row(
           children: [

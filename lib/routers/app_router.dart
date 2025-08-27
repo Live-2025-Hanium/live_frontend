@@ -19,6 +19,7 @@ import '../screens/login/login_screen.dart';
 import '../screens/login/profile_setup/profile_setup_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../providers/auth_provider.dart';
+import 'package:live_frontend/screens/forum/forum_post_screen.dart';
 
 // 라우터 새로고침 트리거
 final routerRefreshProvider = ChangeNotifierProvider((ref) {
@@ -144,6 +145,19 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'forum',
         path: '/forum',
         builder: (context, state) => const ForumScreen(),
+        routes: [
+          GoRoute(
+            name: 'forum_post',
+            path: 'post/:id',
+            builder: (context, state) {
+              final id = int.tryParse(state.pathParameters['id']!);
+              if (id == null) {
+                return NotFoundScreen(error: state.error);
+              }
+              return ForumPostScreen(postId: id);
+            },
+          ),
+        ],
       ),
       GoRoute(
         name: 'mypage',
