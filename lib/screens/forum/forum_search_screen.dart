@@ -43,6 +43,9 @@ class _ForumSearchDetailScreenState
   bool _recentLoading = true;
   Object? _recentError;
 
+  // 검색 실행 여부를 추적하는 상태 추가
+  bool _hasSearched = false;
+
   @override
   void initState() {
     super.initState();
@@ -53,7 +56,10 @@ class _ForumSearchDetailScreenState
     });
 
     _loadRecent();
-    _controller.addListener(_onTextChanged);
+    _controller.addListener(() {
+      // 검색어가 변경되면 검색 실행 상태를 초기화
+      if (_hasSearched) setState(() => _hasSearched = false);
+    });
     _scroll.addListener(_onScroll);
   }
 
@@ -105,7 +111,7 @@ class _ForumSearchDetailScreenState
     return [
       // 정렬 컨트롤
       SliverPadding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         sliver: SliverToBoxAdapter(
           child: Align(
             alignment: Alignment.centerRight,
@@ -127,16 +133,9 @@ class _ForumSearchDetailScreenState
           child: _MessageCenter(text: '검색 중 오류가 발생했습니다'),
         )
       else if (search.items.isEmpty)
-        // ✅ 레퍼런스처럼 중앙에 빈 상태
         SliverFillRemaining(hasScrollBody: false, child: const _EmptyResult())
       else
-        // 실제 결과
-        SliverPadding(
-          padding: EdgeInsets.all(16.w),
-          sliver: SliverToBoxAdapter(
-            child: PostGridSliver(posts: search.items),
-          ),
-        ),
+        PostGridSliver(posts: search.items),
 
       if (search.loadingMore)
         SliverToBoxAdapter(
@@ -174,21 +173,23 @@ class _ForumSearchDetailScreenState
                     await _loadRecent();
 
                     // 검색 실행
+                    setState(() => _hasSearched = true);
                     ref.read(forumSearchProvider.notifier).searchFirst(term);
                   },
                 ),
               ),
             ),
-            SliverToBoxAdapter(child: SizedBox(height: 16.h)),
+            SliverToBoxAdapter(child: Gap(16.h)),
 
-            // 콘텐츠
-            if (_controller.text.isEmpty)
+            // 콘텐츠 - 검색 실행 여부에 따라 다른 내용 표시
+            if (!_hasSearched)
               ForumRecentSearches(
                 items: _recent,
                 loading: _recentLoading,
                 error: _recentError,
                 onTapTerm: (term) {
                   _controller.text = term;
+                  setState(() => _hasSearched = true);
                   ref.read(forumSearchProvider.notifier).searchFirst(term);
                 },
                 onDeleteTerm: (term) async {

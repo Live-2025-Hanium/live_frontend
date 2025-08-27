@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/forum_post_model.dart';
 import '../screens/forum/widgets/sort_controls.dart';
+import '../screens/forum/data/dummy_forum_data.dart';
 
-final forumSearchProvider = StateNotifierProvider<ForumSearchNotifier, ForumSearchState>((ref) {
+final forumSearchProvider =
+    StateNotifierProvider<ForumSearchNotifier, ForumSearchState>((ref) {
   return ForumSearchNotifier();
 });
 
@@ -12,8 +14,8 @@ class ForumSearchState {
   final bool loadingMore;
   final Object? error;
   final List<ForumPost> items;
-  final String? nextCursor;
   final ForumSort sort;
+  final bool hasMore;
 
   const ForumSearchState({
     this.query = '',
@@ -21,8 +23,8 @@ class ForumSearchState {
     this.loadingMore = false,
     this.error,
     this.items = const [],
-    this.nextCursor,
     this.sort = ForumSort.latest,
+    this.hasMore = false,
   });
 
   ForumSearchState copyWith({
@@ -31,8 +33,8 @@ class ForumSearchState {
     bool? loadingMore,
     Object? error,
     List<ForumPost>? items,
-    String? nextCursor,
     ForumSort? sort,
+    bool? hasMore,
   }) {
     return ForumSearchState(
       query: query ?? this.query,
@@ -40,8 +42,8 @@ class ForumSearchState {
       loadingMore: loadingMore ?? this.loadingMore,
       error: error ?? this.error,
       items: items ?? this.items,
-      nextCursor: nextCursor ?? this.nextCursor,
       sort: sort ?? this.sort,
+      hasMore: hasMore ?? this.hasMore,
     );
   }
 }
@@ -49,64 +51,104 @@ class ForumSearchState {
 class ForumSearchNotifier extends StateNotifier<ForumSearchState> {
   ForumSearchNotifier() : super(const ForumSearchState());
 
-  void setSort(ForumSort sort) {
-    state = state.copyWith(sort: sort);
-    searchFirst(state.query);
-  }
+  final List<ForumPost> _all = [];
+  static const int _pageSize = 6;
 
   void reset() {
-    state = ForumSearchState();  // 상태를 초기 상태로 리셋
+    _all.clear();
+    state = const ForumSearchState();
   }
 
-  Future<void> searchFirst(String query) async {
+  Future<void> searchFirst(String raw) async {
+    final query = raw.trim();
+    if (query.isEmpty) {
+      reset();
+      return;
+    }
+
     state = state.copyWith(
       query: query,
       loading: true,
       error: null,
-      items: [],
-      nextCursor: null,
+      items: const [],
+      hasMore: false,
     );
 
     try {
-      final res = await _searchBoards(query: query);
+      // TODO: 나중에 API 연동 시 수정
+      await Future.delayed(const Duration(milliseconds: 300));
+      
+      _all
+        ..clear()
+        ..addAll(_filterByQuery(dummyForumPosts, query));
+      _sortInPlace(_all, state.sort);
+      
+      final slice = _all.take(_pageSize).toList();
       state = state.copyWith(
-        items: res.items,
-        nextCursor: res.nextCursor,
         loading: false,
+        items: slice,
+        hasMore: _all.length > slice.length,
       );
     } catch (e) {
-      state = state.copyWith(error: e, loading: false);
+      state = state.copyWith(loading: false, error: e);
     }
   }
 
+  void setSort(ForumSort sort) {
+    state = state.copyWith(sort: sort);
+    // 정렬을 바꾸면 _all을 다시 정렬하고 첫 페이지 다시 적용
+    _sortInPlace(_all, sort);
+    final slice = _all.take(_pageSize).toList();
+    state = state.copyWith(
+      items: slice,
+      hasMore: _all.length > slice.length,
+    );
+  }
+
   Future<void> loadMore() async {
-    if (state.loading || state.loadingMore || state.nextCursor == null) return;
+    if (state.loading || state.loadingMore || !state.hasMore) return;
 
     state = state.copyWith(loadingMore: true);
-
     try {
-      final res = await _searchBoards(query: state.query, cursor: state.nextCursor);
+      await Future.delayed(const Duration(milliseconds: 250)); // mock delay
+
+      final cur = state.items.length;
+      final end = (cur + _pageSize).clamp(0, _all.length);
+      final more = _all.sublist(cur, end);
+
+      final next = [...state.items, ...more];
       state = state.copyWith(
-        items: [...state.items, ...res.items],
-        nextCursor: res.nextCursor,
         loadingMore: false,
+        items: next,
+        hasMore: _all.length > next.length,
       );
-    } catch (e) {
+    } catch (_) {
       state = state.copyWith(loadingMore: false);
     }
   }
 
-  Future<SearchResult> _searchBoards({
-    required String query,
-    String? cursor,
-  }) async {
-    await Future.delayed(const Duration(milliseconds: 450));
-    return SearchResult(items: [], nextCursor: null);
+  // helpers
+  List<ForumPost> _filterByQuery(List<ForumPost> src, String q) {
+    final lower = q.toLowerCase();
+    return src.where((p) {
+      return p.title.toLowerCase().contains(lower) ||
+          p.relatedOrganization.toLowerCase().contains(lower) ||
+          (p.authorNickname?.toLowerCase().contains(lower) ?? false);
+    }).toList();
   }
-}
 
-class SearchResult {
-  final List<ForumPost> items;
-  final String? nextCursor;
-  SearchResult({required this.items, required this.nextCursor});
+  void _sortInPlace(List<ForumPost> list, ForumSort sort) {
+    switch (sort) {
+      case ForumSort.latest:
+        list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        break;
+      case ForumSort.views:
+        list.sort((a, b) => (b.viewCount ?? 0).compareTo(a.viewCount ?? 0));
+        break;
+      case ForumSort.scraps:
+        list.sort(
+            (a, b) => (b.totalReactionCount ?? 0).compareTo(a.totalReactionCount ?? 0));
+        break;
+    }
+  }
 }
