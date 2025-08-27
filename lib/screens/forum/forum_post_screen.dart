@@ -62,7 +62,7 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
   void _onSendComment() {
     final text = _commentInput.text.trim();
     if (text.isEmpty) return;
-    
+
     ref.read(forumPostProvider(widget.detail.id).notifier).addComment(text);
     _commentInput.clear();
   }
@@ -72,6 +72,7 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
     final state = ref.watch(forumPostProvider(widget.detail.id));
     final notifier = ref.read(forumPostProvider(widget.detail.id).notifier);
     final d = widget.detail;
+    final ui = ref.watch(forumPostProvider(d.id));
 
     return Scaffold(
       appBar: SaeipAppBar(
@@ -106,31 +107,33 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
                     authorNickname: widget.detail.authorNickname,
                     createdAt: widget.detail.createdAt,
                     viewCount: widget.detail.viewCount,
+                    title: widget.detail.title,
+                    commentCount: widget.detail.commentCount,
                   ),
                   Gap(8.h),
 
                   // Content
                   PostDetailContent(
-                    title: widget.detail.title,
-                    date: widget.detail.createdAt,
-                    views: widget.detail.viewCount,
-                    comments: widget.detail.commentCount,
                     content: widget.detail.content,
-                    imageUrls: widget.detail.images.map((e) => e.s3Url).toList(),
+                    imageUrls: widget.detail.images
+                        .map((e) => e.s3Url)
+                        .toList(),
                   ),
 
                   // Reactions
                   PostDetailReactions(
-                    counts: widget.detail.reactionCounts.map((key, value) => MapEntry(ForumReaction.values[key.index], value)),
-                    selected: widget.detail.userReactions.map((r) => ForumReaction.values[r.index]).toSet(),
-                    onToggle: notifier.toggleReaction,
+                    counts: ui.reactions,
+                    selected: ui.selectedReactions,
+                    onToggle: (r) => ref
+                        .read(forumPostProvider(d.id).notifier)
+                        .toggleReaction(r),
                   ),
                   Gap(12.h),
                 ]),
               ),
             ),
 
-            // Comments 
+            // Comments
             if (state.comments.isEmpty)
               const SliverFillRemaining(
                 hasScrollBody: false,
@@ -138,9 +141,10 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
               )
             else
               PostDetailComments(
-                comments: state.comments,                 // <- List<ForumPostComment>
-                onTapMore: notifier.showCommentMenu,         // (ForumPostComment c) => ...
-                onTapLike: notifier.likeComment,           // (ForumPostComment c) => ...
+                comments: state.comments, // <- List<ForumPostComment>
+                onTapMore:
+                    notifier.showCommentMenu, // (ForumPostComment c) => ...
+                onTapLike: notifier.likeComment, // (ForumPostComment c) => ...
               ),
 
             const SliverToBoxAdapter(child: SizedBox(height: 80)),
@@ -157,11 +161,24 @@ class _EmptyComments extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        SvgPicture.asset('assets/icons/comment_empty.svg', width: 88.w, height: 88.w, fit: BoxFit.contain),
-        Gap(12.h),
-        Text('첫 댓글을 남겨주세요.', style: AppTextStyles.bodyRegular(context).copyWith(color: AppColors.blackBlack4)),
-      ]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            'assets/icons/comment_empty.svg',
+            width: 88.w,
+            height: 88.w,
+            fit: BoxFit.contain,
+          ),
+          Gap(12.h),
+          Text(
+            '첫 댓글을 남겨주세요.',
+            style: AppTextStyles.bodyRegular(
+              context,
+            ).copyWith(color: AppColors.blackBlack4),
+          ),
+        ],
+      ),
     );
   }
 }

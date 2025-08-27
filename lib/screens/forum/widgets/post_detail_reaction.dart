@@ -27,7 +27,6 @@ class PostDetailReactions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     const order = [
       ForumReaction.useful,
       ForumReaction.encourage,
@@ -108,23 +107,22 @@ class _ReactionCell extends StatelessWidget {
     final labelStyle = AppTextStyles.smallMedium(context);
     final countStyle = AppTextStyles.bodyRegular(context);
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8.r),
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 8.h),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SvgPicture.asset(
-              iconPath(selected),
-              width: 40.w,
-            ),
-            Gap(8.h),
-            Text(label, style: labelStyle),
-            Gap(4.h),
-            Text('$count', style: countStyle),
-          ],
+    return Material(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8.r),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SvgPicture.asset(iconPath(selected), width: 40.w),
+              Gap(8.h),
+              Text(label, style: labelStyle),
+              Gap(4.h),
+              Text('$count', style: countStyle),
+            ],
+          ),
         ),
       ),
     );
