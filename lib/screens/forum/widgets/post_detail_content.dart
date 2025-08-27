@@ -10,20 +10,10 @@ import 'package:live_frontend/theme/app_text_styles.dart';
 class PostDetailContent extends StatelessWidget {
   const PostDetailContent({
     super.key,
-    required this.title,
-    required this.date,
-    required this.views,
-    required this.comments,
-    this.scraps = 0,
     required this.content,
     this.imageUrls = const <String>[],
   });
 
-  final String title;
-  final DateTime date;
-  final int views;
-  final int comments;
-  final int scraps;
   final String content;
   final List<String> imageUrls;
 
@@ -32,21 +22,7 @@ class PostDetailContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 제목
-        Text(title, style: AppTextStyles.titleSemibold(context)),
-        Gap(6.h),
-
-        // 메타(날짜/조회/댓글/스크랩)
-        _PostMetaRow(
-          date: date,
-          views: views,
-          comments: comments,
-          scraps: scraps,
-        ),
-
-        const Divider(height: 24),
-
-        // 이미지 캐러셀
+        // 이미지
         if (imageUrls.isNotEmpty) ...[
           _ImagesCarousel(urls: imageUrls),
           Gap(16.h),
@@ -54,49 +30,7 @@ class PostDetailContent extends StatelessWidget {
 
         // 본문
         _PostBody(content: content),
-
-        const Divider(height: 24),
-      ],
-    );
-  }
-}
-
-class _PostMetaRow extends StatelessWidget {
-  const _PostMetaRow({
-    required this.date,
-    required this.views,
-    required this.scraps,
-    required this.comments,
-  });
-
-  final DateTime date;
-  final int views;
-  final int scraps;
-  final int comments;
-
-  @override
-  Widget build(BuildContext context) {
-    final d = '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}.';
-    final sub = AppTextStyles.smallMedium(context);
-
-    Widget iconText(IconData i, String t) => Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(i, size: 16.sp, color: AppColors.blackBlack3),
-            Gap(4.w),
-            Text(t, style: sub),
-          ],
-        );
-
-    return Row(
-      children: [
-        Text(d, style: sub),
-        const Spacer(),
-        iconText(Icons.visibility, views.toString()),
-        Gap(12.w),
-        iconText(Icons.comment, comments.toString()),
-        Gap(12.w),
-        iconText(Icons.bookmarks_outlined, scraps.toString()),
+        Gap(24.h),
       ],
     );
   }

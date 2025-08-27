@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart'; // 추가
 import 'package:gap/gap.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
@@ -12,14 +13,17 @@ class PostDetailHeader extends StatelessWidget {
     required this.authorNickname,
     required this.createdAt,
     required this.viewCount,
+    required this.title,
+    required this.commentCount,
   });
 
   final String categoryName;
   final String orgName;
-
   final String authorNickname;
   final DateTime createdAt;
   final int viewCount;
+  final String title;
+  final int commentCount;
 
   @override
   Widget build(BuildContext context) {
@@ -29,62 +33,60 @@ class PostDetailHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 1행: 카테고리칩 + 기관 + 북마크 버튼
+        // 1행: 카테고리칩 + 기관
         Row(
           children: [
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
               decoration: BoxDecoration(
-                color: AppColors.greenNormal.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(6.r),
+                color: AppColors.greenDark,
+                borderRadius: BorderRadius.circular(20.r),
               ),
               child: Text(
                 categoryName,
-                style: AppTextStyles.smallSemibold(context).copyWith(
-                  color: AppColors.greenNormal,
-                ),
-              ),
-            ),
-            Gap(8.w),
-            Expanded(
-              child: Text(
-                orgName,
-                style: AppTextStyles.bodyRegular(context)
-                    .copyWith(color: AppColors.blackBlack4),
-                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.smallSemibold(
+                  context,
+                ).copyWith(color: Colors.white),
               ),
             ),
           ],
         ),
-        Gap(6.h),
-        // 2행: 작성자/날짜/조회
+        Gap(12.h),
+        // 2행: 제목
+        Text(title, style: AppTextStyles.titleSemibold(context)),
+        Gap(8.h),
+
+        // 3행: 메타정보
+        Text('$authorNickname', style: AppTextStyles.bodyRegular(context)),
+        Gap(24.h),
         Row(
           children: [
-            Text(
-              authorNickname,
-              style: AppTextStyles.bodyRegular(context),
-              overflow: TextOverflow.ellipsis,
-            ),
+            Text(dateStr, style: AppTextStyles.smallMedium(context)),
             const Spacer(),
-            Text(
-              dateStr,
-              style: AppTextStyles.smallMedium(context)
-                  .copyWith(color: AppColors.blackBlack4),
-            ),
-            Gap(8.w),
-            Row(
-              children: [
-                Icon(Icons.visibility, size: 16.sp, color: AppColors.blackBlack3),
-                Gap(4.w),
-                Text(
-                  viewCount.toString(),
-                  style: AppTextStyles.smallMedium(context)
-                      .copyWith(color: AppColors.blackBlack4),
-                ),
-              ],
-            ),
+            _MetaItem('assets/icons/cursor.svg', viewCount.toString()),
+            Gap(16.w),
+            _MetaItem('assets/icons/comment.svg', commentCount.toString()),
           ],
         ),
+        Gap(32.h)
+      ],
+    );
+  }
+}
+
+class _MetaItem extends StatelessWidget {
+  const _MetaItem(this.icon, this.text);
+  final String icon; // IconData에서 String으로 변경
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SvgPicture.asset(icon, width: 12.sp, height: 12.sp),
+        Gap(4.w),
+        Text(text, style: AppTextStyles.smallMedium(context)),
       ],
     );
   }
