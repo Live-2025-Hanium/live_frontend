@@ -150,9 +150,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             name: 'forum_post',
             path: 'post/:id',
             builder: (context, state) {
-              final id = int.tryParse(state.pathParameters['id']!);
+              final idStr = state.pathParameters['id'];
+              final id = int.tryParse(idStr ?? '');
               if (id == null) {
-                return NotFoundScreen(error: state.error);
+                return const NotFoundScreen();
               }
               return ForumPostScreen(postId: id);
             },

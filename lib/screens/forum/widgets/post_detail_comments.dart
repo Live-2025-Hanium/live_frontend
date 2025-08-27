@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
-import '../forum_post_screen.dart' show PostComment; // 로컬 댓글 모델 재사용
+import 'package:live_frontend/models/forum_post_comment_model.dart';
 
 class PostDetailComments extends StatelessWidget {
   const PostDetailComments({
@@ -15,9 +15,9 @@ class PostDetailComments extends StatelessWidget {
     required this.onTapLike,
   });
 
-  final List<PostComment> comments;
-  final void Function(PostComment) onTapMore;
-  final void Function(PostComment) onTapLike;
+  final List<ForumPostComment> comments;
+  final void Function(ForumPostComment) onTapMore;
+  final void Function(ForumPostComment) onTapLike;
 
   @override
   Widget build(BuildContext context) {
@@ -44,13 +44,13 @@ class PostDetailComments extends StatelessWidget {
         itemBuilder: (context, i) {
           final c = comments[i];
           final date =
-              '${c.date.year}.${c.date.month.toString().padLeft(2, '0')}.${c.date.day.toString().padLeft(2, '0')}';
+              '${c.createdAt.year}.${c.createdAt.month.toString().padLeft(2, '0')}.${c.createdAt.day.toString().padLeft(2, '0')}';
           return Padding(
             padding: EdgeInsets.symmetric(vertical: 10.h),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(radius: 16.r, child: Text(c.user.characters.first)),
+                CircleAvatar(radius: 16.r, child: Text(c.authorNickname.characters.first)),
                 Gap(12.w),
                 Expanded(
                   child: Column(
@@ -60,7 +60,7 @@ class PostDetailComments extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              c.user,
+                              c.authorNickname,
                               style: AppTextStyles.bodyMedium(context),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -77,7 +77,7 @@ class PostDetailComments extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Text(c.text, style: AppTextStyles.bodyRegular(context)),
+                      Text(c.content, style: AppTextStyles.bodyRegular(context)),
                       Gap(6.h),
                       Row(
                         children: [
@@ -88,9 +88,17 @@ class PostDetailComments extends StatelessWidget {
                               padding: EdgeInsets.symmetric(
                                   horizontal: 6.w, vertical: 4.h),
                               child: Row(children: [
-                                const Icon(Icons.favorite_border, size: 16),
+                                Icon(
+                                  c.isLiked 
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  size: 16,
+                                  color: c.isLiked 
+                                      ? AppColors.pinkNormal 
+                                      : AppColors.blackBlack3,
+                                ),
                                 Gap(4.w),
-                                Text(c.likes.toString(),
+                                Text(c.likeCount.toString(),
                                     style: AppTextStyles.smallMedium(context)),
                               ]),
                             ),
