@@ -128,7 +128,7 @@ class _SaeipNavigationBarState extends State<SaeipNavigationBar> {
                   colorFilter: iconColorFilter,
                   height: 20.h,
                 ),
-                label: '통계',
+                label: '분석',
               ),
               NavigationDestination(
                 selectedIcon: SvgPicture.asset(

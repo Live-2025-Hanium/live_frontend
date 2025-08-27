@@ -62,7 +62,6 @@ dependencies:
   carousel_slider: ^5.1.1
   table_calendar: ^3.2.0
   time_picker_spinner: ^1.0.2
-  syncfusion_flutter_gauges: ^30.2.7
   fl_chart: ^1.0.0
 
 dev_dependencies:
