@@ -1,45 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
-class WeeklyBarChart extends StatefulWidget {
+class WeeklyBarChart extends StatelessWidget {
   final List<double> weeklyData;
-  final Function(int dayIndex)? onBarTapped;
 
-  const WeeklyBarChart({super.key, required this.weeklyData, this.onBarTapped});
+  final int? selectedIndex;
+  final void Function(int dayIndex)? onBarTapped;
 
-  @override
-  State<WeeklyBarChart> createState() => _WeeklyBarChartState();
-}
-
-class _WeeklyBarChartState extends State<WeeklyBarChart> {
-  int? selectedIndex;
+  const WeeklyBarChart({
+    super.key,
+    required this.weeklyData,
+    this.selectedIndex,
+    this.onBarTapped,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final maxVal =
+        (weeklyData.isEmpty
+            ? 0.0
+            : weeklyData.reduce((a, b) => a > b ? a : b)) +
+        5;
+
     return Container(
-      height: 190,
-      padding: EdgeInsets.all(16),
+      height: 190.h,
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
       child: BarChart(
         BarChartData(
-          maxY: widget.weeklyData.reduce((a, b) => a > b ? a : b) + 5,
+          maxY: maxVal,
           minY: 0,
           gridData: FlGridData(
             show: true,
             horizontalInterval: 5,
             verticalInterval: 1,
-            getDrawingHorizontalLine: (value) {
-              return FlLine(color: AppColors.blackBlack1, strokeWidth: 1);
-            },
-            getDrawingVerticalLine: (value) {
-              return FlLine(color: Colors.transparent);
-            },
+            getDrawingHorizontalLine: (value) =>
+                FlLine(color: AppColors.blackBlack1, strokeWidth: 1),
+            getDrawingVerticalLine: (value) =>
+                const FlLine(color: Colors.transparent),
           ),
           titlesData: FlTitlesData(
-            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
@@ -51,7 +60,7 @@ class _WeeklyBarChartState extends State<WeeklyBarChart> {
                       style: TextStyle(color: Colors.grey[600], fontSize: 12),
                     );
                   }
-                  return Container();
+                  return const SizedBox.shrink();
                 },
               ),
             ),
@@ -73,13 +82,13 @@ class _WeeklyBarChartState extends State<WeeklyBarChart> {
                       ),
                     );
                   }
-                  return Container();
+                  return const SizedBox.shrink();
                 },
               ),
             ),
           ),
           borderData: FlBorderData(show: false),
-          barGroups: widget.weeklyData.asMap().entries.map((entry) {
+          barGroups: weeklyData.asMap().entries.map((entry) {
             final index = entry.key;
             final value = entry.value;
             return BarChartGroupData(
@@ -90,21 +99,21 @@ class _WeeklyBarChartState extends State<WeeklyBarChart> {
                   color: selectedIndex == index
                       ? AppColors.greenNormal
                       : AppColors.greenLightActive,
-                  width: 24,
-                  borderRadius: BorderRadius.circular(4),
+                  width: 24.w,
+                  borderRadius: BorderRadius.circular(4.r),
                 ),
               ],
             );
           }).toList(),
           barTouchData: BarTouchData(
             enabled: true,
-            touchCallback: (FlTouchEvent event, barTouchResponse) {
-              if (event is FlTapUpEvent && barTouchResponse?.spot != null) {
-                final index = barTouchResponse!.spot!.touchedBarGroupIndex;
-                setState(() {
-                  selectedIndex = selectedIndex == index ? null : index;
-                });
-                widget.onBarTapped?.call(index);
+            touchCallback: (event, response) {
+              if (event is FlTapUpEvent && response?.spot != null) {
+                final index = response!.spot!.touchedBarGroupIndex;
+                // 1) 외부 콜백
+                onBarTapped?.call(index);
+                // 2) 라우팅 (GoRouter)
+                context.pushNamed('home');
               }
             },
           ),
