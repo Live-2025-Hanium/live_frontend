@@ -141,10 +141,10 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
               )
             else
               PostDetailComments(
-                comments: state.comments, // <- List<ForumPostComment>
+                comments: state.comments,
                 onTapMore:
-                    notifier.showCommentMenu, // (ForumPostComment c) => ...
-                onTapLike: notifier.likeComment, // (ForumPostComment c) => ...
+                    notifier.showCommentMenu,
+                onTapLike: notifier.likeComment,
               ),
 
             const SliverToBoxAdapter(child: SizedBox(height: 80)),
@@ -165,9 +165,9 @@ class _EmptyComments extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SvgPicture.asset(
-            'assets/icons/comment_empty.svg',
-            width: 88.w,
-            height: 88.w,
+            'assets/icons/comment.svg',
+            width: 48.w,
+            height: 48.w,
             fit: BoxFit.contain,
           ),
           Gap(12.h),

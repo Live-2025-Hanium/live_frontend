@@ -127,7 +127,7 @@ class ForumPostNotifier extends StateNotifier<ForumPostState> {
     final newComment = ForumPostComment(
       id: now.microsecondsSinceEpoch,
       content: t,
-      authorNickname: '나',
+      authorNickname: 'userName',
       createdAt: now,
       updatedAt: now,
       likeCount: 0,
