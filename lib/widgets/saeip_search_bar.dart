@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import './utils/debouncer.dart';
 import './utils/recent_search_repo.dart';
-// import 'package:live_frontend/screens/forum/forum_search_detail_screen.dart';
+import 'package:live_frontend/screens/forum/forum_search_detail_screen.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -103,15 +103,14 @@ class _SaeipSearchBarState extends State<SaeipSearchBar> {
   }
 
   void _openDetail() {
-    // 검색 상세 화면으로 이동
-    // Navigator.of(context).push(
-    // MaterialPageRoute(
-    //   builder: (_) => ForumSearchDetailScreen(
-    //     externalController: widget.controller,
-    //     hintText: widget.hintText,
-    //   ),
-    //   ),
-    // );
+    Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (_) => ForumSearchDetailScreen(
+        externalController: widget.controller,
+        hintText: widget.hintText,
+      ),
+      ),
+    );
   }
 
   void _handleSearchPressed() {
