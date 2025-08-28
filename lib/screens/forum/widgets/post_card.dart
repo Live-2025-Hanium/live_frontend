@@ -8,7 +8,7 @@ import 'package:live_frontend/models/forum_post_model.dart';
 class PostCard extends StatelessWidget {
   const PostCard({super.key, required this.post, this.onTap});
 
-  final ForumPost post;
+  final ForumPostModel post;
   final VoidCallback? onTap;
 
   @override

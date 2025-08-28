@@ -25,7 +25,7 @@ class BannerCarousel extends StatefulWidget {
     this.padEnds = false,
 
     // 자동재생
-    this.autoPlay = true,
+    this.autoPlay = false,
     this.autoPlayInterval = const Duration(seconds: 5),
     this.autoPlayDuration = const Duration(milliseconds: 350),
     this.autoPlayCurve = Curves.easeOut,

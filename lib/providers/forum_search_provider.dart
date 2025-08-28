@@ -13,7 +13,7 @@ class ForumSearchState {
   final bool loading;
   final bool loadingMore;
   final Object? error;
-  final List<ForumPost> items;
+  final List<ForumPostModel> items;
   final ForumSort sort;
   final bool hasMore;
 
@@ -32,7 +32,7 @@ class ForumSearchState {
     bool? loading,
     bool? loadingMore,
     Object? error,
-    List<ForumPost>? items,
+    List<ForumPostModel>? items,
     ForumSort? sort,
     bool? hasMore,
   }) {
@@ -51,7 +51,7 @@ class ForumSearchState {
 class ForumSearchNotifier extends StateNotifier<ForumSearchState> {
   ForumSearchNotifier() : super(const ForumSearchState());
 
-  final List<ForumPost> _all = [];
+  final List<ForumPostModel> _all = [];
   static const int _pageSize = 6;
 
   void reset() {
@@ -128,7 +128,7 @@ class ForumSearchNotifier extends StateNotifier<ForumSearchState> {
   }
 
   // helpers
-  List<ForumPost> _filterByQuery(List<ForumPost> src, String q) {
+  List<ForumPostModel> _filterByQuery(List<ForumPostModel> src, String q) {
     final lower = q.toLowerCase();
     return src.where((p) {
       return p.title.toLowerCase().contains(lower) ||
@@ -137,7 +137,7 @@ class ForumSearchNotifier extends StateNotifier<ForumSearchState> {
     }).toList();
   }
 
-  void _sortInPlace(List<ForumPost> list, ForumSort sort) {
+  void _sortInPlace(List<ForumPostModel> list, ForumSort sort) {
     switch (sort) {
       case ForumSort.latest:
         list.sort((a, b) => b.createdAt.compareTo(a.createdAt));

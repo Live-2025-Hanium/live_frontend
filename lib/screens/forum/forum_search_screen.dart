@@ -14,8 +14,8 @@ import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:gap/gap.dart';
 
-class ForumSearchDetailScreen extends ConsumerStatefulWidget {
-  const ForumSearchDetailScreen({
+class ForumSearchScreen extends ConsumerStatefulWidget {
+  const ForumSearchScreen({
     super.key,
     required this.externalController,
     required this.hintText,
@@ -25,12 +25,12 @@ class ForumSearchDetailScreen extends ConsumerStatefulWidget {
   final String hintText;
 
   @override
-  ConsumerState<ForumSearchDetailScreen> createState() =>
+  ConsumerState<ForumSearchScreen> createState() =>
       _ForumSearchDetailScreenState();
 }
 
 class _ForumSearchDetailScreenState
-    extends ConsumerState<ForumSearchDetailScreen> {
+    extends ConsumerState<ForumSearchScreen> {
   static const int _maxRecent = 10;
   static const double _scrollThreshold = 320.0;
 

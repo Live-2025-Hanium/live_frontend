@@ -10,7 +10,7 @@ import 'package:live_frontend/screens/forum/widgets/post_grid.dart';
 import 'package:live_frontend/screens/forum/widgets/sort_controls.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:live_frontend/models/forum_post_model.dart' as models;
+import 'package:live_frontend/models/forum_post_model.dart';
 import 'data/dummy_forum_data.dart';
 
 class ForumScreen extends StatefulWidget {
@@ -33,14 +33,14 @@ class _ForumScreenState extends State<ForumScreen> {
     super.dispose();
   }
 
-  List<models.ForumPost> get _posts {
+  List<ForumPostModel> get _posts {
     return _getFilteredAndSortedPosts(
       categoryId: _selectedCategory,
       sort: _sort,
     );
   }
 
-  List<models.ForumPost> _getFilteredAndSortedPosts({
+  List<ForumPostModel> _getFilteredAndSortedPosts({
     required int categoryId,
     required ForumSort sort,
   }) {
@@ -48,8 +48,8 @@ class _ForumScreenState extends State<ForumScreen> {
     var filtered = categoryId == 0
         ? dummyForumPosts
         : dummyForumPosts
-            .where((post) => post.category.id == categoryId - 1)
-            .toList();
+              .where((post) => post.category.id == categoryId - 1)
+              .toList();
 
     // 2. 정렬
     filtered.sort((a, b) {
@@ -59,7 +59,9 @@ class _ForumScreenState extends State<ForumScreen> {
         case ForumSort.views:
           return (b.viewCount ?? 0).compareTo(a.viewCount ?? 0);
         case ForumSort.scraps:
-          return (b.totalReactionCount ?? 0).compareTo(a.totalReactionCount ?? 0);
+          return (b.totalReactionCount ?? 0).compareTo(
+            a.totalReactionCount ?? 0,
+          );
       }
     });
 
@@ -118,6 +120,10 @@ class _ForumScreenState extends State<ForumScreen> {
                 itemCount: 10,
                 index: _bannerIndex,
                 onPageChanged: (i) => setState(() => _bannerIndex = i),
+                onTap: (index) => context.pushNamed(
+                  'forum_post',
+                  pathParameters: {'id': '1'},
+                ),
                 itemBuilder: (_, i) => Image.network(
                   // TODO : 추후 API 연동 예정
                   'https://picsum.photos/id/${30 + i}/1200/675',
@@ -161,8 +167,7 @@ class _ForumScreenState extends State<ForumScreen> {
           PostGridSliver(
             posts: _posts,
             onTapPost: (post) {
-              // TODO: 상세 화면 이동
-              // context.pushNamed('postDetail', pathParameters: {'id': post.id});
+              context.pushNamed('forum_post', pathParameters: {'id': '1'});
             },
           ),
         ],
