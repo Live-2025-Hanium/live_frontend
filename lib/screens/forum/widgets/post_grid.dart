@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:live_frontend/models/forum_post_model.dart';
 import 'post_card.dart';
 
 class PostGridSliver extends StatelessWidget {
