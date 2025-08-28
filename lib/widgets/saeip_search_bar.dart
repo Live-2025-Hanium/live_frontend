@@ -105,7 +105,7 @@ class _SaeipSearchBarState extends State<SaeipSearchBar> {
   void _openDetail() {
     Navigator.of(context).push(
     MaterialPageRoute(
-      builder: (_) => ForumSearchDetailScreen(
+      builder: (_) => ForumSearchScreen(
         externalController: widget.controller,
         hintText: widget.hintText,
       ),
