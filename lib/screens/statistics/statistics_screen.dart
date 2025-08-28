@@ -6,6 +6,7 @@ import 'package:live_frontend/screens/statistics/widgets/monthly_compare_list.da
 import 'package:live_frontend/screens/statistics/widgets/week_navigator.dart';
 import 'package:live_frontend/screens/statistics/widgets/weekly_bar_chart.dart';
 import 'package:live_frontend/theme/app_colors.dart';
+import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
 
@@ -16,65 +17,121 @@ class StatisticsScreen extends StatefulWidget {
   State<StatisticsScreen> createState() => _StatisticsScreenState();
 }
 
-class _StatisticsScreenState extends State<StatisticsScreen> {
+class _StatisticsScreenState extends State<StatisticsScreen>
+    with SingleTickerProviderStateMixin {
   DateTime _currentAnchor = DateTime.now();
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // map weekday (Mon=1..Sun=7) to index 0..6 assuming week starts on Monday
-
     return Scaffold(
       backgroundColor: AppColors.blackBlack0,
       appBar: SaeipAppBar(appBarStyle: AppBarStyle.common),
       bottomNavigationBar: const SaeipNavigationBar(initialIndex: 1),
       body: SafeArea(
-        child: ListView(
+        child: Column(
           children: [
+            // 탭바 추가
             Container(
               color: Colors.white,
-              child: Column(
+              child: TabBar(
+                controller: _tabController,
+                labelColor: Colors.black,
+                unselectedLabelColor: AppColors.blackBlack4,
+                labelStyle: AppTextStyles.bodyMedium(context),
+                unselectedLabelStyle: AppTextStyles.bodyRegular(context),
+                indicatorColor: AppColors.blackBlack4,
+                indicatorWeight: 2,
+                indicatorSize: TabBarIndicatorSize.tab,
+                dividerColor: AppColors.blackBlack2,
+                tabs: const [
+                  Tab(text: '클로버 미션'),
+                  Tab(text: '마이 미션'),
+                ],
+              ),
+            ),
+            // 탭뷰 추가
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 36.w,
-                      vertical: 16.h,
-                    ),
-                    child: MissionCompletionGauge(
-                      percentage: 80.1,
-                      month: _currentAnchor.month,
-                    ),
-                  ),
-                  Gap(20.h),
-                  WeeklyBarChart(
+                  // 클로버 미션 탭 내용 - tabIndex를 0으로 고정
+                  _buildStatisticsContent(
+                    percentage: 80.1,
                     weeklyData: [5, 10, 15, 20, 25, 30, 35],
-                    onBarTapped: (index) {
-                      // allow tapping a bar to change the selected day
-                      setState(() {
-                        // convert index (0..6 with Monday=0) back to a DateTime
-                        final monday = _startOfWeek(
-                          _currentAnchor,
-                          DateTime.monday,
-                        );
-                        _currentAnchor = monday.add(Duration(days: index));
-                      });
-                    },
+                    tabIndex: 0, // 클로버 미션은 0
                   ),
-                  WeekNavigator(
-                    currentDate: _currentAnchor,
-                    onChanged: (start, end) {
-                      // update anchor to new week's start
-                      setState(() {
-                        _currentAnchor = start;
-                      });
-                    },
+                  // 마이 미션 탭 내용 - tabIndex를 1로 고정
+                  _buildStatisticsContent(
+                    percentage: 65.5,
+                    weeklyData: [3, 8, 12, 18, 22, 28, 32],
+                    tabIndex: 1, // 마이 미션은 1
                   ),
-                  MonthlyCompareList(referenceDate: _currentAnchor),
                 ],
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildStatisticsContent({
+    required double percentage,
+    required List<double> weeklyData,
+    required int tabIndex, // 0: 클로버 미션, 1: 마이 미션
+  }) {
+    return ListView(
+      children: [
+        Container(
+          color: Colors.white,
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 36.w, vertical: 36.h),
+                child: MissionCompletionGauge(
+                  percentage: percentage,
+                  month: _currentAnchor.month,
+                ),
+              ),
+              WeeklyBarChart(
+                weeklyData: weeklyData,
+                onBarTapped: (index) {
+                  setState(() {
+                    final monday = _startOfWeek(
+                      _currentAnchor,
+                      DateTime.monday,
+                    );
+                    _currentAnchor = monday.add(Duration(days: index));
+                  });
+                },
+              ),
+              WeekNavigator(
+                currentDate: _currentAnchor,
+                onChanged: (start, end) {
+                  setState(() {
+                    _currentAnchor = start;
+                  });
+                },
+              ),
+              if (tabIndex == 0)
+                MonthlyCompareList(referenceDate: _currentAnchor),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
