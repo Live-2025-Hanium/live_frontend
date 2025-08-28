@@ -8,6 +8,7 @@ import 'package:gap/gap.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
+// import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 
 import 'package:live_frontend/models/forum_post_detail_model.dart';
 import 'package:live_frontend/providers/forum_post_detail_provider.dart';
@@ -84,7 +85,11 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
                   : 'assets/icons/bookmark_green_border.svg',
               height: 20.h,
             ),
-            onPressed: notifier.toggleBookmark,
+            onPressed: () {
+              notifier.toggleBookmark();
+              // TODO: 토스트 메시지
+              // SaeipToastController.showMessage(context, '게시글을 스크랩했습니다.');
+            },
           ),
         ],
       ),
@@ -142,8 +147,7 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
             else
               PostDetailComments(
                 comments: state.comments,
-                onTapMore:
-                    notifier.showCommentMenu,
+                onTapMore: notifier.showCommentMenu,
                 onTapLike: notifier.likeComment,
               ),
 

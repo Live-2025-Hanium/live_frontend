@@ -137,7 +137,7 @@ class ForumPostNotifier extends StateNotifier<ForumPostState> {
     );
 
     state = state.copyWith(comments: [newComment, ...state.comments]);
-    _showToast('댓글을 남겼습니다.');
+    // _showToast('댓글을 남겼습니다.');
   }
 
   void toggleCommentLike(int commentId) {
@@ -160,7 +160,7 @@ class ForumPostNotifier extends StateNotifier<ForumPostState> {
           if (c.id != commentId) c,
       ],
     );
-    _showToast('댓글을 삭제했습니다.');
+    // _showToast('댓글을 삭제했습니다.');
   }
 
   void likeComment(ForumPostComment comment) {
@@ -204,10 +204,10 @@ class ForumPostNotifier extends StateNotifier<ForumPostState> {
 
     switch (action) {
       case CommentAction.notify:
-        _showToast('대댓글 알림을 켰습니다.');
+        // _showToast('대댓글 알림을 켰습니다.');
         break;
       case CommentAction.edit:
-        _showToast('댓글 수정은 다음 버전에 제공됩니다.');
+        // _showToast('댓글 수정은 다음 버전에 제공됩니다.');
         break;
       case CommentAction.delete:
         final ok = await showDialog<bool>(
@@ -227,13 +227,14 @@ class ForumPostNotifier extends StateNotifier<ForumPostState> {
     }
   }
 
-  void _showToast(String message) {
-    final ctx = navigatorContext;
-    if (ctx == null) return;
-    ScaffoldMessenger.of(ctx).showSnackBar(
-      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
-    );
-  }
+  // TODO:추후 수정할 예정입니다.
+  // void _showToast(String message) {
+  //   final ctx = navigatorContext;
+  //   if (ctx == null) return;
+  //   ScaffoldMessenger.of(ctx).showSnackBar(
+  //     SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+  //   );
+  // }
 }
 
 /// ----- 화면용 Provider (null-safe 시딩) -----
