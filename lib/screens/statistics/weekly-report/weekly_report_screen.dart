@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
+import 'package:live_frontend/screens/statistics/weekly-report/widget/mission_list.dart';
 import 'package:live_frontend/screens/statistics/widgets/week_navigator.dart';
 import 'package:live_frontend/screens/statistics/widgets/weekly_bar_chart.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
@@ -60,6 +61,12 @@ class _WeeklyReportScreenState extends State<WeeklyReportScreen> {
                   });
                 },
               ),
+              Expanded(
+                child: MissionList(
+                  referenceDate: _anchor,
+                  type: widget.missionType,
+                ),
+              ), // Updated here
             ],
           ),
         ),
