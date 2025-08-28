@@ -23,6 +23,9 @@ class _MapScreenState extends State<MapScreen> {
   // 화면에 그릴 마커 목록(더미)
   List<Marker> _markers = [];
 
+  // 현재 위치 상수 추가
+  static const myLocation = LatLng(37.611846, 126.834059);
+
   // 상수로 분리하여 관리 (나중에 설정 파일이나 API로 이동 가능)
   static const categoryItems = [
     CategoryAction(
@@ -48,6 +51,18 @@ class _MapScreenState extends State<MapScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    // 초기 마커 설정
+    _markers = [
+      Marker(
+        markerId: 'my_location',
+        latLng: myLocation,
+      ),
+    ];
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
@@ -55,11 +70,8 @@ class _MapScreenState extends State<MapScreen> {
 
   // dio 없이 동작하는 "모의 검색": 현재 중심 주변에 임의 마커 생성
   Future<void> _mockSearchByCategory(CategoryAction action) async {
-    // 현재 지도 중심 좌표
-    final center = _mapController == null
-        ? LatLng(
-37.611846, 126.834059) // 컨트롤러 없으면 서울시청 근처
-        : await _mapController!.getCenter();
+    // 현재 위치 기준으로 검색
+    final center = myLocation;
 
     // 중심 기준으로 살짝씩 오프셋된 좌표들을 생성(더미)
     const deltas = <(double, double)>[
@@ -71,29 +83,18 @@ class _MapScreenState extends State<MapScreen> {
       (-0.0022, 0.0018),
     ];
 
-    final newMarkers = <Marker>[];
+    final newMarkers = <Marker>[
+      // 현재 위치 마커 먼저 추가
+      Marker(
+        markerId: 'my_location',
+        latLng: myLocation,
+      ),
+    ];
+
+    // 검색 결과 마커 추가
     for (var i = 0; i < deltas.length; i++) {
       final (dy, dx) = deltas[i];
       final lat = center.latitude + dy;
-      final lng = center.longitude + dx;
-      newMarkers.add(
-        Marker(
-          markerId: '${action.label}_$i',
-          latLng: LatLng(lat, lng),
-          infoWindowContent: '${action.label} #$i',
-        ),
-      );
-    }
-
-    setState(() => _markers = newMarkers);
-
-    // 첫 마커로 카메라 이동(선택)
-    if (_mapController != null && newMarkers.isNotEmpty) {
-      await _mapController!.setCenter(newMarkers.first.latLng);
-    }
-
-    // 바텀시트가 닫혀있다면 살짝 열어주기
-    if (_sheetController.size < 0.35) {
       // ignore: unawaited_futures
       _sheetController.animateTo(
         0.35,
@@ -158,7 +159,7 @@ class _MapScreenState extends State<MapScreen> {
                   shape: BoxShape.circle,
                   boxShadow: [BoxShadow(blurRadius: 8, color: Colors.black26)],
                 ),
-                child: SvgPicture.asset('assets/icons/my_location.svg'),
+                child: SvgPicture.asset('assets/icons/reset_location.svg'),
               ),
             ),
           ),
