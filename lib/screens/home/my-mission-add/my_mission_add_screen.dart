@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
+import 'package:live_frontend/models/mission_models.dart';
+import 'package:live_frontend/providers/home_provider.dart';
 import 'package:live_frontend/screens/home/my-mission-add/widget/selection_button.dart';
 import 'package:live_frontend/screens/home/my-mission-add/widget/selection_tile.dart';
 import 'package:live_frontend/theme/app_colors.dart';
@@ -15,14 +18,14 @@ import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 import 'package:time_picker_spinner/time_picker_spinner.dart';
 import 'package:go_router/go_router.dart';
 
-class MyMissionAddScreen extends StatefulWidget {
+class MyMissionAddScreen extends ConsumerStatefulWidget {
   const MyMissionAddScreen({super.key});
 
   @override
-  State<MyMissionAddScreen> createState() => _MyMissionAddScreenState();
+  ConsumerState<MyMissionAddScreen> createState() => _MyMissionAddScreenState();
 }
 
-class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
+class _MyMissionAddScreenState extends ConsumerState<MyMissionAddScreen> {
   late MyMissionAddModel _mission;
   late List<bool> _included;
 
@@ -105,26 +108,35 @@ class _MyMissionAddScreenState extends State<MyMissionAddScreen> {
     return true;
   }
 
-  void _onSavePressed() {
+  Future<void> _onSavePressed() async {
     if (!_validateBeforeSave()) return;
-    MyMissionAddPayloadModel payload = MyMissionAddPayloadModel(
+
+    // Build MyMissionModel and add to global state
+    final scheduledTime = _included[2] ? (_mission.scheduledTime) : null;
+    final repeatDay = _included[3] && _mission.repeatDay != null
+        ? _mission.repeatDay!
+        : null;
+
+    final newMission = MyMissionModel(
+      userMissionId: DateTime.now().millisecondsSinceEpoch,
+      missionType: MissionType.my,
       missionTitle: _titleController.text.trim(),
-      startDate: _mission.startDate != null && _included[0]
-          ? Jiffy.parseFromDateTime(
-              _mission.startDate!,
-            ).format(pattern: 'yyyy-MM-DD')
-          : null,
-      endDate: _mission.endDate != null && _included[1]
-          ? Jiffy.parseFromDateTime(
-              _mission.endDate!,
-            ).format(pattern: 'yyyy-MM-DD')
-          : null,
-      scheduledTime: _included[2] ? _mission.scheduledTime : null,
-      repeatDay: _included[3] ? _mission.repeatDay : null,
+      missionStatus: MissionStatus.assigned,
+      scheduledTime: scheduledTime,
+      repeatDay: repeatDay,
     );
 
-    // 로그로 json 출력하기
-    debugPrint(payload.toJson().toString());
+    try {
+      await ref
+          .read(myMissionNotifierProvider.notifier)
+          .addMyMission(newMission);
+      if (!mounted) return;
+      SaeipToastController.showMessage(context, '마이 미션이 추가되었습니다.');
+      Navigator.of(context).pop();
+    } catch (e) {
+      if (!mounted) return;
+      SaeipToastController.showMessage(context, '저장에 실패했습니다.');
+    }
   }
 
   @override

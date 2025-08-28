@@ -105,6 +105,25 @@ class CloverMissionModel {
       _$CloverMissionModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$CloverMissionModelToJson(this);
+
+  // copyWith 구현하기
+  CloverMissionModel copyWith({
+    int? userMissionId,
+    String? missionTitle,
+    MissionStatus? missionStatus,
+    CloverMissionDifficulty? missionDifficulty,
+    CloverMissionCategory? missionCategory,
+    CloverMissionType? cloverType,
+  }) {
+    return CloverMissionModel(
+      userMissionId: userMissionId ?? this.userMissionId,
+      missionTitle: missionTitle ?? this.missionTitle,
+      missionStatus: missionStatus ?? this.missionStatus,
+      missionDifficulty: missionDifficulty ?? this.missionDifficulty,
+      missionCategory: missionCategory ?? this.missionCategory,
+      cloverType: cloverType ?? this.cloverType,
+    );
+  }
 }
 
 @JsonSerializable()

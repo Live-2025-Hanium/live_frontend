@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
-import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/screens/home/execute/widgets/complete_modal.dart';
 import 'package:live_frontend/screens/home/execute/widgets/countdown_timer.dart';
 import 'package:live_frontend/screens/home/execute/widgets/pause_modal.dart';
@@ -9,39 +9,40 @@ import 'package:live_frontend/screens/home/execute/widgets/execute_screen_templa
 import 'dart:async';
 
 import 'package:live_frontend/widgets/saeip_modal.dart';
+import 'package:live_frontend/providers/home_provider.dart';
 
-final CloverMissionDetailModel timerMission = CloverMissionDetailModel(
-  userMissionId: 1001,
-  cloverType: CloverMissionType.timer,
-  missionTitle: '30초 독서하기',
-  missionStatus: MissionStatus.started,
-  missionDifficulty: CloverMissionDifficulty.normal,
-  missionCategory: CloverMissionCategory.hobby,
-  remainingTime: const Duration(seconds: 30),
-  targetAddress: null,
-  remainingDistance: null,
-);
-
-class ExecuteTimerMissionScreen extends StatefulWidget {
-  final CloverMissionDetailModel data = timerMission;
+class ExecuteTimerMissionScreen extends ConsumerStatefulWidget {
   final int id;
-  ExecuteTimerMissionScreen({super.key, required this.id});
+  const ExecuteTimerMissionScreen({super.key, required this.id});
 
   @override
-  State<ExecuteTimerMissionScreen> createState() =>
+  ConsumerState<ExecuteTimerMissionScreen> createState() =>
       _ExecuteTimerMissionScreenState();
 }
 
-class _ExecuteTimerMissionScreenState extends State<ExecuteTimerMissionScreen> {
+class _ExecuteTimerMissionScreenState
+    extends ConsumerState<ExecuteTimerMissionScreen> {
   late Duration _remaining;
   Timer? _timer;
   bool _isPaused = false;
+  CloverMissionDetailModel? _detail;
+  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _remaining = widget.data.remainingTime ?? Duration.zero;
-    _startTimer();
+    // 상세 미션 정보를 불러옵니다.
+    ref
+        .read(cloverMissionNotifierProvider.notifier)
+        .fetchMissionDetail(widget.id)
+        .then((d) {
+          setState(() {
+            _detail = d;
+            _remaining = d?.remainingTime ?? Duration.zero;
+            _loading = false;
+          });
+          _startTimer();
+        });
   }
 
   void _startTimer() {
@@ -73,7 +74,7 @@ class _ExecuteTimerMissionScreenState extends State<ExecuteTimerMissionScreen> {
     showDialog(
       context: context,
       builder: (_) => PauseModal(
-        userMissionId: widget.data.userMissionId,
+        userMissionId: widget.id,
         onCancel: () {
           _togglePause();
         },
@@ -83,7 +84,10 @@ class _ExecuteTimerMissionScreenState extends State<ExecuteTimerMissionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final mission = widget.data;
+    if (_loading || _detail == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    final mission = _detail!;
     final onRightPressed = _remaining.inSeconds > 0
         ? () {
             _togglePause();
@@ -98,7 +102,7 @@ class _ExecuteTimerMissionScreenState extends State<ExecuteTimerMissionScreen> {
             showDialog(
               context: context,
               builder: (context) {
-                return CompleteModal();
+                return CompleteModal(userMissionId: widget.id);
               },
             );
           };
@@ -139,7 +143,7 @@ class _ExecuteTimerMissionScreenState extends State<ExecuteTimerMissionScreen> {
         showDialog(
           context: context,
           builder: (context) {
-            return CompleteModal();
+            return CompleteModal(userMissionId: widget.id);
           },
         );
       },

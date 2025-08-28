@@ -73,17 +73,17 @@ class MyMissionModel {
   final MissionStatus missionStatus;
 
   /// 예시: ["08:30", "21:00"] (24시간 기준 권장)
-  final String scheduledTime;
+  final String? scheduledTime;
 
-  final RepeatDay repeatDay;
+  final RepeatDay? repeatDay;
 
   const MyMissionModel({
     required this.userMissionId,
     required this.missionType,
     required this.missionTitle,
     required this.missionStatus,
-    required this.scheduledTime,
-    required this.repeatDay,
+    this.scheduledTime,
+    this.repeatDay,
   });
 
   factory MyMissionModel.fromJson(Map<String, dynamic> json) =>

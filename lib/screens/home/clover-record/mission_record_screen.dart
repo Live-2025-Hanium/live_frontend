@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
 import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/screens/home/clover-record/widget/bipolar_range_slider.dart';
@@ -43,7 +44,7 @@ class _MissionRecordScreenState extends State<MissionRecordScreen> {
     super.dispose();
   }
 
-  void onSaveTap() {
+  void onSaveTap(BuildContext context) {
     _feedback = CloverMissionFeedbackModel(
       userMissionId: data.userMissionId,
       feedbackComment: _controller.text,
@@ -54,6 +55,7 @@ class _MissionRecordScreenState extends State<MissionRecordScreen> {
     if (_feedback != null) {
       // 서버에 피드백 저장 로직 추가
       debugPrint(_feedback!.toJson().toString());
+      context.pushNamed('home');
     }
   }
 
@@ -173,7 +175,10 @@ class _MissionRecordScreenState extends State<MissionRecordScreen> {
               ),
               SizedBox(
                 width: double.infinity,
-                child: SaeipButton(text: '저장', onPressed: onSaveTap),
+                child: SaeipButton(
+                  text: '저장',
+                  onPressed: () => onSaveTap(context),
+                ),
               ),
             ],
           ),

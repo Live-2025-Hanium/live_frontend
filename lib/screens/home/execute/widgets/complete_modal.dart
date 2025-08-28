@@ -1,10 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
+import 'package:live_frontend/providers/home_provider.dart';
 
-class CompleteModal extends StatelessWidget {
-  const CompleteModal({super.key});
+class CompleteModal extends ConsumerStatefulWidget {
+  final int userMissionId;
+  const CompleteModal({super.key, required this.userMissionId});
+
+  @override
+  ConsumerState<CompleteModal> createState() => _CompleteModalState();
+}
+
+class _CompleteModalState extends ConsumerState<CompleteModal> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // 실행 시 미션을 완료 처리합니다.
+      ref
+          .read(cloverMissionNotifierProvider.notifier)
+          .completeMission(widget.userMissionId);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
