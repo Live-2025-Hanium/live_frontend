@@ -12,6 +12,7 @@ import 'package:live_frontend/screens/home/my-mission-add/repeat/repeat_screen.d
 import 'package:live_frontend/screens/map/map_screen.dart';
 import 'package:live_frontend/screens/mypage/mypage_screen.dart';
 import 'package:live_frontend/screens/statistics/statistics_screen.dart';
+import 'package:live_frontend/screens/statistics/weekly-report/weekly_report_screen.dart';
 import 'package:live_frontend/screens/survey/survey_screen.dart';
 import 'package:live_frontend/screens/login/terms/terms_detail/terms_detail_screen.dart';
 import 'package:live_frontend/screens/login/terms/terms_screen.dart';
@@ -135,6 +136,21 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'statistics',
         path: '/statistics',
         builder: (context, state) => const StatisticsScreen(),
+        routes: [
+          GoRoute(
+            path: 'weekly_report',
+            name: 'weekly_report',
+            builder: (context, state) {
+              final args = state.extra as Map<String, dynamic>;
+              final referenceDate = args['referenceDate'] as DateTime;
+              final missionType = args['missionType'] as MissionType;
+              return WeeklyReportScreen(
+                referenceDate: referenceDate,
+                missionType: missionType,
+              );
+            },
+          ),
+        ],
       ),
       GoRoute(
         name: 'map',

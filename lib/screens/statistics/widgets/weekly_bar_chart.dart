@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
 class WeeklyBarChart extends StatelessWidget {
   final List<double> weeklyData;
-
   final int? selectedIndex;
   final void Function(int dayIndex)? onBarTapped;
+  final Color? selectedBarColor;
+  final Color? unselectedBarColor;
 
   const WeeklyBarChart({
     super.key,
     required this.weeklyData,
     this.selectedIndex,
     this.onBarTapped,
+    this.selectedBarColor,
+    this.unselectedBarColor,
   });
 
   @override
@@ -97,8 +99,8 @@ class WeeklyBarChart extends StatelessWidget {
                 BarChartRodData(
                   toY: value,
                   color: selectedIndex == index
-                      ? AppColors.greenNormal
-                      : AppColors.greenLightActive,
+                      ? (selectedBarColor ?? AppColors.greenNormal)
+                      : (unselectedBarColor ?? AppColors.greenLightActive),
                   width: 24.w,
                   borderRadius: BorderRadius.circular(4.r),
                 ),
@@ -110,10 +112,7 @@ class WeeklyBarChart extends StatelessWidget {
             touchCallback: (event, response) {
               if (event is FlTapUpEvent && response?.spot != null) {
                 final index = response!.spot!.touchedBarGroupIndex;
-                // 1) 외부 콜백
                 onBarTapped?.call(index);
-                // 2) 라우팅 (GoRouter)
-                context.pushNamed('home');
               }
             },
           ),
