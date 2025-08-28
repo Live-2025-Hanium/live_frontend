@@ -7,12 +7,17 @@ import 'package:live_frontend/theme/app_text_styles.dart';
 
 class MissionCompletionGauge extends StatelessWidget {
   final double percentage; // 0~100
+  final int? month; // optional month override (1-12)
 
-  const MissionCompletionGauge({super.key, required this.percentage});
+  const MissionCompletionGauge({
+    super.key,
+    required this.percentage,
+    this.month,
+  });
 
   String get _currentMonthText {
-    final now = DateTime.now();
-    return '${now.month}월 미션 완료율';
+    final m = month ?? DateTime.now().month;
+    return '$m월 미션 완료율';
   }
 
   @override
@@ -27,7 +32,7 @@ class MissionCompletionGauge extends StatelessWidget {
           height: h, // 실제로 반원 높이만 차지
           child: CustomPaint(
             painter: _SemiGaugePainter(
-              percent: percentage.clamp(0, 100),
+              percent: percentage.clamp(0, 100).toDouble(),
               trackColor: AppColors.blackBlack1,
               progressColor: AppColors.greenNormal,
               thickness: 10.w, // 필요하면 고정값(예: 16.0)으로 변경

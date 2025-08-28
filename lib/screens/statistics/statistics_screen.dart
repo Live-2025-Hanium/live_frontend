@@ -22,7 +22,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   @override
   Widget build(BuildContext context) {
     // map weekday (Mon=1..Sun=7) to index 0..6 assuming week starts on Monday
-    final selectedIndex = (_currentAnchor.weekday - DateTime.monday) % 7;
 
     return Scaffold(
       backgroundColor: AppColors.blackBlack0,
@@ -40,12 +39,14 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       horizontal: 36.w,
                       vertical: 16.h,
                     ),
-                    child: MissionCompletionGauge(percentage: 80.1),
+                    child: MissionCompletionGauge(
+                      percentage: 80.1,
+                      month: _currentAnchor.month,
+                    ),
                   ),
                   Gap(20.h),
                   WeeklyBarChart(
                     weeklyData: [5, 10, 15, 20, 25, 30, 35],
-                    selectedIndex: selectedIndex,
                     onBarTapped: (index) {
                       // allow tapping a bar to change the selected day
                       setState(() {
@@ -67,7 +68,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       });
                     },
                   ),
-                  MonthlyCompareList(currentMonth: _currentAnchor.month),
+                  MonthlyCompareList(referenceDate: _currentAnchor),
                 ],
               ),
             ),

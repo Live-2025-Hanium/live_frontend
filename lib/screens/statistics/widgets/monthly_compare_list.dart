@@ -7,9 +7,12 @@ import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
 class MonthlyCompareList extends StatelessWidget {
-  final int currentMonth;
+  final DateTime referenceDate;
 
-  const MonthlyCompareList({super.key, required this.currentMonth});
+  /// referenceDate: the date used to determine which month to display (year/month).
+  /// If null, defaults to DateTime.now().
+  MonthlyCompareList({super.key, DateTime? referenceDate})
+    : referenceDate = referenceDate ?? DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +35,7 @@ class MonthlyCompareList extends StatelessWidget {
             maxValue: 100,
             currentValue: 80,
             previousValue: 70,
+            referenceMonth: referenceDate,
           ),
           Gap(16.h),
           MonthlyComparePercentCard(
@@ -40,6 +44,7 @@ class MonthlyCompareList extends StatelessWidget {
             maxValue: 100,
             currentValue: 75,
             previousValue: 70,
+            referenceMonth: referenceDate,
           ),
           Gap(16.h),
           MonthlyComparePercentCard(
@@ -48,6 +53,7 @@ class MonthlyCompareList extends StatelessWidget {
             maxValue: 100,
             currentValue: 90,
             previousValue: 80,
+            referenceMonth: referenceDate,
           ),
         ],
       ),
