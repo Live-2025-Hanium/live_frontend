@@ -6,11 +6,12 @@ import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
 import 'package:live_frontend/widgets/saeip_search_bar.dart';
 import 'package:live_frontend/screens/forum/widgets/banner_carousel.dart';
 import 'package:live_frontend/screens/forum/widgets/category_chips.dart';
-import 'package:live_frontend/screens/forum/widgets/post_card.dart';
 import 'package:live_frontend/screens/forum/widgets/post_grid.dart';
 import 'package:live_frontend/screens/forum/widgets/sort_controls.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:live_frontend/models/forum_post_model.dart' as models;
+import 'data/dummy_forum_data.dart';
 
 class ForumScreen extends StatefulWidget {
   const ForumScreen({super.key});
@@ -32,16 +33,48 @@ class _ForumScreenState extends State<ForumScreen> {
     super.dispose();
   }
 
-  // 더미 데이터
-  List<ForumPost> get _posts => List.generate(
-    10,
-    (i) => ForumPost(
-      id: 'p$i',
-      title: '2020 경기도 「청년 마인드케어」, 참여자 모집',
-      date: DateTime(2025, 1, 10),
-      imageUrl: 'https://picsum.photos/seed/post$i/600/400',
-    ),
-  );
+  List<models.ForumPost> get _posts {
+    return _getFilteredAndSortedPosts(
+      categoryId: _selectedCategory,
+      sort: _sort,
+    );
+  }
+
+  List<models.ForumPost> _getFilteredAndSortedPosts({
+    required int categoryId,
+    required ForumSort sort,
+  }) {
+    // 1. 카테고리 필터링
+    var filtered = categoryId == 0
+        ? dummyForumPosts
+        : dummyForumPosts
+            .where((post) => post.category.id == categoryId - 1)
+            .toList();
+
+    // 2. 정렬
+    filtered.sort((a, b) {
+      switch (sort) {
+        case ForumSort.latest:
+          return b.createdAt.compareTo(a.createdAt);
+        case ForumSort.views:
+          return (b.viewCount ?? 0).compareTo(a.viewCount ?? 0);
+        case ForumSort.scraps:
+          return (b.totalReactionCount ?? 0).compareTo(a.totalReactionCount ?? 0);
+      }
+    });
+
+    return filtered;
+  }
+
+  // CategoryChips 위젯의 카테고리 목록
+  static const _categories = [
+    '전체', // index: 0
+    '지원 사업', // index: 1 = ForumCategory.support
+    '마음 챙김', // index: 2 = ForumCategory.mindcare
+    '생활 습관', // index: 3 = ForumCategory.lifestyle
+    '사회 연결', // index: 4 = ForumCategory.social
+    '진로·직업', // index: 5 = ForumCategory.career
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +137,7 @@ class _ForumScreenState extends State<ForumScreen> {
           // 카테고리 칩
           SliverToBoxAdapter(
             child: CategoryChips(
-              categories: const ['지원 사업', '마음 챙김', '생활 습관', '사회 연결', '진로·직업'],
+              categories: _categories,
               selectedIndex: _selectedCategory,
               onSelected: (i) => setState(() => _selectedCategory = i),
             ),

@@ -39,24 +39,21 @@ class CategoryChips extends StatelessWidget {
         itemBuilder: (_, i) {
           final selected = i == selectedIndex;
 
-          return InkWell(
-            onTap: () => onSelected(i),
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 14),
-              child: IntrinsicWidth(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      categories[i],
-                      style: selected
-                          ? AppTextStyles.bodySemibold(context,
-                              color: AppColors.greenNormal,
-                            )
-                          : AppTextStyles.bodyRegular(context),
-                    ),
-                  ],
+          return Material(
+            child: InkWell(
+              onTap: () => onSelected(i),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+                child: Center(
+                  child: Text(
+                    categories[i],
+                    style: selected
+                        ? AppTextStyles.bodySemibold(
+                            context,
+                            color: AppColors.greenNormal,
+                          )
+                        : AppTextStyles.bodyRegular(context),
+                  ),
                 ),
               ),
             ),

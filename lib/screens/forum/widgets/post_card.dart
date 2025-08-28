@@ -3,20 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
-
-class ForumPost {
-  final String id;
-  final String title;
-  final DateTime date;
-  final String imageUrl;
-
-  const ForumPost({
-    required this.id,
-    required this.title,
-    required this.date,
-    required this.imageUrl,
-  });
-}
+import 'package:live_frontend/models/forum_post_model.dart';
 
 class PostCard extends StatelessWidget {
   const PostCard({super.key, required this.post, this.onTap});
@@ -27,7 +14,7 @@ class PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dateStr =
-        '${post.date.year}.${post.date.month.toString().padLeft(2, '0')}.${post.date.day.toString().padLeft(2, '0')}';
+        '${post.createdAt.year}.${post.createdAt.month.toString().padLeft(2, '0')}.${post.createdAt.day.toString().padLeft(2, '0')}';
 
     return InkWell(
       borderRadius: BorderRadius.circular(8),
@@ -40,7 +27,7 @@ class PostCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             child: AspectRatio(
               aspectRatio: 1.33,
-              child: Image.network(post.imageUrl, fit: BoxFit.cover),
+              child: Image.network(post.thumbnailImageUrl ?? 'https://via.placeholder.com/300', fit: BoxFit.cover),
             ),
           ),
 
