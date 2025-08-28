@@ -98,8 +98,8 @@ class _ToastAnimatorState extends State<_ToastAnimator>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 200),
-      reverseDuration: const Duration(milliseconds: 150),
+      duration: const Duration(milliseconds: 150),
+      reverseDuration: const Duration(milliseconds: 100),
     );
     SaeipToastController._animationController = _controller;
 
