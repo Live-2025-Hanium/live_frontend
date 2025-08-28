@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
+import 'package:live_frontend/screens/map/map_search_screen.dart';
 import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
 import 'package:live_frontend/widgets/saeip_search_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -56,7 +57,8 @@ class _MapScreenState extends State<MapScreen> {
   Future<void> _mockSearchByCategory(CategoryAction action) async {
     // 현재 지도 중심 좌표
     final center = _mapController == null
-        ? LatLng(37.5665, 126.9780) // 컨트롤러 없으면 서울시청 근처
+        ? LatLng(
+37.611846, 126.834059) // 컨트롤러 없으면 서울시청 근처
         : await _mapController!.getCenter();
 
     // 중심 기준으로 살짝씩 오프셋된 좌표들을 생성(더미)
@@ -121,13 +123,22 @@ class _MapScreenState extends State<MapScreen> {
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
-              child: SaeipSearchBar(
-                controller: _searchController,
-                hintText: '장소, 주소 검색',
-                onSubmit: (value) {
-                  // TODO: 실제 검색 화면 이동 or 추후 REST API 연동
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const MapSearchScreen()),
+                  );
                 },
-                logoSvgAsset: 'assets/icons/clover.svg',
+                child: AbsorbPointer(
+                  child: SaeipSearchBar(
+                    controller: _searchController,
+                    hintText: '장소, 주소 검색',
+                    onSubmit: (value) {
+                      // 검색바를 탭했을 때는 이 콜백이 호출되지 않음
+                    },
+                    logoSvgAsset: 'assets/icons/clover.svg',
+                  ),
+                ),
               ),
             ),
           ),
