@@ -2,7 +2,7 @@ import 'package:live_frontend/models/forum_post_model.dart';
 
 final dummyForumPosts = List.generate(
   10,
-  (i) => ForumPost(
+  (i) => ForumPostModel(
     id: i, // int로 변경
     title: _dummyTitles[i % _dummyTitles.length],
     category: Category(id: i % 5, name: 'Category ${i % 5}'),

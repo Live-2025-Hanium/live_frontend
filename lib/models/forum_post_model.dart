@@ -8,7 +8,7 @@ class Category {
   });
 }
 
-class ForumPost {
+class ForumPostModel {
   final int id;
   final String title;
   final Category category;
@@ -19,7 +19,7 @@ class ForumPost {
   final int? viewCount;
   final int? totalReactionCount;
 
-  const ForumPost({
+  const ForumPostModel({
     required this.id,
     required this.title,
     required this.category,

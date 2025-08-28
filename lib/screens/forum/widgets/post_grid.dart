@@ -14,8 +14,8 @@ class PostGridSliver extends StatelessWidget {
     this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
   });
 
-  final List<ForumPost> posts;
-  final void Function(ForumPost)? onTapPost;
+  final List<ForumPostModel> posts;
+  final void Function(ForumPostModel)? onTapPost;
 
   final int crossAxisCount;
   final double mainAxisSpacing;
