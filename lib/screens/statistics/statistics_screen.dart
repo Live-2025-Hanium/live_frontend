@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
+import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/screens/statistics/widgets/mission_completion_gauge.dart';
 import 'package:live_frontend/screens/statistics/widgets/monthly_compare_list.dart';
 import 'package:live_frontend/screens/statistics/widgets/week_navigator.dart';
@@ -19,7 +20,9 @@ class StatisticsScreen extends StatefulWidget {
 
 class _StatisticsScreenState extends State<StatisticsScreen>
     with SingleTickerProviderStateMixin {
-  DateTime _currentAnchor = DateTime.now();
+  DateTime _currentAnchor = DateTime.now().subtract(
+    Duration(days: DateTime.now().weekday - 1),
+  );
   late TabController _tabController;
 
   @override
@@ -109,13 +112,17 @@ class _StatisticsScreenState extends State<StatisticsScreen>
               WeeklyBarChart(
                 weeklyData: weeklyData,
                 onBarTapped: (index) {
-                  setState(() {
-                    final monday = _startOfWeek(
-                      _currentAnchor,
-                      DateTime.monday,
-                    );
-                    _currentAnchor = monday.add(Duration(days: index));
-                  });
+                  context.pushNamed(
+                    'weekly_report',
+                    extra: {
+                      'referenceDate': _currentAnchor.add(
+                        Duration(days: index),
+                      ),
+                      'missionType': tabIndex == 0
+                          ? MissionType.clover
+                          : MissionType.my,
+                    },
+                  );
                 },
               ),
               WeekNavigator(
