@@ -26,7 +26,8 @@ class MissionListItem extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          height: 48.h,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
           child: Row(
             children: [
