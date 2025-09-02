@@ -14,6 +14,7 @@ class SaeipButton extends StatelessWidget {
   final TextStyle? textStyle;
   final SaeipButtonType type;
   final bool disabled;
+  final Color? outlineColor;
 
   const SaeipButton({
     super.key,
@@ -25,6 +26,7 @@ class SaeipButton extends StatelessWidget {
     this.textStyle,
     this.type = SaeipButtonType.filled,
     this.disabled = false,
+    this.outlineColor,
   });
 
   const SaeipButton.outlined({
@@ -36,6 +38,7 @@ class SaeipButton extends StatelessWidget {
     this.height = 48,
     this.textStyle,
     this.disabled = false,
+    this.outlineColor = AppColors.greenDark,
   }) : type = SaeipButtonType.outlined;
 
   @override
@@ -46,16 +49,17 @@ class SaeipButton extends StatelessWidget {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
-          side:
-              type == SaeipButtonType.outlined
-                  ? BorderSide(color: AppColors.greenDark, width: 1)
-                  : BorderSide.none,
+          side: type == SaeipButtonType.outlined
+              ? BorderSide(color: outlineColor ?? AppColors.greenDark, width: 1)
+              : BorderSide.none,
         ),
         backgroundColor: backgroundColor,
-        minimumSize: Size(height.w, height.h),
+        minimumSize: Size(0, height.h),
+        padding: EdgeInsets.symmetric(horizontal: 8.w),
       ),
       child: Text(
         text,
+        maxLines: 1,
         style:
             textStyle ?? AppTextStyles.bodySemibold(context, color: textColor),
       ),

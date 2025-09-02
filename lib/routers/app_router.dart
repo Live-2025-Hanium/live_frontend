@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/screens/404/not_found_screen.dart';
 import 'package:live_frontend/screens/forum/forum_screen.dart';
+import 'package:live_frontend/screens/home/clover-record/mission_record_screen.dart';
+import 'package:live_frontend/screens/home/execute/execute_photo_mission_screen.dart';
+import 'package:live_frontend/screens/home/execute/execute_timer_mission_screen.dart';
+import 'package:live_frontend/screens/home/my-mission-add/my_mission_add_screen.dart';
+import 'package:live_frontend/screens/home/my-mission-add/repeat/repeat_screen.dart';
 import 'package:live_frontend/screens/map/map_screen.dart';
 import 'package:live_frontend/screens/mypage/mypage_screen.dart';
 import 'package:live_frontend/screens/statistics/statistics_screen.dart';
+import 'package:live_frontend/screens/statistics/weekly-report/weekly_report_screen.dart';
 import 'package:live_frontend/screens/survey/survey_screen.dart';
 import 'package:live_frontend/screens/login/terms/terms_detail/terms_detail_screen.dart';
 import 'package:live_frontend/screens/login/terms/terms_screen.dart';
@@ -13,6 +20,7 @@ import '../screens/login/login_screen.dart';
 import '../screens/login/profile_setup/profile_setup_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../providers/auth_provider.dart';
+import 'package:live_frontend/screens/forum/forum_post_screen.dart';
 
 // 라우터 새로고침 트리거
 final routerRefreshProvider = ChangeNotifierProvider((ref) {
@@ -58,12 +66,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             name: 'profile_setup',
-            path: '/profile_setup',
+            path: 'profile_setup',
             builder: (context, state) => const ProfileSetupScreen(),
           ),
           GoRoute(
             name: 'terms',
-            path: '/terms',
+            path: 'terms',
             builder: (context, state) {
               return TermsScreen();
             },
@@ -84,16 +92,65 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
-
       GoRoute(
         name: 'home',
         path: '/home',
         builder: (context, state) => const HomeScreen(),
+        routes: [
+          GoRoute(
+            name: 'mission_record',
+            path: 'mission_record',
+            builder: (context, state) => const MissionRecordScreen(),
+          ),
+          GoRoute(
+            name: 'timer_mission',
+            path: 'execute/timer_mission',
+            builder: (context, state) =>
+                ExecuteTimerMissionScreen(id: state.extra as int),
+          ),
+          GoRoute(
+            name: 'photo_mission',
+            path: 'execute/photo_mission',
+            builder: (context, state) =>
+                ExecutePhotoMissionScreen(id: state.extra as int),
+          ),
+          GoRoute(
+            name: 'my_mission_add',
+            path: 'my_mission_add',
+            builder: (context, state) {
+              return MyMissionAddScreen();
+            },
+            routes: [
+              GoRoute(
+                path: 'repeat',
+                name: 'repeat',
+                builder: (context, state) {
+                  return RepeatScreen(initial: state.extra as RepeatDay?);
+                },
+              ),
+            ],
+          ),
+        ],
       ),
       GoRoute(
         name: 'statistics',
         path: '/statistics',
         builder: (context, state) => const StatisticsScreen(),
+        routes: [
+          GoRoute(
+            path: 'weekly_report',
+            name: 'weekly_report',
+            builder: (context, state) {
+              final args = state.extra as Map<String, dynamic>;
+              final referenceDate = args['referenceDate'] as DateTime;
+              final missionType = args['missionType'] as MissionType;
+              return WeeklyReportScreen(
+                referenceDate: referenceDate,
+                missionType: missionType,
+              );
+            },
+          ),
+        ],
       ),
       GoRoute(
         name: 'map',
@@ -104,6 +161,20 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'forum',
         path: '/forum',
         builder: (context, state) => const ForumScreen(),
+        routes: [
+          GoRoute(
+            name: 'forum_post',
+            path: 'post/:id',
+            builder: (context, state) {
+              final idStr = state.pathParameters['id'];
+              final id = int.tryParse(idStr ?? '');
+              if (id == null) {
+                return const NotFoundScreen();
+              }
+              return ForumPostScreen(postId: id);
+            },
+          ),
+        ],
       ),
       GoRoute(
         name: 'mypage',

@@ -31,6 +31,13 @@ enum CloverMissionDifficulty {
 
   final int value;
   const CloverMissionDifficulty(this.value);
+
+  static CloverMissionDifficulty fromValue(int value) {
+    return CloverMissionDifficulty.values.firstWhere(
+      (difficulty) => difficulty.value == value,
+      orElse: () => CloverMissionDifficulty.normal,
+    );
+  }
 }
 
 enum CloverMissionCategory {
@@ -83,6 +90,7 @@ class CloverMissionModel {
   final MissionStatus missionStatus;
   final CloverMissionDifficulty missionDifficulty;
   final CloverMissionCategory missionCategory;
+  final CloverMissionType cloverType;
 
   CloverMissionModel({
     required this.userMissionId,
@@ -90,36 +98,52 @@ class CloverMissionModel {
     required this.missionStatus,
     required this.missionDifficulty,
     required this.missionCategory,
+    required this.cloverType,
   });
 
   factory CloverMissionModel.fromJson(Map<String, dynamic> json) =>
       _$CloverMissionModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$CloverMissionModelToJson(this);
+
+  // copyWith 구현하기
+  CloverMissionModel copyWith({
+    int? userMissionId,
+    String? missionTitle,
+    MissionStatus? missionStatus,
+    CloverMissionDifficulty? missionDifficulty,
+    CloverMissionCategory? missionCategory,
+    CloverMissionType? cloverType,
+  }) {
+    return CloverMissionModel(
+      userMissionId: userMissionId ?? this.userMissionId,
+      missionTitle: missionTitle ?? this.missionTitle,
+      missionStatus: missionStatus ?? this.missionStatus,
+      missionDifficulty: missionDifficulty ?? this.missionDifficulty,
+      missionCategory: missionCategory ?? this.missionCategory,
+      cloverType: cloverType ?? this.cloverType,
+    );
+  }
 }
 
 @JsonSerializable()
 class CloverMissionDetailModel extends CloverMissionModel {
-  final String description;
-  final CloverMissionType cloverType;
+  // final CloverMissionType cloverType;
   @JsonKey(fromJson: _parseDurationFromString, toJson: _formatDurationToString)
   final Duration? remainingTime;
   final String? targetAddress;
   final int? remainingDistance;
-  final String illustrationUrl;
 
   CloverMissionDetailModel({
     required super.userMissionId,
-    required this.cloverType,
+    required super.cloverType,
     required super.missionTitle,
-    required this.description,
     required super.missionStatus,
     required super.missionDifficulty,
     required super.missionCategory,
     this.remainingTime,
     this.targetAddress,
     this.remainingDistance,
-    required this.illustrationUrl,
   });
 
   factory CloverMissionDetailModel.fromJson(Map<String, dynamic> json) =>
@@ -127,4 +151,22 @@ class CloverMissionDetailModel extends CloverMissionModel {
 
   @override
   Map<String, dynamic> toJson() => _$CloverMissionDetailModelToJson(this);
+}
+
+@JsonSerializable()
+class CloverMissionFeedbackModel {
+  final int userMissionId;
+  final String feedbackComment;
+  final CloverMissionDifficulty feedbackDifficulty;
+  final String? imageUrl;
+
+  CloverMissionFeedbackModel({
+    required this.userMissionId,
+    required this.feedbackComment,
+    required this.feedbackDifficulty,
+    this.imageUrl,
+  });
+  factory CloverMissionFeedbackModel.fromJson(Map<String, dynamic> json) =>
+      _$CloverMissionFeedbackModelFromJson(json);
+  Map<String, dynamic> toJson() => _$CloverMissionFeedbackModelToJson(this);
 }

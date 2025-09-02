@@ -31,6 +31,7 @@ SaeipUserModel _$SaeipUserModelFromJson(Map<String, dynamic> json) =>
       nickname: json['nickname'] as String,
       profileImageUrl: json['profileImageUrl'] as String?,
       role: $enumDecode(_$SaeipUserTypeEnumMap, json['role']),
+      isNewUser: json['isNewUser'] as bool,
     );
 
 Map<String, dynamic> _$SaeipUserModelToJson(SaeipUserModel instance) =>
@@ -40,6 +41,7 @@ Map<String, dynamic> _$SaeipUserModelToJson(SaeipUserModel instance) =>
       'nickname': instance.nickname,
       'profileImageUrl': instance.profileImageUrl,
       'role': _$SaeipUserTypeEnumMap[instance.role]!,
+      'isNewUser': instance.isNewUser,
     };
 
 const _$SaeipUserTypeEnumMap = {

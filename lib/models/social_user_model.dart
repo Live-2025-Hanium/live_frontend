@@ -1,14 +1,14 @@
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 
-class AppUser {
+class SocialUser {
   final String id;
   final String name;
   final String? email;
   final String provider; // ex: google, kakao
   final String? profileImageUrl;
 
-  AppUser({
+  SocialUser({
     required this.id,
     required this.name,
     required this.provider,
@@ -16,8 +16,8 @@ class AppUser {
     this.profileImageUrl,
   });
 
-  factory AppUser.fromKakao(User kakaoUser) {
-    return AppUser(
+  factory SocialUser.fromKakao(User kakaoUser) {
+    return SocialUser(
       id: kakaoUser.id.toString(),
       name: kakaoUser.kakaoAccount?.profile?.nickname ?? 'Kakao 사용자',
       email: kakaoUser.kakaoAccount?.email,
@@ -26,8 +26,8 @@ class AppUser {
     );
   }
 
-  factory AppUser.fromGoogle(GoogleSignInAccount googleUser) {
-    return AppUser(
+  factory SocialUser.fromGoogle(GoogleSignInAccount googleUser) {
+    return SocialUser(
       id: googleUser.id,
       name: googleUser.displayName ?? 'Google 사용자',
       email: googleUser.email,

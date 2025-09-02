@@ -3,8 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/models/saeip_user_model.dart';
+import 'package:live_frontend/models/social_user_model.dart';
 import 'package:live_frontend/providers/dio_provider.dart';
-import '../models/user.dart';
 
 class AuthRepository {
   final Dio _dio;
@@ -12,7 +12,7 @@ class AuthRepository {
 
   /// 카카오 액세스 토큰을 백엔드로 전달하고, 회원 정보를 받아옵니다.
   Future<SaeipUserModel> loginWithKakaoOnBackend(
-    AppUser user,
+    SocialUser user,
     String accessToken,
   ) async {
     final resp = await _dio.post(

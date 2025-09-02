@@ -1,29 +1,176 @@
 import 'package:flutter/material.dart';
-import 'package:live_frontend/widgets/saeip_app_bar.dart';
-import 'package:live_frontend/widgets/saeip_button.dart';
-import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:live_frontend/widgets/saeip_app_bar.dart';
+import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
+import 'package:live_frontend/widgets/saeip_search_bar.dart';
+import 'package:live_frontend/screens/forum/widgets/banner_carousel.dart';
+import 'package:live_frontend/screens/forum/widgets/category_chips.dart';
+import 'package:live_frontend/screens/forum/widgets/post_grid.dart';
+import 'package:live_frontend/screens/forum/widgets/sort_controls.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
+import 'package:live_frontend/models/forum_post_model.dart';
+import 'data/dummy_forum_data.dart';
 
-class ForumScreen extends StatelessWidget {
+class ForumScreen extends StatefulWidget {
   const ForumScreen({super.key});
+
+  @override
+  State<ForumScreen> createState() => _ForumScreenState();
+}
+
+class _ForumScreenState extends State<ForumScreen> {
+  final _searchCtrl = TextEditingController();
+
+  int _bannerIndex = 0;
+  int _selectedCategory = 0;
+  ForumSort _sort = ForumSort.latest;
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
+
+  List<ForumPostModel> get _posts {
+    return _getFilteredAndSortedPosts(
+      categoryId: _selectedCategory,
+      sort: _sort,
+    );
+  }
+
+  List<ForumPostModel> _getFilteredAndSortedPosts({
+    required int categoryId,
+    required ForumSort sort,
+  }) {
+    // 1. 카테고리 필터링
+    var filtered = categoryId == 0
+        ? dummyForumPosts
+        : dummyForumPosts
+              .where((post) => post.category.id == categoryId - 1)
+              .toList();
+
+    // 2. 정렬
+    filtered.sort((a, b) {
+      switch (sort) {
+        case ForumSort.latest:
+          return b.createdAt.compareTo(a.createdAt);
+        case ForumSort.views:
+          return (b.viewCount ?? 0).compareTo(a.viewCount ?? 0);
+        case ForumSort.scraps:
+          return (b.totalReactionCount ?? 0).compareTo(
+            a.totalReactionCount ?? 0,
+          );
+      }
+    });
+
+    return filtered;
+  }
+
+  // CategoryChips 위젯의 카테고리 목록
+  static const _categories = [
+    '전체', // index: 0
+    '지원 사업', // index: 1 = ForumCategory.support
+    '마음 챙김', // index: 2 = ForumCategory.mindcare
+    '생활 습관', // index: 3 = ForumCategory.lifestyle
+    '사회 연결', // index: 4 = ForumCategory.social
+    '진로·직업', // index: 5 = ForumCategory.career
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
-      appBar: SaeipAppBar(title: 'Forum'),
-      body: Container(
-        padding: const EdgeInsets.all(16.0),
-        width: double.infinity,
-        height: double.infinity,
-        child: Center(
-          child: SaeipButton(
-            text: '설문조사',
-            onPressed: () {
-              context.pushNamed('survey');
+      backgroundColor: Colors.white,
+      appBar: SaeipAppBar(
+        title: 'Forum',
+        appBarStyle: AppBarStyle.common,
+        actions: [
+          IconButton(
+            icon: SvgPicture.asset('assets/icons/bookmark.svg', height: 20.h),
+            onPressed: () => debugPrint('bookmark tapped'),
+          ),
+        ],
+      ),
+      body: CustomScrollView(
+        clipBehavior: Clip.none,
+        slivers: [
+          // 검색창
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              child: SaeipSearchBar(
+                controller: _searchCtrl,
+                hintText: '지원 사업, 생활 꿀팁',
+                onSubmit: (q) {
+                  // TODO: 검색 실행
+                  debugPrint('search: $q');
+                },
+              ),
+            ),
+          ),
+
+          SliverGap(16.h),
+
+          // 메인 배너
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: BannerCarousel(
+                itemCount: 10,
+                index: _bannerIndex,
+                onPageChanged: (i) => setState(() => _bannerIndex = i),
+                onTap: (index) => context.pushNamed(
+                  'forum_post',
+                  pathParameters: {'id': '1'},
+                ),
+                itemBuilder: (_, i) => Image.network(
+                  // TODO : 추후 API 연동 예정
+                  'https://picsum.photos/id/${30 + i}/1200/675',
+                  fit: BoxFit.cover,
+                ),
+                overlayBuilder: (_, i) => BannerOverlay(
+                  // TODO : 추후 API 연동 예정
+                  title: '“네가 있어 행복해” 반려동물이 주는 정서적 효과',
+                  subtitle: '서울 유기 동물 입양 센터',
+                ),
+              ),
+            ),
+          ),
+
+          SliverGap(24.h),
+
+          // 카테고리 칩
+          SliverToBoxAdapter(
+            child: CategoryChips(
+              categories: _categories,
+              selectedIndex: _selectedCategory,
+              onSelected: (i) => setState(() => _selectedCategory = i),
+            ),
+          ),
+
+          // 정렬 옵션
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: SortControls(
+                  value: _sort,
+                  onChanged: (v) => setState(() => _sort = v),
+                ),
+              ),
+            ),
+          ),
+
+          // 2열 카드 그리드
+          PostGridSliver(
+            posts: _posts,
+            onTapPost: (post) {
+              context.pushNamed('forum_post', pathParameters: {'id': '1'});
             },
           ),
-        ),
+        ],
       ),
       bottomNavigationBar: const SaeipNavigationBar(initialIndex: 3),
     );

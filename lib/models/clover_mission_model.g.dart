@@ -19,6 +19,7 @@ CloverMissionModel _$CloverMissionModelFromJson(Map<String, dynamic> json) =>
         _$CloverMissionCategoryEnumMap,
         json['missionCategory'],
       ),
+      cloverType: $enumDecode(_$CloverMissionTypeEnumMap, json['cloverType']),
     );
 
 Map<String, dynamic> _$CloverMissionModelToJson(
@@ -30,6 +31,7 @@ Map<String, dynamic> _$CloverMissionModelToJson(
   'missionDifficulty':
       _$CloverMissionDifficultyEnumMap[instance.missionDifficulty]!,
   'missionCategory': _$CloverMissionCategoryEnumMap[instance.missionCategory]!,
+  'cloverType': _$CloverMissionTypeEnumMap[instance.cloverType]!,
 };
 
 const _$MissionStatusEnumMap = {
@@ -56,13 +58,19 @@ const _$CloverMissionCategoryEnumMap = {
   CloverMissionCategory.study: 'STUDY',
 };
 
+const _$CloverMissionTypeEnumMap = {
+  CloverMissionType.timer: 'TIMER',
+  CloverMissionType.distance: 'DISTANCE',
+  CloverMissionType.visit: 'VISIT',
+  CloverMissionType.photo: 'PHOTO',
+};
+
 CloverMissionDetailModel _$CloverMissionDetailModelFromJson(
   Map<String, dynamic> json,
 ) => CloverMissionDetailModel(
   userMissionId: (json['userMissionId'] as num).toInt(),
   cloverType: $enumDecode(_$CloverMissionTypeEnumMap, json['cloverType']),
   missionTitle: json['missionTitle'] as String,
-  description: json['description'] as String,
   missionStatus: $enumDecode(_$MissionStatusEnumMap, json['missionStatus']),
   missionDifficulty: $enumDecode(
     _$CloverMissionDifficultyEnumMap,
@@ -75,7 +83,6 @@ CloverMissionDetailModel _$CloverMissionDetailModelFromJson(
   remainingTime: _parseDurationFromString(json['remainingTime'] as String),
   targetAddress: json['targetAddress'] as String?,
   remainingDistance: (json['remainingDistance'] as num?)?.toInt(),
-  illustrationUrl: json['illustrationUrl'] as String,
 );
 
 Map<String, dynamic> _$CloverMissionDetailModelToJson(
@@ -87,17 +94,30 @@ Map<String, dynamic> _$CloverMissionDetailModelToJson(
   'missionDifficulty':
       _$CloverMissionDifficultyEnumMap[instance.missionDifficulty]!,
   'missionCategory': _$CloverMissionCategoryEnumMap[instance.missionCategory]!,
-  'description': instance.description,
   'cloverType': _$CloverMissionTypeEnumMap[instance.cloverType]!,
   'remainingTime': _formatDurationToString(instance.remainingTime),
   'targetAddress': instance.targetAddress,
   'remainingDistance': instance.remainingDistance,
-  'illustrationUrl': instance.illustrationUrl,
 };
 
-const _$CloverMissionTypeEnumMap = {
-  CloverMissionType.timer: 'TIMER',
-  CloverMissionType.distance: 'DISTANCE',
-  CloverMissionType.visit: 'VISIT',
-  CloverMissionType.photo: 'PHOTO',
+CloverMissionFeedbackModel _$CloverMissionFeedbackModelFromJson(
+  Map<String, dynamic> json,
+) => CloverMissionFeedbackModel(
+  userMissionId: (json['userMissionId'] as num).toInt(),
+  feedbackComment: json['feedbackComment'] as String,
+  feedbackDifficulty: $enumDecode(
+    _$CloverMissionDifficultyEnumMap,
+    json['feedbackDifficulty'],
+  ),
+  imageUrl: json['imageUrl'] as String?,
+);
+
+Map<String, dynamic> _$CloverMissionFeedbackModelToJson(
+  CloverMissionFeedbackModel instance,
+) => <String, dynamic>{
+  'userMissionId': instance.userMissionId,
+  'feedbackComment': instance.feedbackComment,
+  'feedbackDifficulty':
+      _$CloverMissionDifficultyEnumMap[instance.feedbackDifficulty]!,
+  'imageUrl': instance.imageUrl,
 };

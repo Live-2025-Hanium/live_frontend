@@ -57,6 +57,14 @@ dependencies:
   shared_preferences: ^2.5.3
   dio: ^5.8.0
   flutter_secure_storage: ^9.2.4
+  syncfusion_flutter_sliders: ^30.1.42
+  flutter_rating_bar: ^4.0.1
+  flutter_localizations:
+    sdk: flutter
+  carousel_slider: ^5.1.1
+  table_calendar: ^3.2.0
+  time_picker_spinner: ^1.0.2
+  fl_chart: ^1.0.0
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +81,8 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
   riverpod_lint: ^2.6.5
+  riverpod_generator: ^2.6.5
+
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -92,12 +102,14 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/images/clover_mission/
     - assets/fonts/
     - assets/logo/
     - assets/terms/
     - assets/icons/
     - assets/surveys/
     - .env
+    - assets/icons/forum_post_detail/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-import 'package:live_frontend/models/user.dart';
+import 'package:live_frontend/models/social_user_model.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 import 'package:live_frontend/providers/auth_repository_provider.dart';
 import 'package:live_frontend/providers/google_signin_provider.dart';
@@ -21,7 +21,7 @@ class AuthController extends StateNotifier<AuthState> {
       }
 
       final googleAuth = await googleUser.authentication;
-      final user = AppUser.fromGoogle(googleUser);
+      final user = SocialUser.fromGoogle(googleUser);
 
       debugPrint('✅ Google 로그인 성공');
       debugPrint('accessToken: ${googleAuth.accessToken}');
@@ -31,7 +31,7 @@ class AuthController extends StateNotifier<AuthState> {
 
       state = AuthState(
         status: AuthStatus.authenticated,
-        user: user,
+        socialUser: user,
         token: googleAuth.idToken,
       );
     } catch (e) {
@@ -50,7 +50,7 @@ class AuthController extends StateNotifier<AuthState> {
       }
 
       final kakaoUser = await UserApi.instance.me();
-      final user = AppUser.fromKakao(kakaoUser);
+      final user = SocialUser.fromKakao(kakaoUser);
 
       debugPrint('✅ Kakao 로그인 성공');
       // debugPrint('accessToken: ${token.accessToken}');
@@ -66,7 +66,7 @@ class AuthController extends StateNotifier<AuthState> {
       final storage = ref.read(secureStorageProvider);
       state = AuthState(
         status: AuthStatus.authenticated,
-        user: user,
+        socialUser: user,
         saeipUser: saeipUser,
         token: token.accessToken,
       );

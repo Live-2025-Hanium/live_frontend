@@ -9,7 +9,12 @@ class MapScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: SaeipAppBar(title: 'Map'),
-      body: const Center(child: Text('지도 화면')),
+      body: Center(
+        child: Text(
+          'Map Screen',
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+      ),
       bottomNavigationBar: const SaeipNavigationBar(initialIndex: 2),
     );
   }

@@ -50,6 +50,7 @@ class SaeipUserModel {
   final String? profileImageUrl;
 
   final SaeipUserType role;
+  final bool isNewUser;
 
   SaeipUserModel({
     required this.id,
@@ -57,6 +58,7 @@ class SaeipUserModel {
     required this.nickname,
     this.profileImageUrl,
     required this.role,
+    required this.isNewUser,
   });
 
   factory SaeipUserModel.fromJson(Map<String, dynamic> json) =>

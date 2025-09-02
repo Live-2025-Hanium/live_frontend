@@ -207,7 +207,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
   }
 
   Widget _buildUserInfoWidget() {
-    final userName = ref.watch(authProvider).user?.name ?? "사용자";
+    final userName = ref.watch(authProvider).saeipUser?.nickname ?? "사용자";
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
