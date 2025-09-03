@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:live_frontend/models/common_api_response_model.dart';
 import 'package:live_frontend/models/saeip_user_model.dart';
-import 'package:live_frontend/models/api_response.dart';
 import 'package:live_frontend/models/social_user_model.dart';
 import 'package:live_frontend/providers/dio_provider.dart';
 
