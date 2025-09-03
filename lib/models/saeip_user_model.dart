@@ -12,26 +12,26 @@ enum SaeipUserType {
   admin,
 }
 
-/// 로그인 API 응답의 최상위 모델
-@JsonSerializable()
-class LoginResponse {
-  final LoginData data;
-
-  LoginResponse({required this.data});
-
-  factory LoginResponse.fromJson(Map<String, dynamic> json) =>
-      _$LoginResponseFromJson(json);
-  Map<String, dynamic> toJson() => _$LoginResponseToJson(this);
-}
-
-/// 로그인 응답의 data 필드
+// 모델 보완 예시
 @JsonSerializable()
 class LoginData {
   final SaeipUserModel user;
+
+  @JsonKey(defaultValue: '')
+  final String accessToken;
+
+  @JsonKey(defaultValue: '')
+  final String refreshToken;
+
   @JsonKey(name: 'newUser', defaultValue: false)
   final bool newUser;
 
-  LoginData({required this.user, required this.newUser});
+  LoginData({
+    required this.user,
+    required this.accessToken,
+    required this.refreshToken,
+    required this.newUser,
+  });
 
   factory LoginData.fromJson(Map<String, dynamic> json) =>
       _$LoginDataFromJson(json);
@@ -50,7 +50,6 @@ class SaeipUserModel {
   final String? profileImageUrl;
 
   final SaeipUserType role;
-  final bool isNewUser;
 
   SaeipUserModel({
     required this.id,
@@ -58,7 +57,6 @@ class SaeipUserModel {
     required this.nickname,
     this.profileImageUrl,
     required this.role,
-    required this.isNewUser,
   });
 
   factory SaeipUserModel.fromJson(Map<String, dynamic> json) =>

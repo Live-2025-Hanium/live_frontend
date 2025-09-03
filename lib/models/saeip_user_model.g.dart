@@ -6,21 +6,17 @@ part of 'saeip_user_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-LoginResponse _$LoginResponseFromJson(Map<String, dynamic> json) =>
-    LoginResponse(
-      data: LoginData.fromJson(json['data'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$LoginResponseToJson(LoginResponse instance) =>
-    <String, dynamic>{'data': instance.data};
-
 LoginData _$LoginDataFromJson(Map<String, dynamic> json) => LoginData(
   user: SaeipUserModel.fromJson(json['user'] as Map<String, dynamic>),
+  accessToken: json['accessToken'] as String? ?? '',
+  refreshToken: json['refreshToken'] as String? ?? '',
   newUser: json['newUser'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$LoginDataToJson(LoginData instance) => <String, dynamic>{
   'user': instance.user,
+  'accessToken': instance.accessToken,
+  'refreshToken': instance.refreshToken,
   'newUser': instance.newUser,
 };
 
@@ -31,7 +27,6 @@ SaeipUserModel _$SaeipUserModelFromJson(Map<String, dynamic> json) =>
       nickname: json['nickname'] as String,
       profileImageUrl: json['profileImageUrl'] as String?,
       role: $enumDecode(_$SaeipUserTypeEnumMap, json['role']),
-      isNewUser: json['isNewUser'] as bool,
     );
 
 Map<String, dynamic> _$SaeipUserModelToJson(SaeipUserModel instance) =>
@@ -41,7 +36,6 @@ Map<String, dynamic> _$SaeipUserModelToJson(SaeipUserModel instance) =>
       'nickname': instance.nickname,
       'profileImageUrl': instance.profileImageUrl,
       'role': _$SaeipUserTypeEnumMap[instance.role]!,
-      'isNewUser': instance.isNewUser,
     };
 
 const _$SaeipUserTypeEnumMap = {
