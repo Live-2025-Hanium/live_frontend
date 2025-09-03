@@ -5,10 +5,14 @@ import 'package:live_frontend/models/common_api_response_model.dart';
 import 'package:live_frontend/models/saeip_user_model.dart';
 import 'package:live_frontend/models/social_user_model.dart';
 import 'package:live_frontend/providers/dio_provider.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:live_frontend/providers/secure_storage_provider.dart';
 
 class AuthRepository {
   final Dio _dio;
-  AuthRepository(this._dio);
+  final FlutterSecureStorage _secureStorage;
+
+  AuthRepository(this._dio, this._secureStorage);
 
   /// 카카오 액세스 토큰을 백엔드로 전달하고, 회원 정보를 받아옵니다.
   /// NOTE: 백엔드 응답은 { success, message, data: { user, accessToken, refreshToken, newUser }, ... } 형태
@@ -36,7 +40,23 @@ class AuthRepository {
       if (apiResp.data == null) {
         throw Exception('Login response missing data: ${resp.data}');
       }
-      return apiResp.data!.user;
+
+      // Persist tokens securely
+      final login = apiResp.data!;
+      try {
+        await _secureStorage.write(
+          key: TokenKeys.access,
+          value: login.accessToken,
+        );
+        await _secureStorage.write(
+          key: TokenKeys.refresh,
+          value: login.refreshToken,
+        );
+      } catch (e) {
+        if (kDebugMode) debugPrint('Failed to persist tokens: $e');
+      }
+
+      return login.user;
     } on DioException catch (e, s) {
       if (kDebugMode) {
         debugPrint('loginWithKakaoOnBackend DioException: ${e.response?.data}');
@@ -59,7 +79,22 @@ class AuthRepository {
       if (apiResp.data == null) {
         throw Exception('Login response missing data: ${resp.data}');
       }
-      return apiResp.data!.user;
+
+      final login = apiResp.data!;
+      try {
+        await _secureStorage.write(
+          key: TokenKeys.access,
+          value: login.accessToken,
+        );
+        await _secureStorage.write(
+          key: TokenKeys.refresh,
+          value: login.refreshToken,
+        );
+      } catch (e) {
+        if (kDebugMode) debugPrint('Failed to persist tokens: $e');
+      }
+
+      return login.user;
     } on DioException catch (e, s) {
       if (kDebugMode) {
         debugPrint(
@@ -74,5 +109,6 @@ class AuthRepository {
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final dio = ref.watch(dioProvider);
-  return AuthRepository(dio);
+  final storage = ref.watch(secureStorageProvider);
+  return AuthRepository(dio, storage);
 });
