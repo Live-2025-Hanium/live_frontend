@@ -4,27 +4,27 @@ part 'common_api_response_model.g.dart';
 
 // Error 모델
 @JsonSerializable()
-class ApiError {
+class ApiErrorModel {
   final String code;
   final String message;
 
-  ApiError({required this.code, required this.message});
+  ApiErrorModel({required this.code, required this.message});
 
-  factory ApiError.fromJson(Map<String, dynamic> json) =>
-      _$ApiErrorFromJson(json);
-  Map<String, dynamic> toJson() => _$ApiErrorToJson(this);
+  factory ApiErrorModel.fromJson(Map<String, dynamic> json) =>
+      _$ApiErrorModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ApiErrorModelToJson(this);
 }
 
 // 전체 API Response 모델
 @JsonSerializable(genericArgumentFactories: true)
-class ApiResponse<T> {
+class ApiResponseModel<T> {
   final String timestamp;
   final bool success;
   final String message;
   final T? data;
-  final ApiError? error;
+  final ApiErrorModel? error;
 
-  ApiResponse({
+  ApiResponseModel({
     required this.timestamp,
     required this.success,
     required this.message,
@@ -32,11 +32,11 @@ class ApiResponse<T> {
     this.error,
   });
 
-  factory ApiResponse.fromJson(
+  factory ApiResponseModel.fromJson(
     Map<String, dynamic> json,
     T Function(Object? json) fromJsonT,
-  ) => _$ApiResponseFromJson(json, fromJsonT);
+  ) => _$ApiResponseModelFromJson(json, fromJsonT);
 
   Map<String, dynamic> toJson(Object? Function(T value) toJsonT) =>
-      _$ApiResponseToJson(this, toJsonT);
+      _$ApiResponseModelToJson(this, toJsonT);
 }

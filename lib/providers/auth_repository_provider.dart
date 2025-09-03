@@ -29,7 +29,7 @@ class AuthRepository {
         options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
       );
 
-      final apiResp = ApiResponse<LoginData>.fromJson(
+      final apiResp = ApiResponseModel<LoginData>.fromJson(
         resp.data,
         (raw) => LoginData.fromJson(Map<String, dynamic>.from(raw as Map)),
       );
@@ -52,7 +52,7 @@ class AuthRepository {
     try {
       final resp = await _dio.post('/auth/google', data: {'token': idToken});
 
-      final apiResp = ApiResponse<LoginData>.fromJson(
+      final apiResp = ApiResponseModel<LoginData>.fromJson(
         resp.data,
         (raw) => LoginData.fromJson(Map<String, dynamic>.from(raw as Map)),
       );
