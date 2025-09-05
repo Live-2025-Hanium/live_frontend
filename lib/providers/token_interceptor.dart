@@ -2,27 +2,25 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:live_frontend/providers/secure_storage_provider.dart';
 
 /// A Dio interceptor that attaches access token and handles automatic refresh.
 class TokenInterceptor extends Interceptor {
-  final FlutterSecureStorage storage;
+  final SecureStorageService storage;
   final Dio _refreshDio;
   final String refreshEndpoint = '/api/auth/refresh';
 
   // Simple mutex to avoid parallel refresh requests
   Completer<void>? _refreshCompleter;
 
-  TokenInterceptor(this.storage, {String? baseUrl})
-    : _refreshDio = Dio(BaseOptions(baseUrl: baseUrl ?? ''));
+  /// Accept a [refreshOptions] to construct the internal refresh Dio.
+  TokenInterceptor(this.storage, {BaseOptions? refreshOptions})
+    : _refreshDio = Dio(refreshOptions ?? BaseOptions(baseUrl: ''));
 
-  Future<String?> _readAccess() => storage.read(key: TokenKeys.access);
-  Future<String?> _readRefresh() => storage.read(key: TokenKeys.refresh);
-  Future<void> _writeTokens(String access, String refresh) async {
-    await storage.write(key: TokenKeys.access, value: access);
-    await storage.write(key: TokenKeys.refresh, value: refresh);
-  }
+  Future<String?> _readAccess() => storage.readAccess();
+  Future<String?> _readRefresh() => storage.readRefresh();
+  Future<void> _writeTokens(String access, String refresh) async =>
+      storage.writeTokens(access, refresh);
 
   @override
   void onRequest(

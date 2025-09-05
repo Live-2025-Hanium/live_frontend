@@ -5,12 +5,11 @@ import 'package:live_frontend/models/common_api_response_model.dart';
 import 'package:live_frontend/models/saeip_user_model.dart';
 import 'package:live_frontend/models/social_user_model.dart';
 import 'package:live_frontend/providers/dio_provider.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:live_frontend/providers/secure_storage_provider.dart';
 
 class AuthRepository {
   final Dio _dio;
-  final FlutterSecureStorage _secureStorage;
+  final SecureStorageService _secureStorage;
 
   AuthRepository(this._dio, this._secureStorage);
 
@@ -44,14 +43,8 @@ class AuthRepository {
       // Persist tokens securely
       final login = apiResp.data!;
       try {
-        await _secureStorage.write(
-          key: TokenKeys.access,
-          value: login.accessToken,
-        );
-        await _secureStorage.write(
-          key: TokenKeys.refresh,
-          value: login.refreshToken,
-        );
+        await _secureStorage.write(TokenKeys.access, login.accessToken);
+        await _secureStorage.write(TokenKeys.refresh, login.refreshToken);
       } catch (e) {
         if (kDebugMode) debugPrint('Failed to persist tokens: $e');
       }
@@ -82,14 +75,8 @@ class AuthRepository {
 
       final login = apiResp.data!;
       try {
-        await _secureStorage.write(
-          key: TokenKeys.access,
-          value: login.accessToken,
-        );
-        await _secureStorage.write(
-          key: TokenKeys.refresh,
-          value: login.refreshToken,
-        );
+        await _secureStorage.write(TokenKeys.access, login.accessToken);
+        await _secureStorage.write(TokenKeys.refresh, login.refreshToken);
       } catch (e) {
         if (kDebugMode) debugPrint('Failed to persist tokens: $e');
       }

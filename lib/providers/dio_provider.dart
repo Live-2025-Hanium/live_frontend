@@ -7,16 +7,17 @@ import 'package:live_frontend/providers/token_interceptor.dart';
 final dioProvider = Provider<Dio>((ref) {
   final storage = ref.watch(secureStorageProvider);
 
-  final dio = Dio(
-    BaseOptions(
-      baseUrl: dotenv.env['API_BASE_URL'] ?? '',
-      connectTimeout: const Duration(seconds: 5),
-      receiveTimeout: const Duration(seconds: 5),
-    ),
+  final baseOptions = BaseOptions(
+    baseUrl: dotenv.env['API_BASE_URL'] ?? '',
+    connectTimeout: const Duration(seconds: 5),
+    receiveTimeout: const Duration(seconds: 5),
   );
 
+  final dio = Dio(baseOptions);
+
   dio.interceptors.addAll([
-    TokenInterceptor(storage, baseUrl: dotenv.env['API_BASE_URL'] ?? ''),
+    // pass the same BaseOptions to TokenInterceptor for refresh requests
+    TokenInterceptor(storage, refreshOptions: baseOptions),
     LogInterceptor(responseBody: true),
   ]);
 

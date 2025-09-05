@@ -5,7 +5,6 @@ import 'package:live_frontend/models/social_user_model.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 import 'package:live_frontend/providers/auth_repository_provider.dart';
 import 'package:live_frontend/providers/google_signin_provider.dart';
-import 'package:live_frontend/providers/secure_storage_provider.dart';
 
 class AuthController extends StateNotifier<AuthState> {
   final Ref ref;
@@ -63,7 +62,7 @@ class AuthController extends StateNotifier<AuthState> {
 
       debugPrint('✅ 백엔드 로그인 성공');
 
-      final storage = ref.read(secureStorageProvider);
+      // final storage = ref.read(secureStorageProvider);
       state = AuthState(
         status: AuthStatus.authenticated,
         socialUser: user,
