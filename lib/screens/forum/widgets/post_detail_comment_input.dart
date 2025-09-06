@@ -19,7 +19,7 @@ class PostDetailCommentInput extends StatelessWidget {
       top: false,
       child: Container(
         color: Colors.transparent,
-        padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 10.h),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
         child: ValueListenableBuilder<TextEditingValue>(
           valueListenable: controller,
           builder: (context, value, _) {
