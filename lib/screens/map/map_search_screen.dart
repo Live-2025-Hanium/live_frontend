@@ -1,3 +1,6 @@
+import 'dart:convert'; // ★ base64
+import 'package:flutter/services.dart' show rootBundle; // ★ asset 로딩
+
 import 'package:flutter/material.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:live_frontend/theme/app_colors.dart';
@@ -8,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:live_frontend/widgets/saeip_search_bar.dart';
 import 'widgets/map_search_temp_bar.dart';
 import 'data/map_recent_search_temp_repo.dart'; // ← 임시 레포
+import 'package:live_frontend/widgets/saeip_modal.dart';
 
 class MapSearchScreen extends StatefulWidget {
   const MapSearchScreen({super.key, this.initialText});
@@ -36,10 +40,14 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
   // 바텀시트
   final _sheetCtrl = DraggableScrollableController();
 
+  // ★ data URI 캐시
+  String? _markerDataUri;
+
   @override
   void initState() {
     super.initState();
     _loadRecents();
+    _loadMarkerIcon(); // ★ 애셋 PNG → data URI 미리 로드
   }
 
   Future<void> _loadRecents() async {
@@ -52,6 +60,25 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  // ★ 애셋을 base64 data URI로 변환
+  Future<String> _assetToDataUri(String assetPath, {String mime = 'image/png'}) async {
+    final bytes = await rootBundle.load(assetPath);
+    final b64 = base64Encode(bytes.buffer.asUint8List());
+    return 'data:$mime;base64,$b64';
+  }
+
+  // ★ 마커 아이콘 data URI 준비
+  Future<void> _loadMarkerIcon() async {
+    try {
+      final uri = await _assetToDataUri('assets/images/mock_marker.png');
+      if (!mounted) return;
+      setState(() => _markerDataUri = uri);
+    } catch (e) {
+      // 실패 시 null 유지(fallback 사용)
+      // debugPrint('marker icon load failed: $e');
+    }
   }
 
   // TODO: 실제 REST API로 교체
@@ -80,11 +107,18 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
           address: '서울 강동구 고덕로 266 4층 405호',
           status: i == 1 ? _BizStatus.closed : _BizStatus.open,
           statusNote: i == 1 ? '매주 화요일 휴무' : '18:00까지',
-          thumbUrl: null,
+          thumbUrl: 'https://picsum.photos/seed/$i/84', // 고유한 썸네일 URL
           lat: 37.611846 + (i * 0.002),
           lng: 126.834059 + (i * 0.002),
         );
       });
+    }
+
+    // ★ data URI가 아직이면 즉시 로드 시도(경쟁상황 대비)
+    if (_markerDataUri == null) {
+      try {
+        _markerDataUri = await _assetToDataUri('assets/images/mock_marker.png');
+      } catch (_) {}
     }
 
     // 마커 변환
@@ -94,14 +128,20 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
       ms = data.isEmpty
           ? []
           : data
-                .map(
-                  (p) => Marker(
-                    markerId: p.id,
-                    latLng: LatLng(p.lat, p.lng),
-                    infoWindowContent: p.name,
-                  ),
-                )
-                .toList();
+              .map(
+                (p) => Marker(
+                  markerId: p.id,
+                  latLng: LatLng(p.lat, p.lng),
+                  infoWindowContent: p.name,
+                  // ★ 핵심: 플러터 애셋 경로 대신 data URI 사용
+                  markerImageSrc: _markerDataUri ??
+                      // 로드 실패/지연 시 네트워크 PNG로 폴백
+                      'https://upload.wikimedia.org/wikipedia/commons/7/7e/Map_marker.svg.png',
+                  width: 60,
+                  height: 60,
+                ),
+              )
+              .toList();
 
       if (ms.isNotEmpty) {
         await _mapController!.setCenter(ms.first.latLng);
@@ -132,6 +172,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
 
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             // 상단 영역
@@ -141,13 +182,11 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
               onSubmitted: (value) => _runSearch(value.trim()),
               onBack: () => Navigator.of(context).pop(),
               onTapSearch: () => _runSearch(_controller.text.trim()),
-              showBottomDivider: true,
+              showBottomDivider: false,
             ),
 
             Expanded(
-              child: _searched
-                  ? _buildAfterSearch(theme)
-                  : _buildRecents(theme),
+              child: _searched ? _buildAfterSearch(theme) : _buildRecents(theme),
             ),
           ],
         ),
@@ -171,13 +210,12 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                 child: Align(
                   alignment: Alignment.topCenter,
                   child: Text(
-                  '최근 검색어가 없습니다.',
-                  style: AppTextStyles.bodyRegular(
-                    context,
-                  ).copyWith(color: AppColors.blackBlack4),
+                    '최근 검색어가 없습니다.',
+                    style: AppTextStyles.bodyRegular(context)
+                        .copyWith(color: AppColors.blackBlack4),
+                  ),
                 ),
               ),
-            ),
             ),
           ],
         ),
@@ -198,7 +236,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
         }
         return _recentTile(_recents[i]);
       },
-      separatorBuilder: (_, __) => const Divider(height: 1),
+      separatorBuilder: (_, __) => const Divider(height: 0),
       itemCount: _recents.length,
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
     );
@@ -330,8 +368,11 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                           controller: scrollController,
                           padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
                           itemBuilder: (_, i) => _resultCard(_results[i]),
-                          separatorBuilder: (_, __) =>
-                              const Divider(height: 24),
+                          separatorBuilder: (_, __) => const Divider(
+                            height: 28,
+                            color: AppColors.blackBlack3,
+                            thickness: 0.5,
+                          ),
                           itemCount: _results.length,
                         ),
                       ),
@@ -346,11 +387,10 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
   }
 
   Widget _resultCard(_Place p) {
-    final statusStyle = AppTextStyles.bodyMedium(context).copyWith(
+    final statusStyle = AppTextStyles.bodyRegular(context).copyWith(
       color: p.status == _BizStatus.open
           ? AppColors.greenNormal
-          : AppColors.errorError3,
-      fontWeight: FontWeight.w700,
+          : AppColors.errorError4,
     );
 
     return Row(
@@ -367,18 +407,15 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                   Flexible(
                     child: Text(
                       p.name,
-                      style: AppTextStyles.titleMedium(
-                        context,
-                      ).copyWith(fontWeight: FontWeight.w800),
+                      style: AppTextStyles.bodyMedium(context),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   const Gap(8),
                   Text(
                     p.category,
-                    style: AppTextStyles.bodyMedium(
-                      context,
-                    ).copyWith(color: AppColors.blackBlack3),
+                    style: AppTextStyles.smallMedium(context)
+                        .copyWith(color: AppColors.blackBlack4),
                   ),
                 ],
               ),
@@ -398,9 +435,39 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
               Gap(10.h),
               Row(
                 children: [
-                  _pillButton(Icons.call, '전화', onPressed: null), // 아직 비활성
+                  _pillButton(Icons.call, '전화', onPressed: () {
+                    showDialog<void>(
+                      context: context,
+                      builder: (ctx) => SaeipModal(
+                        title: '02-3242-3242',
+                        message: '전화를 연결할까요?',
+                        confirmText: '전화 걸기',
+                        cancelText: '취소',
+                        onCancel: () => Navigator.of(ctx).pop(),
+                        onConfirm: () {
+                          // TODO: 전화 연결 로직 연결
+                          Navigator.of(ctx).pop();
+                        },
+                      ),
+                    );
+                  }),
                   const Gap(8),
-                  _pillButton(Icons.route, '길 찾기', onPressed: null),
+                  _pillButton(Icons.route, '길 찾기', onPressed: () {
+                    showDialog<void>(
+                      context: context,
+                      builder: (ctx) => SaeipModal(
+                        title: '더마음의원',
+                        message: '다른 앱으로 길 찾기를 연결할까요?',
+                        confirmText: '길 찾기',
+                        cancelText: '취소',
+                        onCancel: () => Navigator.of(ctx).pop(),
+                        onConfirm: () {
+                          // TODO: 길 찾기 로직 연결
+                          Navigator.of(ctx).pop();
+                        },
+                      ),
+                    );
+                  }),
                 ],
               ),
             ],
@@ -410,14 +477,11 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
         // 썸네일
         const Gap(12),
         ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            width: 96.w,
-            height: 72.h,
-            color: const Color(0xFFE5E7EB),
-            child: p.thumbUrl == null
-                ? const SizedBox.shrink()
-                : Image.network(p.thumbUrl!, fit: BoxFit.cover),
+          borderRadius: BorderRadius.circular(8),
+          child: SizedBox(
+            width: 76.w,
+            height: 76.h,
+            child: Image.network('https://picsum.photos/84', fit: BoxFit.cover),
           ),
         ),
       ],
@@ -430,17 +494,15 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
       onPressed: onPressed,
       icon: Icon(
         icon,
-        size: 18,
-        color: disabled ? AppColors.blackBlack3 : AppColors.blackBlack2,
+        size: 16,
+        color: AppColors.blackBlack4,
       ),
       label: Text(label),
       style: OutlinedButton.styleFrom(
-        foregroundColor: disabled
-            ? AppColors.blackBlack3
-            : AppColors.blackBlack2,
+        foregroundColor: AppColors.blackBlack4,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        side: BorderSide(
-          color: disabled ? AppColors.blackBlack3 : AppColors.blackBlack2,
+        side: const BorderSide(
+          color: AppColors.blackBlack4,
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
       ),

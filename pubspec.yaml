@@ -69,6 +69,7 @@ dependencies:
   time_picker_spinner: ^1.0.2
   fl_chart: ^1.0.0
   kakao_map_plugin: ^0.3.7
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:
@@ -115,6 +116,7 @@ flutter:
     - assets/surveys/
     - assets/icons/forum_post_detail/
     - assets/icons/map_category/
+    - assets/images/mock_marker.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

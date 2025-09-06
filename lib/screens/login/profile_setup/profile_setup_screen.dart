@@ -51,7 +51,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     // final saeipUser = SaeipUserModel.fromFormData(formData);
 
     try {
-      context.pushNamed('home');
+      context.pushNamed('survey');
     } catch (e) {
       debugPrint('❌ 네트워크 오류: $e');
     }
