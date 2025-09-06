@@ -47,8 +47,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       return;
     }
 
-    final formData = _formKey.currentState!.value;
-    final saeipUser = SaeipUser.fromFormData(formData);
+    // final formData = _formKey.currentState!.value;
+    // final saeipUser = SaeipUserModel.fromFormData(formData);
 
     try {
       context.pushNamed('home');

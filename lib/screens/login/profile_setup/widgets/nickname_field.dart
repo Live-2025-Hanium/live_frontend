@@ -8,15 +8,19 @@ import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:live_frontend/providers/dio_provider.dart';
+import 'package:live_frontend/models/common_api_response_model.dart';
 
-class NicknameField extends StatefulWidget {
+class NicknameField extends ConsumerStatefulWidget {
   const NicknameField({super.key});
 
   @override
   NicknameFieldState createState() => NicknameFieldState();
 }
 
-class NicknameFieldState extends State<NicknameField> {
+class NicknameFieldState extends ConsumerState<NicknameField> {
   late final TextEditingController _controller;
 
   // 중복 확인 버튼 클릭 여부
@@ -41,9 +45,26 @@ class NicknameFieldState extends State<NicknameField> {
   }
 
   Future<bool> _checkNickname(String nickname) async {
-    // TODO: API 연동
-    await Future.delayed(const Duration(milliseconds: 500));
-    return nickname != '일이삼사오육칠팔구십';
+    final dio = ref.read(dioProvider);
+    try {
+      final resp = await dio.get(
+        '/api/members/nickname/check',
+        queryParameters: {'nickname': nickname},
+      );
+
+      final apiResp = ApiResponseModel<Map<String, dynamic>>.fromJson(
+        resp.data as Map<String, dynamic>,
+        (raw) => Map<String, dynamic>.from(raw as Map),
+      );
+      final available = apiResp.data?['available'] as bool?;
+      return available ?? false;
+    } on DioException catch (e) {
+      debugPrint('nickname check error: ${e.response?.data ?? e.message}');
+      return false;
+    } catch (e) {
+      debugPrint('nickname check unexpected error: $e');
+      return false;
+    }
   }
 
   Future<void> _handleDuplicateCheck() async {

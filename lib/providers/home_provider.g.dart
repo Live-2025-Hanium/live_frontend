@@ -7,7 +7,7 @@ part of 'home_provider.dart';
 // **************************************************************************
 
 String _$cloverMissionNotifierHash() =>
-    r'1193407821c028ce1ef5a8ab566e8814807d770f';
+    r'f190fb3603f8d1e3f5b12b3ba144316a66a8eb18';
 
 /// See also [CloverMissionNotifier].
 @ProviderFor(CloverMissionNotifier)

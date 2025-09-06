@@ -12,8 +12,8 @@ MyMissionModel _$MyMissionModelFromJson(Map<String, dynamic> json) =>
       missionType: $enumDecode(_$MissionTypeEnumMap, json['missionType']),
       missionTitle: json['missionTitle'] as String,
       missionStatus: $enumDecode(_$MissionStatusEnumMap, json['missionStatus']),
-      scheduledTime: json['scheduledTime'] as String,
-      repeatDay: $enumDecode(_$RepeatDayEnumMap, json['repeatDay']),
+      scheduledTime: json['scheduledTime'] as String?,
+      repeatDay: $enumDecodeNullable(_$RepeatDayEnumMap, json['repeatDay']),
     );
 
 Map<String, dynamic> _$MyMissionModelToJson(MyMissionModel instance) =>
@@ -23,7 +23,7 @@ Map<String, dynamic> _$MyMissionModelToJson(MyMissionModel instance) =>
       'missionTitle': instance.missionTitle,
       'missionStatus': _$MissionStatusEnumMap[instance.missionStatus]!,
       'scheduledTime': instance.scheduledTime,
-      'repeatDay': _$RepeatDayEnumMap[instance.repeatDay]!,
+      'repeatDay': _$RepeatDayEnumMap[instance.repeatDay],
     };
 
 const _$MissionTypeEnumMap = {
