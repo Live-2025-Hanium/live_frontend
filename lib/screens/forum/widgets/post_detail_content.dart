@@ -24,7 +24,7 @@ class PostDetailContent extends StatelessWidget {
       children: [
         // 이미지
         if (imageUrls.isNotEmpty) ...[
-          _ImagesCarousel(urls: imageUrls),
+          _SingleImage(url: imageUrls.first),
           Gap(16.h),
         ],
 
@@ -36,59 +36,18 @@ class PostDetailContent extends StatelessWidget {
   }
 }
 
-class _ImagesCarousel extends StatefulWidget {
-  const _ImagesCarousel({required this.urls});
-  final List<String> urls;
-
-  @override
-  State<_ImagesCarousel> createState() => _ImagesCarouselState();
-}
-
-class _ImagesCarouselState extends State<_ImagesCarousel> {
-  final PageController _page = PageController();
-  int _index = 0;
-
-  @override
-  void dispose() {
-    _page.dispose();
-    super.dispose();
-  }
+class _SingleImage extends StatelessWidget {
+  const _SingleImage({required this.url});
+  final String url;
 
   @override
   Widget build(BuildContext context) {
-    if (widget.urls.isEmpty) return const SizedBox.shrink();
-
-    return Column(
-      children: [
-        AspectRatio(
-          aspectRatio: 4 / 3,
-          child: PageView.builder(
-            controller: _page,
-            itemCount: widget.urls.length,
-            onPageChanged: (i) => setState(() => _index = i),
-            itemBuilder: (_, i) => ClipRRect(
-              borderRadius: BorderRadius.circular(8.r),
-              child: Image.network(widget.urls[i], fit: BoxFit.cover),
-            ),
-          ),
-        ),
-        Gap(8.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            widget.urls.length,
-            (i) => Container(
-              width: 6.w,
-              height: 6.w,
-              margin: EdgeInsets.symmetric(horizontal: 3.w),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: i == _index ? AppColors.blackBlack3 : AppColors.blackBlack1,
-              ),
-            ),
-          ),
-        ),
-      ],
+    return AspectRatio(
+      aspectRatio: 4 / 3,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8.r),
+        child: Image.network(url, fit: BoxFit.cover),
+      ),
     );
   }
 }
