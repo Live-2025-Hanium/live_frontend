@@ -6,8 +6,8 @@ part of 'forum_post_comment_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ForumPostComment _$ForumPostCommentFromJson(Map<String, dynamic> json) =>
-    ForumPostComment(
+ForumPostCommentModel _$ForumPostCommentFromJson(Map<String, dynamic> json) =>
+    ForumPostCommentModel(
       id: (json['id'] as num).toInt(),
       content: json['content'] as String,
       authorNickname: json['authorNickname'] as String,
@@ -23,7 +23,7 @@ ForumPostComment _$ForumPostCommentFromJson(Map<String, dynamic> json) =>
           const [],
     );
 
-Map<String, dynamic> _$ForumPostCommentToJson(ForumPostComment instance) =>
+Map<String, dynamic> _$ForumPostCommentToJson(ForumPostCommentModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'content': instance.content,

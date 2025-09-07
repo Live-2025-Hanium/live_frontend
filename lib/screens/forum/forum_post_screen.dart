@@ -8,7 +8,7 @@ import 'package:gap/gap.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
-// import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
+import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 
 import 'package:live_frontend/models/forum_post_detail_model.dart';
 import 'package:live_frontend/providers/forum_post_detail_provider.dart';
@@ -36,14 +36,14 @@ class ForumPostScreen extends ConsumerWidget {
         appBar: SaeipAppBar(),
         body: Center(child: Text('게시글을 불러오지 못했습니다.')),
       ),
-      data: (detail) => _ForumPostView(detail: detail),
+      data: (detail) => _ForumPostView(detail: detail as ForumPostDetailModel),
     );
   }
 }
 
 class _ForumPostView extends ConsumerStatefulWidget {
   const _ForumPostView({super.key, required this.detail});
-  final PostDetail detail;
+  final ForumPostDetailModel detail;
 
   @override
   ConsumerState<_ForumPostView> createState() => _ForumPostViewState();
@@ -87,8 +87,13 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
             ),
             onPressed: () {
               notifier.toggleBookmark();
-              // TODO: 토스트 메시지
-              // SaeipToastController.showMessage(context, '게시글을 스크랩했습니다.');
+              // TODO: api 연결
+              state.isBookmarked
+                  ? SaeipToastController.showMessage(
+                      context,
+                      '게시글 스크랩을 해제했습니다.',
+                    )
+                  : SaeipToastController.showMessage(context, '게시글을 스크랩했습니다.');
             },
           ),
         ],

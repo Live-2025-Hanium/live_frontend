@@ -90,7 +90,7 @@ class ReactionSetConverter
 }
 
 @JsonSerializable(explicitToJson: true)
-class PostDetail {
+class ForumPostDetailModel {
   final int id;
   final String title;
   final String content;
@@ -110,7 +110,7 @@ class PostDetail {
   final DateTime createdAt;
   final DateTime modifiedAt;
 
-  PostDetail({
+  ForumPostDetailModel({
     required this.id,
     required this.title,
     required this.content,
@@ -126,7 +126,7 @@ class PostDetail {
     required this.modifiedAt,
   });
 
-  factory PostDetail.fromJson(Map<String, dynamic> json) =>
+  factory ForumPostDetailModel.fromJson(Map<String, dynamic> json) =>
       _$PostDetailFromJson(json);
   Map<String, dynamic> toJson() => _$PostDetailToJson(this);
 }

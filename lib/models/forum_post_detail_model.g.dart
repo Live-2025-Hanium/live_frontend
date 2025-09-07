@@ -22,7 +22,7 @@ Map<String, dynamic> _$PostImageToJson(PostImage instance) => <String, dynamic>{
   's3Url': instance.s3Url,
 };
 
-PostDetail _$PostDetailFromJson(Map<String, dynamic> json) => PostDetail(
+ForumPostDetailModel _$PostDetailFromJson(Map<String, dynamic> json) => ForumPostDetailModel(
   id: (json['id'] as num).toInt(),
   title: json['title'] as String,
   content: json['content'] as String,
@@ -45,7 +45,7 @@ PostDetail _$PostDetailFromJson(Map<String, dynamic> json) => PostDetail(
 );
 
 Map<String, dynamic> _$PostDetailToJson(
-  PostDetail instance,
+  ForumPostDetailModel instance,
 ) => <String, dynamic>{
   'id': instance.id,
   'title': instance.title,

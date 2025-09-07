@@ -17,10 +17,10 @@ class PostDetailComments extends StatelessWidget {
     this.avatarUrlBuilder,
   });
 
-  final List<ForumPostComment> comments;
-  final void Function(ForumPostComment) onTapMore;
-  final void Function(ForumPostComment) onTapLike;
-  final String? Function(ForumPostComment comment)? avatarUrlBuilder;
+  final List<ForumPostCommentModel> comments;
+  final void Function(ForumPostCommentModel) onTapMore;
+  final void Function(ForumPostCommentModel) onTapLike;
+  final String? Function(ForumPostCommentModel comment)? avatarUrlBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +53,9 @@ class _CommentTile extends StatelessWidget {
     this.avatarUrl,
   });
 
-  final ForumPostComment comment;
-  final void Function(ForumPostComment) onTapMore;
-  final void Function(ForumPostComment) onTapLike;
+  final ForumPostCommentModel comment;
+  final void Function(ForumPostCommentModel) onTapMore;
+  final void Function(ForumPostCommentModel) onTapLike;
   final String? avatarUrl;
 
   String _fmt(DateTime d) {

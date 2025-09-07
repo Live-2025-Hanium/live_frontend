@@ -1,6 +1,6 @@
 import 'package:live_frontend/models/forum_post_detail_model.dart';
 
-final mockPostDetail = PostDetail(
+final mockPostDetail = ForumPostDetailModel(
   id: 1,
   title: '“네가 있어 행복해”\n반려동물이 주는 정서적 효과',
   content:

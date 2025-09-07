@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'forum_post_comment_model.g.dart';
 
 @JsonSerializable()
-class ForumPostComment {
+class ForumPostCommentModel {
   final int id;
   final String content;
 
@@ -23,7 +23,7 @@ class ForumPostComment {
   /// Swagger 기준: string 배열
   final List<String> replies;
 
-  const ForumPostComment({
+  const ForumPostCommentModel({
     required this.id,
     required this.content,
     required this.authorNickname,
@@ -35,12 +35,12 @@ class ForumPostComment {
     this.replies = const [],
   });
 
-  factory ForumPostComment.fromJson(Map<String, dynamic> json) =>
+  factory ForumPostCommentModel.fromJson(Map<String, dynamic> json) =>
       _$ForumPostCommentFromJson(json);
 
   Map<String, dynamic> toJson() => _$ForumPostCommentToJson(this);
 
-  ForumPostComment copyWith({
+  ForumPostCommentModel copyWith({
     int? id,
     String? content,
     String? authorNickname,
@@ -51,7 +51,7 @@ class ForumPostComment {
     bool? isMyComment,
     List<String>? replies,
   }) {
-    return ForumPostComment(
+    return ForumPostCommentModel(
       id: id ?? this.id,
       content: content ?? this.content,
       authorNickname: authorNickname ?? this.authorNickname,

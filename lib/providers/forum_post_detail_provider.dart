@@ -10,7 +10,10 @@ import 'package:live_frontend/screens/forum/data/dummy_post_detail.dart';
 import 'package:live_frontend/screens/forum/widgets/post_detail_reaction.dart';
 
 /// ----- 상세 조회(Mock) -----
-final postDetailProvider = FutureProvider.family<PostDetail, int>((ref, id) async {
+final postDetailProvider = FutureProvider.family<ForumPostDetailModel, int>((
+  ref,
+  id,
+) async {
   await Future.delayed(const Duration(milliseconds: 200)); // mock delay
   if (id == 1) return mockPostDetail;
   // TODO: API 연동
@@ -31,26 +34,26 @@ class ForumPostState {
   });
 
   /// 시딩 전에는 null
-  final PostDetail? detail;
+  final ForumPostDetailModel? detail;
   final bool isBookmarked;
   final Map<ForumReaction, int> reactions;
   final Set<ForumReaction> selectedReactions;
-  final List<ForumPostComment> comments;
+  final List<ForumPostCommentModel> comments;
 
   factory ForumPostState.initial() => const ForumPostState(
-        detail: null,
-        isBookmarked: false,
-        reactions: <ForumReaction, int>{},
-        selectedReactions: <ForumReaction>{},
-        comments: <ForumPostComment>[],
-      );
+    detail: null,
+    isBookmarked: false,
+    reactions: <ForumReaction, int>{},
+    selectedReactions: <ForumReaction>{},
+    comments: <ForumPostCommentModel>[],
+  );
 
   ForumPostState copyWith({
-    PostDetail? detail,
+    ForumPostDetailModel? detail,
     bool? isBookmarked,
     Map<ForumReaction, int>? reactions,
     Set<ForumReaction>? selectedReactions,
-    List<ForumPostComment>? comments,
+    List<ForumPostCommentModel>? comments,
   }) {
     return ForumPostState(
       detail: detail ?? this.detail,
@@ -66,13 +69,12 @@ enum CommentAction { notify, edit, delete }
 
 /// ----- Notifier -----
 class ForumPostNotifier extends StateNotifier<ForumPostState> {
-  ForumPostNotifier({this.navigatorContext})
-      : super(ForumPostState.initial());
+  ForumPostNotifier({this.navigatorContext}) : super(ForumPostState.initial());
 
   final BuildContext? navigatorContext;
 
   /// 상세가 준비된 뒤 호출되어 상태를 시딩
-  void seed(PostDetail detail) {
+  void seed(ForumPostDetailModel detail) {
     state = ForumPostState(
       detail: detail,
       isBookmarked: false,
@@ -82,15 +84,15 @@ class ForumPostNotifier extends StateNotifier<ForumPostState> {
     );
   }
 
-  static Map<ForumReaction, int> _initReactions(PostDetail d) => {
-        ForumReaction.useful: 0,
-        ForumReaction.encourage: 0,
-        ForumReaction.willTry: 0,
-        ForumReaction.empathy: d.reactionCounts[ReactionType.empathy] ?? 0,
-        ForumReaction.thanks: 0,
-      };
+  static Map<ForumReaction, int> _initReactions(ForumPostDetailModel d) => {
+    ForumReaction.useful: 0,
+    ForumReaction.encourage: 0,
+    ForumReaction.willTry: 0,
+    ForumReaction.empathy: d.reactionCounts[ReactionType.empathy] ?? 0,
+    ForumReaction.thanks: 0,
+  };
 
-  static Set<ForumReaction> _initSelectedReactions(PostDetail d) {
+  static Set<ForumReaction> _initSelectedReactions(ForumPostDetailModel d) {
     final selected = <ForumReaction>{};
     if (d.userReactions.contains(ReactionType.empathy)) {
       selected.add(ForumReaction.empathy);
@@ -99,6 +101,7 @@ class ForumPostNotifier extends StateNotifier<ForumPostState> {
   }
 
   void toggleBookmark() {
+    // TODO: API 연동 및 낙관적 업데이트 적용
     state = state.copyWith(isBookmarked: !state.isBookmarked);
   }
 
@@ -124,7 +127,7 @@ class ForumPostNotifier extends StateNotifier<ForumPostState> {
     if (t.isEmpty) return;
 
     final now = DateTime.now();
-    final newComment = ForumPostComment(
+    final newComment = ForumPostCommentModel(
       id: now.microsecondsSinceEpoch,
       content: t,
       authorNickname: 'userName',
@@ -163,11 +166,11 @@ class ForumPostNotifier extends StateNotifier<ForumPostState> {
     // _showToast('댓글을 삭제했습니다.');
   }
 
-  void likeComment(ForumPostComment comment) {
+  void likeComment(ForumPostCommentModel comment) {
     toggleCommentLike(comment.id);
   }
 
-  Future<void> showCommentMenu(ForumPostComment comment) async {
+  Future<void> showCommentMenu(ForumPostCommentModel comment) async {
     final ctx = navigatorContext;
     if (ctx == null) return;
 
@@ -215,8 +218,14 @@ class ForumPostNotifier extends StateNotifier<ForumPostState> {
           builder: (_) => AlertDialog(
             title: const Text('댓글을 삭제할까요?'),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('취소')),
-              TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('삭제')),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('취소'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: const Text('삭제'),
+              ),
             ],
           ),
         );
@@ -239,22 +248,23 @@ class ForumPostNotifier extends StateNotifier<ForumPostState> {
 
 /// ----- 화면용 Provider (null-safe 시딩) -----
 final forumPostProvider =
-    StateNotifierProvider.family<ForumPostNotifier, ForumPostState, int>(
-  (ref, postId) {
-    final navCtx = ref.read(navigatorKeyProvider).currentContext;
-    final notifier = ForumPostNotifier(navigatorContext: navCtx);
+    StateNotifierProvider.family<ForumPostNotifier, ForumPostState, int>((
+      ref,
+      postId,
+    ) {
+      final navCtx = ref.read(navigatorKeyProvider).currentContext;
+      final notifier = ForumPostNotifier(navigatorContext: navCtx);
 
-    // 1) 현재 값이 이미 준비되어 있으면 즉시 시딩
-    final cur = ref.read(postDetailProvider(postId));
-    if (cur.hasValue) {
-      notifier.seed(cur.value!);
-    }
+      // 1) 현재 값이 이미 준비되어 있으면 즉시 시딩
+      final cur = ref.read(postDetailProvider(postId));
+      if (cur.hasValue) {
+        notifier.seed(cur.value!);
+      }
 
-    // 2) 이후 로딩 완료될 때마다 갱신
-    ref.listen(postDetailProvider(postId), (prev, next) {
-      next.whenData(notifier.seed);
+      // 2) 이후 로딩 완료될 때마다 갱신
+      ref.listen(postDetailProvider(postId), (prev, next) {
+        next.whenData(notifier.seed);
+      });
+
+      return notifier;
     });
-
-    return notifier;
-  },
-);
