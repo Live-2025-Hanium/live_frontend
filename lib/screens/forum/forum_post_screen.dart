@@ -12,6 +12,7 @@ import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 
 import 'package:live_frontend/models/forum_post_detail_model.dart';
 import 'package:live_frontend/providers/forum_post_detail_provider.dart';
+import 'package:live_frontend/providers/forum_scrap_controller.dart';
 
 import 'widgets/post_detail_header.dart';
 import 'widgets/post_detail_content.dart';
@@ -85,15 +86,40 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
                   : 'assets/icons/bookmark_green_border.svg',
               height: 20.h,
             ),
-            onPressed: () {
+            onPressed: () async {
+              final wasBookmarked = state.isBookmarked;
+
+              // 1) 낙관적 UI: 먼저 토글
               notifier.toggleBookmark();
-              // TODO: api 연결
-              state.isBookmarked
-                  ? SaeipToastController.showMessage(
-                      context,
-                      '게시글 스크랩을 해제했습니다.',
-                    )
-                  : SaeipToastController.showMessage(context, '게시글을 스크랩했습니다.');
+
+              try {
+                // 2) 서버 토글 호출
+                final isScraped = await ref
+                    .read(scrapControllerProvider.notifier)
+                    .toggleScrap(d.id);
+
+                // 3) 서버 결과와 UI 동기화(서버 결과가 다르면 보정)
+                //    - wasBookmarked: 서버 호출 전 상태
+                //    - 현재 UI는 wasBookmarked를 반전시킨 상태
+                //    - 서버 결과(isScraped)가 UI와 다르면 한번 더 토글해서 맞춤
+                final uiNowBookmarked = !wasBookmarked;
+                if (isScraped != uiNowBookmarked) {
+                  notifier.toggleBookmark(); // 보정
+                }
+
+                // 4) 토스트
+                SaeipToastController.showMessage(
+                  context,
+                  isScraped ? '게시글을 스크랩했습니다.' : '게시글 스크랩을 해제했습니다.',
+                );
+              } catch (e) {
+                // 5) 실패 시 롤백
+                notifier.toggleBookmark();
+                SaeipToastController.showMessage(
+                  context,
+                  '스크랩 처리에 실패했습니다. 잠시 후 다시 시도해 주세요.',
+                );
+              }
             },
           ),
         ],

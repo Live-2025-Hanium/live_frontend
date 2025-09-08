@@ -6,6 +6,7 @@ import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/screens/forum/widgets/post_grid.dart';
 import 'package:live_frontend/providers/forum_scrap_controller.dart';
+import 'package:live_frontend/providers/forum_scrap_controller.dart';
 
 class ForumScrapScreen extends ConsumerStatefulWidget {
   const ForumScrapScreen({super.key});
@@ -35,7 +36,8 @@ class _ForumScrapScreenState extends ConsumerState<ForumScrapScreen> {
   void _onScroll() {
     if (!_scroll.hasClients) return;
     if (_lastLoadMore != null &&
-        DateTime.now().difference(_lastLoadMore!) < const Duration(seconds: 1)) return;
+        DateTime.now().difference(_lastLoadMore!) < const Duration(seconds: 1))
+      return;
 
     final s = ref.read(scrapControllerProvider);
     final p = _scroll.position;
@@ -62,8 +64,9 @@ class _ForumScrapScreenState extends ConsumerState<ForumScrapScreen> {
                   onPressed: ctrl.toggleEdit,
                   child: Text(
                     s.editing ? '완료' : '편집',
-                    style: AppTextStyles.bodyMedium(context)
-                        .copyWith(color: AppColors.blackBlack6),
+                    style: AppTextStyles.bodyMedium(
+                      context,
+                    ).copyWith(color: AppColors.blackBlack6),
                   ),
                 ),
               ],
@@ -85,8 +88,9 @@ class _ForumScrapScreenState extends ConsumerState<ForumScrapScreen> {
                 child: Center(
                   child: Text(
                     '목록을 불러오는 중 오류가 발생했습니다',
-                    style: AppTextStyles.bodyRegular(context)
-                        .copyWith(color: AppColors.blackBlack4),
+                    style: AppTextStyles.bodyRegular(
+                      context,
+                    ).copyWith(color: AppColors.blackBlack4),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -130,7 +134,9 @@ class _ForumScrapScreenState extends ConsumerState<ForumScrapScreen> {
               ),
 
             SliverToBoxAdapter(
-              child: SizedBox(height: s.editing && s.selected.isNotEmpty ? 88.h : 16.h),
+              child: SizedBox(
+                height: s.editing && s.selected.isNotEmpty ? 88.h : 16.h,
+              ),
             ),
           ],
         ),
@@ -145,7 +151,9 @@ class _ForumScrapScreenState extends ConsumerState<ForumScrapScreen> {
                 } catch (_) {
                   if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('스크랩 해제에 실패했습니다. 잠시 후 다시 시도해 주세요.')),
+                    const SnackBar(
+                      content: Text('스크랩 해제에 실패했습니다. 잠시 후 다시 시도해 주세요.'),
+                    ),
                   );
                 }
               },
@@ -156,7 +164,11 @@ class _ForumScrapScreenState extends ConsumerState<ForumScrapScreen> {
 }
 
 class _BottomActionBar extends StatelessWidget {
-  const _BottomActionBar({required this.onUnScrap, required this.count, required this.busy});
+  const _BottomActionBar({
+    required this.onUnScrap,
+    required this.count,
+    required this.busy,
+  });
   final VoidCallback onUnScrap;
   final int count;
   final bool busy;
