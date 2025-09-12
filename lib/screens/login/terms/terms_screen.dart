@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/screens/login/terms/widgets/term.dart';
 import 'package:live_frontend/screens/login/terms/widgets/term_info.dart';
@@ -51,10 +53,10 @@ class TermsScreenState extends ConsumerState<TermsScreen> {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
-            left: 8.0,
-            right: 8.0,
-            top: 4.0,
-            bottom: 40.0,
+            left: 8.w,
+            right: 8.w,
+            top: 4.h,
+            bottom: 40.h,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -92,9 +94,9 @@ class TermsScreenState extends ConsumerState<TermsScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16.0),
+                  Gap(16.h),
                   Divider(color: AppColors.greenLightActive, thickness: 1.0),
-                  SizedBox(height: 12.0),
+                  Gap(12.h),
                   Column(
                     children: terms.map((term) {
                       return Term(
