@@ -39,7 +39,7 @@ class Term extends StatelessWidget {
 
     return ListTile(
       contentPadding: const EdgeInsets.all(0),
-      onTap: null,
+      onTap: () => onTap(),
       title: Text(
         title,
         style: AppTextStyles.bodyRegular(
