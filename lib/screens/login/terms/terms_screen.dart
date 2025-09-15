@@ -68,7 +68,7 @@ class TermsScreenState extends ConsumerState<TermsScreen> {
                   TermInfo(userName: userName),
                   SizedBox(height: 44.0),
                   ListTile(
-                    contentPadding: EdgeInsets.only(left: 0),
+                    contentPadding: EdgeInsets.zero,
                     leading: SizedBox(
                       height: 48,
                       width: 48,
