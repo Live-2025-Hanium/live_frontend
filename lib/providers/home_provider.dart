@@ -216,7 +216,7 @@ class MyMissionNotifier
     // Try loading from API, fall back to local simulated data on error
     final dio = ref.read(dioProvider);
     try {
-      final resp = await dio.get('/api/v1/missions/my');
+      final resp = await dio.get('/api/v1/missions/my/today');
       debugPrint('API 응답 데이터: ${resp.data}');
       final apiResp = ApiResponseModel<List<MyMissionModel>>.fromJson(
         resp.data,
@@ -228,27 +228,14 @@ class MyMissionNotifier
       return;
     } catch (e) {
       debugPrint('Failed to load my missions from API: $e');
+      state = AsyncValue.data([]);
     }
   }
 
-  Future<void> addMyMission(MyMissionModel mission) async {
-    final current = state.valueOrNull ?? [];
-    // optimistic update
-    state = AsyncValue.data([...current, mission]);
-
+  Future<void> addMyMission(MyMissionAddPayloadModel mission) async {
     final dio = ref.read(dioProvider);
     try {
-      final resp = await dio.post('/my-missions', data: mission.toJson());
-      if (resp.statusCode == 201) {
-        // Optionally replace with server-returned payload
-        final returned = MyMissionModel.fromJson(
-          resp.data as Map<String, dynamic>,
-        );
-        state = AsyncValue.data([
-          for (final m in state.valueOrNull ?? [])
-            if (m == mission) returned else m,
-        ]);
-      }
+      await dio.post('/api/v1/missions/my', data: mission.toJson());
     } catch (e) {
       debugPrint('Failed to add my mission via API: $e');
       // keep optimistic update as fallback

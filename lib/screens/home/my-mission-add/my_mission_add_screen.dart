@@ -111,25 +111,34 @@ class _MyMissionAddScreenState extends ConsumerState<MyMissionAddScreen> {
   Future<void> _onSavePressed() async {
     if (!_validateBeforeSave()) return;
 
-    // Build MyMissionModel and add to global state
     final scheduledTime = _included[2] ? (_mission.scheduledTime) : null;
     final repeatDay = _included[3] && _mission.repeatDay != null
         ? _mission.repeatDay!
         : null;
-
-    final newMission = MyMissionModel(
-      userMissionId: DateTime.now().millisecondsSinceEpoch,
-      missionType: MissionType.my,
-      missionTitle: _titleController.text.trim(),
-      missionStatus: MissionStatus.assigned,
-      scheduledTime: scheduledTime,
-      repeatDay: repeatDay,
-    );
+    // YYYY-MM-DD로 바꾸기
+    final startDate = _included[0] && _mission.startDate != null
+        ? Jiffy.parseFromDateTime(
+            _mission.startDate!,
+          ).format(pattern: 'yyyy-MM-dd')
+        : null;
+    final endDate = _included[1] && _mission.endDate != null
+        ? Jiffy.parseFromDateTime(
+            _mission.endDate!,
+          ).format(pattern: 'yyyy-MM-dd')
+        : null;
 
     try {
       await ref
           .read(myMissionNotifierProvider.notifier)
-          .addMyMission(newMission);
+          .addMyMission(
+            MyMissionAddPayloadModel(
+              missionTitle: _titleController.text.trim(),
+              startDate: _included[0] ? startDate : null,
+              endDate: _included[1] ? endDate : null,
+              scheduledTime: scheduledTime,
+              repeatDay: repeatDay,
+            ),
+          );
       if (!mounted) return;
       SaeipToastController.showMessage(context, '마이 미션이 추가되었습니다.');
       Navigator.of(context).pop();
