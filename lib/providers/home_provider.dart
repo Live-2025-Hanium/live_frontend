@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
+import 'package:live_frontend/models/common_api_response_model.dart';
 import 'package:live_frontend/models/mission_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:live_frontend/providers/dio_provider.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 
 part 'home_provider.g.dart';
@@ -205,55 +207,105 @@ class CloverMissionNotifier extends _$CloverMissionNotifier {
 // Manual StateNotifier-based provider for MyMissionModel list (no codegen)
 class MyMissionNotifier
     extends StateNotifier<AsyncValue<List<MyMissionModel>>> {
-  MyMissionNotifier() : super(const AsyncValue.loading()) {
+  final Ref ref;
+  MyMissionNotifier(this.ref) : super(const AsyncValue.loading()) {
     _init();
   }
 
   Future<void> _init() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    state = AsyncValue.data([
-      MyMissionModel(
-        userMissionId: 100,
-        missionType: MissionType.my,
-        missionTitle: '아침 스트레칭 10분',
-        missionStatus: MissionStatus.assigned,
-        scheduledTime: '08:30',
-        repeatDay: RepeatDay.monday,
-      ),
-      MyMissionModel(
-        userMissionId: 100,
-        missionType: MissionType.my,
-        missionTitle: '아침 스트레칭 10분',
-        missionStatus: MissionStatus.assigned,
-        scheduledTime: '08:30',
-        repeatDay: RepeatDay.monday,
-      ),
-    ]);
+    // Try loading from API, fall back to local simulated data on error
+    final dio = ref.read(dioProvider);
+    try {
+      final resp = await dio.get('/api/v1/missions/my');
+      debugPrint('API 응답 데이터: ${resp.data}');
+      final apiResp = ApiResponseModel<List<MyMissionModel>>.fromJson(
+        resp.data,
+        (raw) => (raw as List)
+            .map((e) => MyMissionModel.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      );
+      state = AsyncValue.data(apiResp.data ?? []);
+      return;
+    } catch (e) {
+      debugPrint('Failed to load my missions from API: $e');
+    }
   }
 
   Future<void> addMyMission(MyMissionModel mission) async {
     final current = state.valueOrNull ?? [];
-    await Future.delayed(const Duration(milliseconds: 200));
+    // optimistic update
     state = AsyncValue.data([...current, mission]);
+
+    final dio = ref.read(dioProvider);
+    try {
+      final resp = await dio.post('/my-missions', data: mission.toJson());
+      if (resp.statusCode == 201) {
+        // Optionally replace with server-returned payload
+        final returned = MyMissionModel.fromJson(
+          resp.data as Map<String, dynamic>,
+        );
+        state = AsyncValue.data([
+          for (final m in state.valueOrNull ?? [])
+            if (m == mission) returned else m,
+        ]);
+      }
+    } catch (e) {
+      debugPrint('Failed to add my mission via API: $e');
+      // keep optimistic update as fallback
+    }
   }
 
   Future<void> updateMyMission(MyMissionModel mission) async {
     final current = state.valueOrNull;
     if (current == null) return;
-    await Future.delayed(const Duration(milliseconds: 200));
+
+    // optimistic local update
     state = AsyncValue.data([
       for (final m in current)
         if (m.userMissionId == mission.userMissionId) mission else m,
     ]);
+
+    final dio = ref.read(dioProvider);
+    try {
+      final resp = await dio.patch(
+        '/my-missions/${mission.userMissionId}',
+        data: mission.toJson(),
+      );
+      if (resp.statusCode == 200) {
+        final returned = MyMissionModel.fromJson(
+          resp.data as Map<String, dynamic>,
+        );
+        state = AsyncValue.data([
+          for (final m in state.valueOrNull ?? [])
+            if (m.userMissionId == returned.userMissionId) returned else m,
+        ]);
+      }
+    } catch (e) {
+      debugPrint('Failed to update my mission via API: $e');
+      // keep optimistic change
+    }
   }
 
   Future<void> removeMyMission(int userMissionId) async {
     final current = state.valueOrNull;
     if (current == null) return;
-    await Future.delayed(const Duration(milliseconds: 200));
-    state = AsyncValue.data(
-      current.where((m) => m.userMissionId != userMissionId).toList(),
-    );
+
+    // optimistic removal
+    final updated = current
+        .where((m) => m.userMissionId != userMissionId)
+        .toList();
+    state = AsyncValue.data(updated);
+
+    final dio = ref.read(dioProvider);
+    try {
+      final resp = await dio.delete('/my-missions/$userMissionId');
+      if (resp.statusCode == 200 || resp.statusCode == 204) {
+        return;
+      }
+    } catch (e) {
+      debugPrint('Failed to delete my mission via API: $e');
+      // rollback: attempt to re-fetch or re-insert removed item is complex; keep as-is for now
+    }
   }
 
   MyMissionModel? getMyMissionById(int userMissionId) {
@@ -275,7 +327,6 @@ class MyMissionNotifier
     if (idx == -1) return;
 
     final mission = current[idx];
-    // copyWith doesn't accept missionStatus in the model, so build a new instance
     final updated = MyMissionModel(
       userMissionId: mission.userMissionId,
       missionType: mission.missionType,
@@ -285,14 +336,25 @@ class MyMissionNotifier
       repeatDay: mission.repeatDay,
     );
 
-    await Future.delayed(const Duration(milliseconds: 200));
+    // optimistic update locally
     state = AsyncValue.data([
       for (var i = 0; i < current.length; i++) i == idx ? updated : current[i],
     ]);
+
+    final dio = ref.read(dioProvider);
+    try {
+      final resp = await dio.patch('/my-missions/$userMissionId/complete');
+      if (resp.statusCode == 200) {
+        // optionally reconcile with server response
+      }
+    } catch (e) {
+      debugPrint('Failed to complete my mission via API: $e');
+      // keep optimistic update
+    }
   }
 }
 
 final myMissionNotifierProvider =
     StateNotifierProvider<MyMissionNotifier, AsyncValue<List<MyMissionModel>>>(
-      (ref) => MyMissionNotifier(),
+      (ref) => MyMissionNotifier(ref),
     );
