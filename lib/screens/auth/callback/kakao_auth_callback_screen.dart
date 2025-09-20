@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:live_frontend/core/utils/url_utils.dart';
 
 class KakaoAuthCallbackScreen extends ConsumerStatefulWidget {
   const KakaoAuthCallbackScreen({super.key});
@@ -20,12 +21,10 @@ class _KakaoAuthCallbackScreenState
     super.didChangeDependencies();
     if (!_started) {
       _started = true;
-      // Use the current browser URL (contains code param) to perform backend login
       final uri = Uri.base.toString();
-      // Trigger the login flow after the current frame to avoid modifying providers
-      // while the widget tree is building.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ref.read(authProvider.notifier).loginWithKakaoWeb(uri);
+        removeQueryParam('code');
       });
     }
   }

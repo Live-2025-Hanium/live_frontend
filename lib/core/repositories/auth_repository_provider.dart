@@ -103,9 +103,9 @@ class AuthRepository {
         },
       );
 
-      final apiResp = ApiResponseModel<WebLoginModel>.fromJson(
+      final apiResp = ApiResponseModel<LoginData>.fromJson(
         resp.data,
-        (raw) => WebLoginModel.fromJson(Map<String, dynamic>.from(raw as Map)),
+        (raw) => LoginData.fromJson(Map<String, dynamic>.from(raw as Map)),
       );
       if (apiResp.data == null) {
         throw Exception('Login response missing data: ${resp.data}');
@@ -113,20 +113,13 @@ class AuthRepository {
 
       final login = apiResp.data!;
       try {
-        await _secureStorage.write(TokenKeys.access, login.token.accessToken);
-        await _secureStorage.write(TokenKeys.refresh, login.token.refreshToken);
+        await _secureStorage.write(TokenKeys.access, login.accessToken);
+        await _secureStorage.write(TokenKeys.refresh, login.refreshToken);
       } catch (e) {
         if (kDebugMode) debugPrint('Failed to persist tokens: $e');
       }
-      final saeipUser = SaeipUserModel(
-        id: login.user.userId,
-        email: login.user.email,
-        nickname: login.user.nickname,
-        profileImageUrl: login.user.profileImageUrl,
-        role: SaeipUserType.user,
-      );
 
-      return saeipUser;
+      return login.user;
     } on DioException catch (e, s) {
       if (kDebugMode) {
         debugPrint(
