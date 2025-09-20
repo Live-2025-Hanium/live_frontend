@@ -92,6 +92,51 @@ class AuthRepository {
       rethrow;
     }
   }
+
+  Future<SaeipUserModel> loginWithKakaoWebOnBackend(String code) async {
+    try {
+      final resp = await _dio.post(
+        '/api/v2/auth/kakao/callback',
+        data: {
+          'code': code,
+          'redirectUri': 'http://localhost:3000/auth/callback',
+        },
+      );
+
+      final apiResp = ApiResponseModel<WebLoginModel>.fromJson(
+        resp.data,
+        (raw) => WebLoginModel.fromJson(Map<String, dynamic>.from(raw as Map)),
+      );
+      if (apiResp.data == null) {
+        throw Exception('Login response missing data: ${resp.data}');
+      }
+
+      final login = apiResp.data!;
+      try {
+        await _secureStorage.write(TokenKeys.access, login.token.accessToken);
+        await _secureStorage.write(TokenKeys.refresh, login.token.refreshToken);
+      } catch (e) {
+        if (kDebugMode) debugPrint('Failed to persist tokens: $e');
+      }
+      final saeipUser = SaeipUserModel(
+        id: login.user.userId,
+        email: login.user.email,
+        nickname: login.user.nickname,
+        profileImageUrl: login.user.profileImageUrl,
+        role: SaeipUserType.user,
+      );
+
+      return saeipUser;
+    } on DioException catch (e, s) {
+      if (kDebugMode) {
+        debugPrint(
+          'loginWithKakaoWebOnBackend DioException: ${e.response?.data}',
+        );
+        debugPrintStack(stackTrace: s);
+      }
+      rethrow;
+    }
+  }
 }
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {

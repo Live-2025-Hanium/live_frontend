@@ -26,13 +26,7 @@ class AuthController extends StateNotifier<AuthState> {
       debugPrint('accessToken: ${googleAuth.accessToken}');
       debugPrint('idToken: ${googleAuth.idToken}');
 
-      // TODO: 백엔드에 idToken 전송 → 사용자 인증
-
-      state = AuthState(
-        status: AuthStatus.authenticated,
-        socialUser: user,
-        token: googleAuth.idToken,
-      );
+      state = AuthState(status: AuthStatus.authenticated, socialUser: user);
     } catch (e) {
       state = state.copyWith(status: AuthStatus.error, error: e.toString());
     }
@@ -63,17 +57,41 @@ class AuthController extends StateNotifier<AuthState> {
       debugPrint('✅ 백엔드 로그인 성공');
 
       // final storage = ref.read(secureStorageProvider);
-      state = AuthState(
-        status: AuthStatus.authenticated,
-        socialUser: user,
-        saeipUser: saeipUser,
-        token: token.accessToken,
-      );
+      state = AuthState(status: AuthStatus.authenticated, saeipUser: saeipUser);
     } catch (e) {
       debugPrint('❌ Kakao 로그인 실패: $e');
       state = state.copyWith(status: AuthStatus.error, error: e.toString());
     }
   }
+
+  void loginWithKakaoWeb(String authUri) async {
+    if (!kIsWeb) {
+      return;
+    }
+    state = state.copyWith(status: AuthStatus.loading);
+    try {
+      // search param에서 code 꺼내기
+      final uri = Uri.parse(authUri);
+      final code = uri.queryParameters['code'];
+      if (code == null) {
+        throw Exception('코드를 찾을 수 없습니다.');
+      }
+
+      debugPrint('✅ Kakao 웹 로그인 성공');
+      // debugPrint('accessToken: ${token.accessToken}');
+
+      final repo = ref.read(authRepositoryProvider);
+      final saeipUser = await repo.loginWithKakaoWebOnBackend(code);
+      debugPrint('✅ 백엔드 로그인 성공');
+
+      state = AuthState(status: AuthStatus.authenticated, saeipUser: saeipUser);
+    } catch (e) {
+      debugPrint('❌ Kakao 웹 로그인 실패: $e');
+      state = state.copyWith(status: AuthStatus.error, error: e.toString());
+    }
+  }
+
+  void loginToBackendWeb() {}
 
   void logout() {
     state = const AuthState();
