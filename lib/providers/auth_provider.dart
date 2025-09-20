@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/models/saeip_user_model.dart';
-import 'package:live_frontend/providers/auth_controller.dart';
+import 'package:live_frontend/core/controllers/auth_controller.dart';
 import 'package:live_frontend/models/social_user_model.dart';
 
 enum AuthStatus { initial, loading, authenticated, error }
