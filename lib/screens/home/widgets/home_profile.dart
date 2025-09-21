@@ -23,10 +23,10 @@ class HomeProfile extends StatelessWidget {
     String dateString = Jiffy.now().format(pattern: 'yyyy년 M월 d일');
     return Container(
       color: Colors.white,
-      height: 116.h,
+      constraints: BoxConstraints(minHeight: 116.h),
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           ClipOval(
@@ -36,11 +36,10 @@ class HomeProfile extends StatelessWidget {
               child: CachedNetworkImage(
                 imageUrl: profileImageSrc,
                 fit: BoxFit.cover,
-                placeholder:
-                    (context, url) => Container(
-                      color: Colors.grey.shade200,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
+                placeholder: (context, url) => Container(
+                  color: Colors.grey.shade200,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
                 errorWidget: (context, url, error) {
                   debugPrint('Avatar load error: $error');
                   return Container(

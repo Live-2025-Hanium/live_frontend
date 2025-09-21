@@ -22,9 +22,9 @@ class AuthController extends StateNotifier<AuthState> {
       final googleAuth = await googleUser.authentication;
       final user = SocialUser.fromGoogle(googleUser);
 
-      // debugPrint('✅ Google 로그인 성공');
-      // debugPrint('accessToken: ${googleAuth.accessToken}');
-      // debugPrint('idToken: ${googleAuth.idToken}');
+      debugPrint('✅ Google 로그인 성공');
+      debugPrint('accessToken: ${googleAuth.accessToken}');
+      debugPrint('idToken: ${googleAuth.idToken}');
 
       state = AuthState(status: AuthStatus.authenticated, socialUser: user);
     } catch (e) {
