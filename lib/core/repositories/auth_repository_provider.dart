@@ -46,14 +46,14 @@ class AuthRepository {
         await _secureStorage.write(TokenKeys.access, login.accessToken);
         await _secureStorage.write(TokenKeys.refresh, login.refreshToken);
       } catch (e) {
-        if (kDebugMode) debugPrint('Failed to persist tokens: $e');
+        // if (kDebugMode) debugPrint('Failed to persist tokens: $e');
       }
 
       return login.user;
     } on DioException catch (e, s) {
       if (kDebugMode) {
-        debugPrint('loginWithKakaoOnBackend DioException: ${e.response?.data}');
-        debugPrintStack(stackTrace: s);
+        // debugPrint('loginWithKakaoOnBackend DioException: ${e.response?.data}');
+        // debugPrintStack(stackTrace: s);
       }
       rethrow;
     }
@@ -78,16 +78,16 @@ class AuthRepository {
         await _secureStorage.write(TokenKeys.access, login.accessToken);
         await _secureStorage.write(TokenKeys.refresh, login.refreshToken);
       } catch (e) {
-        if (kDebugMode) debugPrint('Failed to persist tokens: $e');
+        // if (kDebugMode) debugPrint('Failed to persist tokens: $e');
       }
 
       return login.user;
     } on DioException catch (e, s) {
       if (kDebugMode) {
-        debugPrint(
-          'loginWithGoogleOnBackend DioException: ${e.response?.data}',
-        );
-        debugPrintStack(stackTrace: s);
+        // debugPrint(
+        //   'loginWithGoogleOnBackend DioException: ${e.response?.data}',
+        // );
+        // debugPrintStack(stackTrace: s);
       }
       rethrow;
     }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/screens/login/terms/widgets/term.dart';
+import 'package:live_frontend/screens/login/terms/widgets/term_info.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
@@ -35,10 +38,9 @@ class TermsScreenState extends ConsumerState<TermsScreen> {
   void updateAll(bool? value) {
     setState(() {
       agreedToAll = value ?? false;
-      terms =
-          terms
-              .map((term) => Agreement(term.label, agreed: agreedToAll))
-              .toList();
+      terms = terms
+          .map((term) => Agreement(term.label, agreed: agreedToAll))
+          .toList();
     });
   }
 
@@ -47,14 +49,14 @@ class TermsScreenState extends ConsumerState<TermsScreen> {
     final authState = ref.watch(authProvider);
     final userName = authState.socialUser?.name ?? "유저";
     return Scaffold(
-      appBar: SaeipAppBar(lastPage: 'home'), // 임시로 이전페이지는 홈으로 돌아가도록,,
+      appBar: SaeipAppBar(lastPage: 'home'),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
-            left: 20.0,
-            right: 8.0,
-            top: 4.0,
-            bottom: 40.0,
+            left: 8.w,
+            right: 8.w,
+            top: 4.h,
+            bottom: 40.h,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -63,103 +65,72 @@ class TermsScreenState extends ConsumerState<TermsScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        "$userName ",
-                        style: AppTextStyles.titleMedium(
-                          context,
-                          color: AppColors.greenNormal,
+                  TermInfo(userName: userName),
+                  SizedBox(height: 44.0),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: SizedBox(
+                      height: 48,
+                      width: 48,
+                      child: Transform.scale(
+                        scale: 32 / 18,
+                        child: Checkbox(
+                          value: agreedToAll,
+                          onChanged: updateAll,
+                          activeColor: AppColors.greenNormal,
+                          checkColor: Colors.white,
+                          shape: const CircleBorder(
+                            side: BorderSide(color: AppColors.greenNormal),
+                          ),
+                          visualDensity: VisualDensity.compact,
                         ),
                       ),
-                      Text(
-                        "님, 반갑습니다!",
-                        style: AppTextStyles.titleMedium(
-                          context,
-                          color: Colors.black,
-                        ),
+                    ),
+                    title: Text(
+                      "전체 동의",
+                      style: AppTextStyles.subtitleMedium(
+                        context,
+                        color: Colors.black,
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 8.0),
-                  Text(
-                    "Live 서비스 시작을 위해 \n아래 이용 약관을 확인해주세요.",
-                    style: AppTextStyles.subtitleMedium(
-                      context,
-                      color: AppColors.blackBlack4,
                     ),
                   ),
-                  SizedBox(height: 44.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "전체 동의",
-                        style: AppTextStyles.subtitleMedium(
-                          context,
-                          color: Colors.black,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 48,
-                        width: 48,
-                        child: Transform.scale(
-                          scale: 32 / 18,
-                          child: Checkbox(
-                            value: agreedToAll,
-                            onChanged: updateAll,
-                            activeColor: AppColors.greenNormal,
-                            checkColor: Colors.white,
-                            shape: const CircleBorder(
-                              side: BorderSide(color: AppColors.greenNormal),
-                            ),
-                            visualDensity: VisualDensity.compact,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16.0),
+                  Gap(16.h),
                   Divider(color: AppColors.greenLightActive, thickness: 1.0),
-                  SizedBox(height: 12.0),
+                  Gap(12.h),
                   Column(
-                    children:
-                        terms.map((term) {
-                          return Term(
-                            title: term.label,
-                            description: "자세히 보기",
-                            isChecked: term.agreed,
-                            onChanged: (value) {
-                              setState(() {
-                                term.agreed = value ?? false;
-                                agreedToAll = terms.every((t) => t.agreed);
-                              });
-                            },
-                            filePath: term.filePath,
-                          );
-                        }).toList(),
+                    children: terms.map((term) {
+                      return Term(
+                        title: term.label,
+                        description: "자세히 보기",
+                        isChecked: term.agreed,
+                        onChanged: (value) {
+                          setState(() {
+                            term.agreed = value ?? false;
+                            agreedToAll = terms.every((t) => t.agreed);
+                          });
+                        },
+                        filePath: term.filePath,
+                      );
+                    }).toList(),
                   ),
                 ],
               ),
               Padding(
-                padding: EdgeInsets.only(right: 12.0),
+                padding: EdgeInsets.symmetric(horizontal: 12.0),
                 child: ElevatedButton(
-                  onPressed:
-                      agreedToAll
-                          ? () {
-                            context.pushNamed('profile_setup');
-                          }
-                          : null,
+                  onPressed: agreedToAll
+                      ? () {
+                          context.pushNamed('profile_setup');
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(double.infinity, 48),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    backgroundColor:
-                        agreedToAll
-                            ? AppColors.greenDark
-                            : AppColors.blackBlack2,
+                    backgroundColor: agreedToAll
+                        ? AppColors.greenDark
+                        : AppColors.blackBlack2,
                   ),
                   child: Text(
                     "다음",
