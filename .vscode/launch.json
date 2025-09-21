@@ -1,11 +1,23 @@
 {
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "Flutter (Chrome 3000)",
-      "request": "launch",
-      "type": "dart",
-      "args": ["-d", "chrome", "--web-port", "3000"]
-    }
-  ]
+    "version": "0.2.0",
+    "configurations": [
+        {
+          "name": "Flutter (Chrome 3000 localhost)",
+          "request": "launch",
+          "type": "dart",
+          "args": ["-d", "chrome", "--web-port", "3000", "--web-hostname", "localhost"]
+        },
+        {
+          "name": "Flutter (Android)",
+          "request": "launch",
+          "type": "dart",
+          "args": ["-d", "android"]
+        },
+        {
+          "name": "Flutter (iOS - iPhone 13 mini)",
+          "request": "launch",
+          "type": "dart",
+          "args": ["-d", "iPhone 13 mini"]
+       },
+    ]
 }
