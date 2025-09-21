@@ -108,7 +108,6 @@ flutter:
     - assets/terms/
     - assets/icons/
     - assets/surveys/
-    - .env
     - assets/icons/forum_post_detail/
 
   # To add assets to your application, add an assets section, like this:
