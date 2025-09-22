@@ -9,8 +9,6 @@
         "-d", "chrome",
         "--web-port", "3000",
         "--web-hostname", "localhost",
-        "--wasm=false",
-        "--web-renderer=html",
         "--dart-define-from-file=.vscode/dart-defines.local.json"
       ]
     },
