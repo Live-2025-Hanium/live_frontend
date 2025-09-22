@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/screens/404/not_found_screen.dart';
+import 'package:live_frontend/screens/auth/callback/kakao_auth_callback_screen.dart';
 import 'package:live_frontend/screens/forum/forum_screen.dart';
 import 'package:live_frontend/screens/home/clover-record/mission_record_screen.dart';
 import 'package:live_frontend/screens/home/execute/execute_photo_mission_screen.dart';
@@ -42,7 +43,9 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final isLoggedIn = authState.status == AuthStatus.authenticated;
       final isLoading = authState.status == AuthStatus.loading;
-      final isOnLoginPage = state.uri.toString() == '/login';
+      final isOnLoginPage =
+          state.uri.toString() == '/login' ||
+          state.uri.toString().startsWith('/auth/callback');
 
       // 1. 로딩 중엔 아무것도 리디렉션하지 않음
       if (isLoading) return null;
@@ -59,6 +62,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       return NotFoundScreen(error: state.error);
     },
     routes: [
+      GoRoute(
+        name: 'kakao_auth_callback',
+        path: '/auth/callback',
+        builder: (context, state) => KakaoAuthCallbackScreen(),
+      ),
       GoRoute(
         name: 'login',
         path: '/login',

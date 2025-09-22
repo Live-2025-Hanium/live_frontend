@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -65,4 +62,15 @@ class DefaultFirebaseOptions {
     storageBucket: 'live-hanium.firebasestorage.app',
     iosBundleId: 'com.example.liveFrontend',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyA7ncJwDMK4TJyfLSwjpktzitp7VWagQfw',
+    appId: '1:67317803547:web:90fbc3d8d26cc7e00f66be',
+    messagingSenderId: '67317803547',
+    projectId: 'live-hanium',
+    authDomain: 'live-hanium.firebaseapp.com',
+    storageBucket: 'live-hanium.firebasestorage.app',
+    measurementId: 'G-0ZJT46LJ31',
+  );
+
 }
