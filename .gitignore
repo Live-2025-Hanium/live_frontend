@@ -72,3 +72,4 @@ android/my-release-key
 .gradle/
 
 .env
+.vscode/dart-defines.local.json
