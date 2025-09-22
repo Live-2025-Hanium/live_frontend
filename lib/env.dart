@@ -1,5 +1,3 @@
-// Generated env wrapper using compile-time dart-define values.
-// Use --dart-define=KEY=VALUE or --dart-define-from-file for local development.
 class Env {
   static const apiBase = String.fromEnvironment(
     'API_BASE_URL',
