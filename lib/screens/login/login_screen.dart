@@ -7,7 +7,7 @@ import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'widgets/login_button.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:live_frontend/env.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends ConsumerWidget {
@@ -54,10 +54,10 @@ class LoginScreen extends ConsumerWidget {
                         if (kIsWeb) {
                           // 브라우저라면
                           // 웹에서는 OAuth authorize URL로 리다이렉트
-                          final restApiKey = dotenv.env['KAKAO_REST_API_KEY'];
-                          final redirectUri = dotenv.env['KAKAO_REDIRECT_URI'];
-                          if (restApiKey == null || redirectUri == null) {
-                            // env 미설정: 개발자가 .env에 추가해야 함
+                          final restApiKey = Env.kakaoRestApiKey;
+                          final redirectUri = Env.kakaoRedirectUri;
+                          if (restApiKey.isEmpty || redirectUri.isEmpty) {
+                            // env missing: inform developer
                             debugPrint(
                               'Kakao web OAuth env missing: set KAKAO_REST_API_KEY and KAKAO_REDIRECT_URI',
                             );
