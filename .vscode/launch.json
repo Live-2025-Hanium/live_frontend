@@ -4,7 +4,7 @@
     {
       "name": "Flutter (Chrome 3000 localhost)",
       "request": "launch",
-      "type": "dart",
+      "type": "dart",k
       "args": [
         "-d", "chrome",
         "--web-port", "3000",
