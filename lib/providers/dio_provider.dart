@@ -21,5 +21,9 @@ final dioProvider = Provider<Dio>((ref) {
     LogInterceptor(responseBody: true),
   ]);
 
+  // Example: to call an endpoint without attaching Authorization header,
+  // pass Options with extra['noAuth'] == true:
+  // await dio.get('/public', options: Options(extra: {'noAuth': true}));
+
   return dio;
 });

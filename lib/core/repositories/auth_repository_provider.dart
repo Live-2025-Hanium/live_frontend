@@ -29,7 +29,10 @@ class AuthRepository {
           'profileImageUrl': user.profileImageUrl,
         },
         // 백엔드에서 카카오 토큰 검증용으로 Bearer 받는다면 OK
-        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+          extra: {'noAuth': true},
+        ),
       );
 
       final apiResp = ApiResponseModel<LoginData>.fromJson(
@@ -101,6 +104,7 @@ class AuthRepository {
           'code': code,
           'redirectUri': 'http://localhost:3000/auth/callback',
         },
+        options: Options(extra: {'noAuth': true}),
       );
 
       final apiResp = ApiResponseModel<LoginData>.fromJson(

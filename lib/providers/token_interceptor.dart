@@ -27,6 +27,11 @@ class TokenInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
+    // If caller set extra['noAuth'] = true, do not attach tokens.
+    final noAuth = options.extra['noAuth'] == true;
+    if (noAuth) {
+      return handler.next(options);
+    }
     try {
       final access = await _readAccess();
       if (access != null && access.isNotEmpty) {
@@ -40,8 +45,10 @@ class TokenInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
+    // If original request asked to skip auth, don't attempt refresh/retry.
+    final originalNoAuth = err.requestOptions.extra['noAuth'] == true;
     // Only handle 401 from server (unauthorized)
-    if (err.response?.statusCode == 401) {
+    if (!originalNoAuth && err.response?.statusCode == 401) {
       try {
         // If a refresh is already in progress, wait for it
         if (_refreshCompleter != null) {
@@ -80,14 +87,17 @@ class TokenInterceptor extends Interceptor {
         // retry original request with new access token
         final access = await _readAccess();
         if (access != null && access.isNotEmpty) {
-          err.requestOptions.headers['Authorization'] = 'Bearer $access';
+          // Clone and send the request using the refresh Dio so that
+          // we don't re-run the interceptors on the main Dio instance.
+          final requestOptions = err.requestOptions;
+          requestOptions.headers['Authorization'] = 'Bearer $access';
           final cloneReq = await _refreshDio.request(
-            err.requestOptions.path,
-            data: err.requestOptions.data,
-            queryParameters: err.requestOptions.queryParameters,
+            requestOptions.path,
+            data: requestOptions.data,
+            queryParameters: requestOptions.queryParameters,
             options: Options(
-              method: err.requestOptions.method,
-              headers: err.requestOptions.headers,
+              method: requestOptions.method,
+              headers: requestOptions.headers,
             ),
           );
           return handler.resolve(cloneReq);
