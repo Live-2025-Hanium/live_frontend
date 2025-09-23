@@ -5,16 +5,25 @@ import 'package:live_frontend/models/social_user_model.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 import 'package:live_frontend/core/repositories/auth_repository_provider.dart';
 import 'package:live_frontend/providers/google_signin_provider.dart';
-import 'package:live_frontend/models/common_api_response_model.dart';
+// ...existing code...
 import 'package:live_frontend/providers/secure_storage_provider.dart';
 import 'package:live_frontend/core/controllers/profile_controller.dart';
 import 'package:live_frontend/models/saeip_user_model.dart';
-import 'package:dio/dio.dart';
-import 'package:live_frontend/env.dart';
+// ...existing code...
 
 class AuthController extends StateNotifier<AuthState> {
   final Ref ref;
-  AuthController(this.ref) : super(const AuthState());
+  AuthController(this.ref)
+    : super(const AuthState(status: AuthStatus.loading)) {
+    // run restore asynchronously
+    Future.microtask(() async {
+      await restoreSession();
+      // if still loading (no auth set), set to initial
+      if (state.status == AuthStatus.loading) {
+        state = const AuthState();
+      }
+    });
+  }
 
   /// Attempt to restore session on app startup.
   /// Reads stored refresh token and calls refresh endpoint to obtain fresh tokens
@@ -23,36 +32,22 @@ class AuthController extends StateNotifier<AuthState> {
     try {
       final storage = ref.read(secureStorageProvider);
       final refresh = await storage.readRefresh();
-      if (refresh == null || refresh.isEmpty) return;
-
-      final dio = Dio(BaseOptions(baseUrl: Env.apiBase));
-      final resp = await dio.post(
-        '/api/auth/refresh',
-        data: {'refreshToken': refresh},
-        options: Options(extra: {'noAuth': true}),
-      );
-
-      // Use ApiResponseModel convention: { timestamp, success, message, data: { accessToken, refreshToken, ... } }
-      final apiResp = ApiResponseModel<Map<String, dynamic>>.fromJson(
-        resp.data as Map<String, dynamic>,
-        (raw) => Map<String, dynamic>.from(raw as Map),
-      );
-
-      final payload = apiResp.data ?? <String, dynamic>{};
-      final access = payload['accessToken'] as String?;
-      final newRefresh = payload['refreshToken'] as String?;
-
-      if (access != null && newRefresh != null) {
-        await storage.writeTokens(access, newRefresh);
-
-        // After refreshing tokens, fetch profile to populate user state
+      final accessExisting = await storage.readAccess();
+      if (kDebugMode) {
+        debugPrint(
+          'restoreSession: existing refresh=$refresh access=$accessExisting',
+        );
+      }
+      // If tokens exist, treat user as authenticated and fetch profile.
+      if ((refresh != null && refresh.isNotEmpty) ||
+          (accessExisting != null && accessExisting.isNotEmpty)) {
         final profileController = ref.read(profileControllerProvider);
         final profile = await profileController.fetchProfile();
+        if (kDebugMode) debugPrint('restoreSession: fetched profile=$profile');
         if (profile != null) {
           final user = SaeipUserModel(
             id: profile.id,
-            email:
-                '', // API doesn't provide email in profile; leave empty or fetch elsewhere
+            email: '',
             nickname: profile.nickname,
             profileImageUrl: profile.profileImageUrl,
             role: SaeipUserType.user,
