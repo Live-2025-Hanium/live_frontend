@@ -7,6 +7,8 @@ import 'package:live_frontend/core/repositories/auth_repository_provider.dart';
 import 'package:live_frontend/providers/google_signin_provider.dart';
 import 'package:live_frontend/models/common_api_response_model.dart';
 import 'package:live_frontend/providers/secure_storage_provider.dart';
+import 'package:live_frontend/core/controllers/profile_controller.dart';
+import 'package:live_frontend/models/saeip_user_model.dart';
 import 'package:dio/dio.dart';
 import 'package:live_frontend/env.dart';
 
@@ -42,9 +44,23 @@ class AuthController extends StateNotifier<AuthState> {
 
       if (access != null && newRefresh != null) {
         await storage.writeTokens(access, newRefresh);
-        // We don't have user info in this refresh payload per convention; leave state to be updated by other flows if needed.
-        // Set simple authenticated state so UI treats user as logged in.
-        state = state.copyWith(status: AuthStatus.authenticated);
+
+        // After refreshing tokens, fetch profile to populate user state
+        final profileController = ref.read(profileControllerProvider);
+        final profile = await profileController.fetchProfile();
+        if (profile != null) {
+          final user = SaeipUserModel(
+            id: profile.id,
+            email:
+                '', // API doesn't provide email in profile; leave empty or fetch elsewhere
+            nickname: profile.nickname,
+            profileImageUrl: profile.profileImageUrl,
+            role: SaeipUserType.user,
+          );
+          state = AuthState(status: AuthStatus.authenticated, saeipUser: user);
+        } else {
+          state = state.copyWith(status: AuthStatus.authenticated);
+        }
       }
     } catch (e) {
       if (kDebugMode) debugPrint('restoreSession failed: $e');
