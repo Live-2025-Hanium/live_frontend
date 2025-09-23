@@ -102,7 +102,7 @@ class AuthRepository {
         '/api/v2/auth/kakao/callback',
         data: {
           'code': code,
-          'redirectUri': 'http://localhost:3000/auth/callback',
+          'redirectUri': const String.fromEnvironment('KAKAO_REDIRECT_URI'),
         },
         options: Options(extra: {'noAuth': true}),
       );
