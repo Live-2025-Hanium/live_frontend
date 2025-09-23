@@ -5,10 +5,51 @@ import 'package:live_frontend/models/social_user_model.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 import 'package:live_frontend/core/repositories/auth_repository_provider.dart';
 import 'package:live_frontend/providers/google_signin_provider.dart';
+import 'package:live_frontend/models/common_api_response_model.dart';
+import 'package:live_frontend/providers/secure_storage_provider.dart';
+import 'package:dio/dio.dart';
+import 'package:live_frontend/env.dart';
 
 class AuthController extends StateNotifier<AuthState> {
   final Ref ref;
   AuthController(this.ref) : super(const AuthState());
+
+  /// Attempt to restore session on app startup.
+  /// Reads stored refresh token and calls refresh endpoint to obtain fresh tokens
+  /// and user info. If successful, sets authenticated state.
+  Future<void> restoreSession() async {
+    try {
+      final storage = ref.read(secureStorageProvider);
+      final refresh = await storage.readRefresh();
+      if (refresh == null || refresh.isEmpty) return;
+
+      final dio = Dio(BaseOptions(baseUrl: Env.apiBase));
+      final resp = await dio.post(
+        '/api/auth/refresh',
+        data: {'refreshToken': refresh},
+        options: Options(extra: {'noAuth': true}),
+      );
+
+      // Use ApiResponseModel convention: { timestamp, success, message, data: { accessToken, refreshToken, ... } }
+      final apiResp = ApiResponseModel<Map<String, dynamic>>.fromJson(
+        resp.data as Map<String, dynamic>,
+        (raw) => Map<String, dynamic>.from(raw as Map),
+      );
+
+      final payload = apiResp.data ?? <String, dynamic>{};
+      final access = payload['accessToken'] as String?;
+      final newRefresh = payload['refreshToken'] as String?;
+
+      if (access != null && newRefresh != null) {
+        await storage.writeTokens(access, newRefresh);
+        // We don't have user info in this refresh payload per convention; leave state to be updated by other flows if needed.
+        // Set simple authenticated state so UI treats user as logged in.
+        state = state.copyWith(status: AuthStatus.authenticated);
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('restoreSession failed: $e');
+    }
+  }
 
   Future<void> loginWithGoogle() async {
     state = state.copyWith(status: AuthStatus.loading);

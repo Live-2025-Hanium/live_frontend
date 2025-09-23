@@ -4,16 +4,31 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'routers/app_router.dart';
+import 'package:live_frontend/providers/auth_provider.dart';
 
 const kMaxWidth = 1000.0; // 웹 본문 최대 너비
 const kGutter = 24.0; // 좌우 여백
 const kNarrowWidthCutoff = 900.0; // 좁은 폭(태블릿/모바일 웹) 기준
 
-class MyApp extends ConsumerWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    // restore auth session after provider is ready
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(authProvider.notifier).restoreSession();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
 
     final saeipColorScheme = ColorScheme(
