@@ -6,7 +6,7 @@ import 'package:live_frontend/theme/app_colors.dart';
 import 'routers/app_router.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 
-const kMaxWidth = 1000.0; // 웹 본문 최대 너비
+const kMaxWidth = 600.0; // 웹 본문 최대 너비
 const kGutter = 24.0; // 좌우 여백
 const kNarrowWidthCutoff = 900.0; // 좁은 폭(태블릿/모바일 웹) 기준
 
