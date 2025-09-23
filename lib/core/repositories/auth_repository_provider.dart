@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:live_frontend/env.dart';
 import 'package:live_frontend/models/common_api_response_model.dart';
 import 'package:live_frontend/models/saeip_user_model.dart';
 import 'package:live_frontend/models/social_user_model.dart';
@@ -100,10 +101,7 @@ class AuthRepository {
     try {
       final resp = await _dio.post(
         '/api/v2/auth/kakao/callback',
-        data: {
-          'code': code,
-          'redirectUri': const String.fromEnvironment('KAKAO_REDIRECT_URI'),
-        },
+        data: {'code': code, 'redirectUri': Env.kakaoRedirectUri},
         options: Options(extra: {'noAuth': true}),
       );
 
