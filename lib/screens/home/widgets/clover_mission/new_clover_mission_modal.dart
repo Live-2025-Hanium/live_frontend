@@ -76,7 +76,7 @@ class _NewCloverMissionModalState extends ConsumerState<NewCloverMissionModal> {
     }
 
     return Dialog(
-      insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
+      insetPadding: EdgeInsets.symmetric(horizontal: 16),
       child: Stack(
         children: [
           Container(
@@ -84,7 +84,7 @@ class _NewCloverMissionModalState extends ConsumerState<NewCloverMissionModal> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
             ),
-            padding: EdgeInsets.fromLTRB(16.w, 36.h, 16.w, 4.h),
+            padding: EdgeInsets.fromLTRB(16, 36, 16, 4),
             width: double.infinity,
             child: content,
           ),
@@ -115,12 +115,12 @@ class _NewCloverMissionModalState extends ConsumerState<NewCloverMissionModal> {
           style: AppTextStyles.titleMedium(context, color: Colors.black),
           textAlign: TextAlign.center,
         ),
-        Gap(12.h),
+        Gap(12),
         Image.asset(
           // 이유는 모르겠는데 svg가 안됨.
           'assets/images/clover.png',
-          width: 52.w,
-          height: 52.w,
+          width: 52,
+          height: 52,
         ),
         Gap(24.h),
         ...missionList.asMap().entries.map((entry) {
@@ -158,7 +158,7 @@ class _NewCloverMissionModalState extends ConsumerState<NewCloverMissionModal> {
         border: Border.all(color: AppColors.blackBlack1, width: 1.0),
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 22.w),
+        padding: EdgeInsets.symmetric(horizontal: 22),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -170,7 +170,7 @@ class _NewCloverMissionModalState extends ConsumerState<NewCloverMissionModal> {
                 color: AppColors.blackBlack4,
               ),
             ),
-            Gap(24.w),
+            Gap(24),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,7 +182,7 @@ class _NewCloverMissionModalState extends ConsumerState<NewCloverMissionModal> {
                     color: Colors.black,
                   ),
                 ),
-                Gap(4.h),
+                Gap(4),
                 CloverSubContent(difficulty: difficulty, category: category),
               ],
             ),
