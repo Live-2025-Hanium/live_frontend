@@ -5,10 +5,62 @@ import 'package:live_frontend/models/social_user_model.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 import 'package:live_frontend/core/repositories/auth_repository_provider.dart';
 import 'package:live_frontend/providers/google_signin_provider.dart';
+// ...existing code...
+import 'package:live_frontend/providers/secure_storage_provider.dart';
+import 'package:live_frontend/core/controllers/profile_controller.dart';
+import 'package:live_frontend/models/saeip_user_model.dart';
+// ...existing code...
 
 class AuthController extends StateNotifier<AuthState> {
   final Ref ref;
-  AuthController(this.ref) : super(const AuthState());
+  AuthController(this.ref)
+    : super(const AuthState(status: AuthStatus.loading)) {
+    // run restore asynchronously
+    Future.microtask(() async {
+      await restoreSession();
+      // if still loading (no auth set), set to initial
+      if (state.status == AuthStatus.loading) {
+        state = const AuthState();
+      }
+    });
+  }
+
+  /// Attempt to restore session on app startup.
+  /// Reads stored refresh token and calls refresh endpoint to obtain fresh tokens
+  /// and user info. If successful, sets authenticated state.
+  Future<void> restoreSession() async {
+    try {
+      final storage = ref.read(secureStorageProvider);
+      final refresh = await storage.readRefresh();
+      final accessExisting = await storage.readAccess();
+      if (kDebugMode) {
+        debugPrint(
+          'restoreSession: existing refresh=$refresh access=$accessExisting',
+        );
+      }
+      // If tokens exist, treat user as authenticated and fetch profile.
+      if ((refresh != null && refresh.isNotEmpty) ||
+          (accessExisting != null && accessExisting.isNotEmpty)) {
+        final profileController = ref.read(profileControllerProvider);
+        final profile = await profileController.fetchProfile();
+        if (kDebugMode) debugPrint('restoreSession: fetched profile=$profile');
+        if (profile != null) {
+          final user = SaeipUserModel(
+            id: profile.id,
+            email: '',
+            nickname: profile.nickname,
+            profileImageUrl: profile.profileImageUrl,
+            role: SaeipUserType.user,
+          );
+          state = AuthState(status: AuthStatus.authenticated, saeipUser: user);
+        } else {
+          state = state.copyWith(status: AuthStatus.authenticated);
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('restoreSession failed: $e');
+    }
+  }
 
   Future<void> loginWithGoogle() async {
     state = state.copyWith(status: AuthStatus.loading);

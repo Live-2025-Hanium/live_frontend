@@ -24,14 +24,21 @@ import '../providers/auth_provider.dart';
 import 'package:live_frontend/screens/forum/forum_post_screen.dart';
 
 // 라우터 새로고침 트리거
-final routerRefreshProvider = ChangeNotifierProvider((ref) {
-  return _RouterRefreshNotifier(ref.watch(authProvider.notifier));
+final routerRefreshProvider = ChangeNotifierProvider<_RouterRefreshNotifier>((
+  ref,
+) {
+  final notifier = _RouterRefreshNotifier();
+  // Ensure notifier is called whenever auth state changes so GoRouter can
+  // re-run redirect logic. Using ref.listen is more robust than listening
+  // to the notifier instance directly.
+  ref.listen<AuthState>(authProvider, (_, __) {
+    notifier.ping();
+  });
+  return notifier;
 });
 
 class _RouterRefreshNotifier extends ChangeNotifier {
-  _RouterRefreshNotifier(StateNotifier authNotifier) {
-    authNotifier.addListener((_) => notifyListeners());
-  }
+  void ping() => notifyListeners();
 }
 
 final routerProvider = Provider<GoRouter>((ref) {

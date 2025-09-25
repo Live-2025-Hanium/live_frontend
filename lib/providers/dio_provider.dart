@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:live_frontend/env.dart';
 import 'package:live_frontend/providers/secure_storage_provider.dart';
 import 'package:live_frontend/providers/token_interceptor.dart';
+import 'package:live_frontend/providers/auth_provider.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   final storage = ref.watch(secureStorageProvider);
@@ -17,7 +18,11 @@ final dioProvider = Provider<Dio>((ref) {
 
   dio.interceptors.addAll([
     // pass the same BaseOptions to TokenInterceptor for refresh requests
-    TokenInterceptor(storage, refreshOptions: baseOptions),
+    TokenInterceptor(
+      storage,
+      refreshOptions: baseOptions,
+      onLogout: () => ref.read(authProvider.notifier).logout(),
+    ),
     LogInterceptor(responseBody: true),
   ]);
 

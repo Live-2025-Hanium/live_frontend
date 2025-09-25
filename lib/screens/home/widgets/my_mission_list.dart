@@ -10,6 +10,7 @@ import 'package:live_frontend/screens/home/widgets/my_mission/mission_repeat.dar
 import 'package:live_frontend/screens/home/widgets/my_mission/mission_time.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
+import 'dart:math' as math;
 
 class MyMissionList extends ConsumerStatefulWidget {
   const MyMissionList({super.key});
@@ -56,10 +57,10 @@ class _MyMissionListState extends ConsumerState<MyMissionList> {
                     ),
                   ),
                   SizedBox(
-                    width: 48.w,
-                    height: 48.w,
+                    width: math.min(48.w, 56),
+                    height: math.min(48.w, 56),
                     child: IconButton(
-                      iconSize: 24.w,
+                      iconSize: math.min(24.w, 28),
                       onPressed: () {
                         context.pushNamed('my_mission_add');
                       },
