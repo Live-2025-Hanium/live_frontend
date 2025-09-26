@@ -284,7 +284,14 @@ class _MyMissionAddScreenState extends ConsumerState<MyMissionAddScreen> {
                 onPressed: () async {
                   final result = await context.pushNamed(
                     'repeat',
-                    extra: _mission.repeatDay,
+                    queryParameters: _mission.repeatDay != null
+                        ? {
+                            'initial': _mission.repeatDay
+                                .toString()
+                                .split('.')
+                                .last,
+                          }
+                        : {},
                   );
                   if (result != null && result is RepeatDay) {
                     setState(() {
