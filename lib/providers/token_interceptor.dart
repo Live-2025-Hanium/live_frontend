@@ -7,6 +7,7 @@ import 'package:live_frontend/providers/secure_storage_provider.dart';
 /// A Dio interceptor that attaches access token and handles automatic refresh.
 class TokenInterceptor extends Interceptor {
   final SecureStorageService storage;
+  final void Function()? onLogout;
   final Dio _refreshDio;
   final String refreshEndpoint = '/api/auth/refresh';
 
@@ -14,7 +15,7 @@ class TokenInterceptor extends Interceptor {
   Completer<void>? _refreshCompleter;
 
   /// Accept a [refreshOptions] to construct the internal refresh Dio.
-  TokenInterceptor(this.storage, {BaseOptions? refreshOptions})
+  TokenInterceptor(this.storage, {BaseOptions? refreshOptions, this.onLogout})
     : _refreshDio = Dio(refreshOptions ?? BaseOptions(baseUrl: ''));
 
   Future<String?> _readAccess() => storage.readAccess();
@@ -106,6 +107,23 @@ class TokenInterceptor extends Interceptor {
         if (kDebugMode) {
           debugPrint('Token refresh failed: $e');
           debugPrintStack(stackTrace: s);
+        }
+        // If refresh failed, clear stored tokens and trigger optional logout
+        try {
+          await storage.delete(TokenKeys.access);
+          await storage.delete(TokenKeys.refresh);
+        } catch (e2) {
+          if (kDebugMode) {
+            debugPrint('Failed to clear tokens after refresh failure: $e2');
+          }
+        }
+
+        if (onLogout != null) {
+          try {
+            onLogout!();
+          } catch (e2) {
+            if (kDebugMode) debugPrint('onLogout callback failed: $e2');
+          }
         }
         // fallthrough to propagate original error
       }

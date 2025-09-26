@@ -34,7 +34,7 @@ class SelectionButton extends StatelessWidget {
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: 48.h),
             child: Padding(
-              padding: EdgeInsetsGeometry.only(left: 16.w, right: 24.w),
+              padding: EdgeInsetsGeometry.only(left: 16, right: 24),
               child: Row(
                 children: [
                   Expanded(
