@@ -1,8 +1,4 @@
-import 'dart:convert'; // ★ base64
-import 'package:flutter/services.dart' show rootBundle; // ★ asset 로딩
-
 import 'package:flutter/material.dart';
-import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:gap/gap.dart';
@@ -12,6 +8,9 @@ import 'package:live_frontend/widgets/saeip_search_bar.dart';
 import 'widgets/map_search_temp_bar.dart';
 import 'data/map_recent_search_temp_repo.dart'; // ← 임시 레포
 import 'package:live_frontend/widgets/saeip_modal.dart';
+
+// ★ 웹/모바일 공통 카카오맵 래퍼
+import 'package:live_frontend/widgets/platform_kakao_map.dart';
 
 class MapSearchScreen extends StatefulWidget {
   const MapSearchScreen({super.key, this.initialText});
@@ -26,7 +25,6 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
   late final TextEditingController _controller = TextEditingController(
     text: widget.initialText ?? '',
   );
-  KakaoMapController? _mapController;
 
   // 최근 검색
   List<String> _recents = [];
@@ -35,19 +33,21 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
   bool _searched = false; // 검색 버튼/Submit 이후 true
   bool _loading = false;
   List<_Place> _results = [];
-  List<Marker> _markers = [];
+
+  // 공통 맵용 포인트 (웹/모바일 공통)
+  List<LatLngPoint> _points = [];
+
+  // 맵 중심 좌표(임의 초기값, map_screen.dart의 초기값과 동일)
+  double _centerLat = 37.611846;
+  double _centerLng = 126.834059;
 
   // 바텀시트
   final _sheetCtrl = DraggableScrollableController();
-
-  // ★ data URI 캐시
-  String? _markerDataUri;
 
   @override
   void initState() {
     super.initState();
     _loadRecents();
-    _loadMarkerIcon(); // ★ 애셋 PNG → data URI 미리 로드
   }
 
   Future<void> _loadRecents() async {
@@ -60,25 +60,6 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
   void dispose() {
     _controller.dispose();
     super.dispose();
-  }
-
-  // ★ 애셋을 base64 data URI로 변환
-  Future<String> _assetToDataUri(String assetPath, {String mime = 'image/png'}) async {
-    final bytes = await rootBundle.load(assetPath);
-    final b64 = base64Encode(bytes.buffer.asUint8List());
-    return 'data:$mime;base64,$b64';
-  }
-
-  // ★ 마커 아이콘 data URI 준비
-  Future<void> _loadMarkerIcon() async {
-    try {
-      final uri = await _assetToDataUri('assets/images/mock_marker.png');
-      if (!mounted) return;
-      setState(() => _markerDataUri = uri);
-    } catch (e) {
-      // 실패 시 null 유지(fallback 사용)
-      // debugPrint('marker icon load failed: $e');
-    }
   }
 
   // TODO: 실제 REST API로 교체
@@ -107,56 +88,31 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
           address: '서울 강동구 고덕로 266 4층 405호',
           status: i == 1 ? _BizStatus.closed : _BizStatus.open,
           statusNote: i == 1 ? '매주 화요일 휴무' : '18:00까지',
-          thumbUrl: 'https://picsum.photos/seed/$i/84', // 고유한 썸네일 URL
+          thumbUrl: 'https://picsum.photos/seed/$i/84',
           lat: 37.611846 + (i * 0.002),
           lng: 126.834059 + (i * 0.002),
         );
       });
     }
 
-    // ★ data URI가 아직이면 즉시 로드 시도(경쟁상황 대비)
-    if (_markerDataUri == null) {
-      try {
-        _markerDataUri = await _assetToDataUri('assets/images/mock_marker.png');
-      } catch (_) {}
-    }
+    // _Place → 공통 포인트로 변환
+    final pts = data
+        .map((p) => LatLngPoint(p.lat, p.lng, label: p.name))
+        .toList(growable: false);
 
-    // 마커 변환
-    List<Marker> ms = [];
-    if (_mapController != null) {
-      final center = await _mapController!.getCenter();
-      ms = data.isEmpty
-          ? []
-          : data
-              .map(
-                (p) => Marker(
-                  markerId: p.id,
-                  latLng: LatLng(p.lat, p.lng),
-                  infoWindowContent: p.name,
-                  // ★ 핵심: 플러터 애셋 경로 대신 data URI 사용
-                  markerImageSrc: _markerDataUri ??
-                      // 로드 실패/지연 시 네트워크 PNG로 폴백
-                      'https://upload.wikimedia.org/wikipedia/commons/7/7e/Map_marker.svg.png',
-                  width: 60,
-                  height: 60,
-                ),
-              )
-              .toList();
-
-      if (ms.isNotEmpty) {
-        await _mapController!.setCenter(ms.first.latLng);
-      } else {
-        await _mapController!.setCenter(center);
-      }
+    // 중심 좌표 업데이트(첫 결과)
+    if (pts.isNotEmpty) {
+      _centerLat = pts.first.lat;
+      _centerLng = pts.first.lng;
     }
 
     setState(() {
       _results = data;
-      _markers = ms;
+      _points = pts;
       _loading = false;
     });
 
-    if (ms.isNotEmpty && mounted && _sheetCtrl.size < 0.35) {
+    if (pts.isNotEmpty && mounted && _sheetCtrl.size < 0.35) {
       // ignore: unawaited_futures
       _sheetCtrl.animateTo(
         0.35,
@@ -186,7 +142,9 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
             ),
 
             Expanded(
-              child: _searched ? _buildAfterSearch(theme) : _buildRecents(theme),
+              child: _searched
+                  ? _buildAfterSearch(theme)
+                  : _buildRecents(theme),
             ),
           ],
         ),
@@ -211,8 +169,9 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                   alignment: Alignment.topCenter,
                   child: Text(
                     '최근 검색어가 없습니다.',
-                    style: AppTextStyles.bodyRegular(context)
-                        .copyWith(color: AppColors.blackBlack4),
+                    style: AppTextStyles.bodyRegular(
+                      context,
+                    ).copyWith(color: AppColors.blackBlack4),
                   ),
                 ),
               ),
@@ -262,7 +221,6 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
       trailing: IconButton(
         icon: const Icon(Icons.close, color: AppColors.blackBlack3),
         onPressed: () async {
-          // ✅ 지도 전용 임시 레포에서 삭제
           await MapRecentSearchTempRepo.remove(q);
           _loadRecents();
         },
@@ -280,9 +238,11 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
       children: [
         // 지도
         Positioned.fill(
-          child: KakaoMap(
-            markers: _markers,
-            onMapCreated: (c) => _mapController = c,
+          child: PlatformKakaoMap(
+            centerLat: _centerLat,
+            centerLng: _centerLng,
+            zoomLevel: 3,
+            points: _points,
           ),
         ),
 
@@ -414,8 +374,9 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                   const Gap(8),
                   Text(
                     p.category,
-                    style: AppTextStyles.smallMedium(context)
-                        .copyWith(color: AppColors.blackBlack4),
+                    style: AppTextStyles.smallMedium(
+                      context,
+                    ).copyWith(color: AppColors.blackBlack4),
                   ),
                 ],
               ),
@@ -435,39 +396,47 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
               Gap(10.h),
               Row(
                 children: [
-                  _pillButton(Icons.call, '전화', onPressed: () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (ctx) => SaeipModal(
-                        title: '02-3242-3242',
-                        message: '전화를 연결할까요?',
-                        confirmText: '전화 걸기',
-                        cancelText: '취소',
-                        onCancel: () => Navigator.of(ctx).pop(),
-                        onConfirm: () {
-                          // TODO: 전화 연결 로직 연결
-                          Navigator.of(ctx).pop();
-                        },
-                      ),
-                    );
-                  }),
+                  _pillButton(
+                    Icons.call,
+                    '전화',
+                    onPressed: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (ctx) => SaeipModal(
+                          title: '02-3242-3242',
+                          message: '전화를 연결할까요?',
+                          confirmText: '전화 걸기',
+                          cancelText: '취소',
+                          onCancel: () => Navigator.of(ctx).pop(),
+                          onConfirm: () {
+                            // TODO: 전화 연결 로직 연결
+                            Navigator.of(ctx).pop();
+                          },
+                        ),
+                      );
+                    },
+                  ),
                   const Gap(8),
-                  _pillButton(Icons.route, '길 찾기', onPressed: () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (ctx) => SaeipModal(
-                        title: '더마음의원',
-                        message: '다른 앱으로 길 찾기를 연결할까요?',
-                        confirmText: '길 찾기',
-                        cancelText: '취소',
-                        onCancel: () => Navigator.of(ctx).pop(),
-                        onConfirm: () {
-                          // TODO: 길 찾기 로직 연결
-                          Navigator.of(ctx).pop();
-                        },
-                      ),
-                    );
-                  }),
+                  _pillButton(
+                    Icons.route,
+                    '길 찾기',
+                    onPressed: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (ctx) => SaeipModal(
+                          title: '더마음의원',
+                          message: '다른 앱으로 길 찾기를 연결할까요?',
+                          confirmText: '길 찾기',
+                          cancelText: '취소',
+                          onCancel: () => Navigator.of(ctx).pop(),
+                          onConfirm: () {
+                            // TODO: 길 찾기 로직 연결
+                            Navigator.of(ctx).pop();
+                          },
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
             ],
@@ -492,18 +461,12 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
     final disabled = onPressed == null;
     return OutlinedButton.icon(
       onPressed: onPressed,
-      icon: Icon(
-        icon,
-        size: 16,
-        color: AppColors.blackBlack4,
-      ),
+      icon: Icon(icon, size: 16, color: AppColors.blackBlack4),
       label: Text(label),
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.blackBlack4,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        side: const BorderSide(
-          color: AppColors.blackBlack4,
-        ),
+        side: const BorderSide(color: AppColors.blackBlack4),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
       ),
     );

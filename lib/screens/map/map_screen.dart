@@ -4,7 +4,8 @@ import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:live_frontend/screens/map/map_search_screen.dart';
 import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
 import 'package:live_frontend/widgets/saeip_search_bar.dart';
-import 'widgets/category_bottom_sheet.dart'; // CategoryBottomSheet, CategoryAction
+import 'widgets/category_bottom_sheet.dart';
+import 'package:live_frontend/widgets/platform_kakao_map.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -165,11 +166,19 @@ class _MapScreenState extends State<MapScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: KakaoMap(
-              markers: _markers,
-              circles: _circles, // ← 추가된 Circle들 적용
-              onMapCreated: (c) => _mapController = c,
-              center: myLocation,
+            child: PlatformKakaoMap(
+              centerLat: 37.611846,
+              centerLng: 126.834059,
+              zoomLevel: 3,
+              points: _markers
+                  .map(
+                    (marker) => LatLngPoint(
+                      marker.latLng.latitude,
+                      marker.latLng.longitude,
+                      label: marker.infoWindowContent,
+                    ),
+                  )
+                  .toList(),
             ),
           ),
 

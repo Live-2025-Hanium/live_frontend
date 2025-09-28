@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// ⚠️ TEMP: PR 머지 전까지 지도 탭에서만 쓰는 임시 레포
+/// ⚠️ TEMP: API 연동 전까지 지도 탭에서만 쓰는 임시 레포
 class MapRecentSearchTempRepo {
   static const String _key = 'recent_map_searches'; // 지도 전용 키
   static Future<SharedPreferences> get _prefs => SharedPreferences.getInstance();
