@@ -7,11 +7,17 @@ class PostDetailCommentInput extends StatelessWidget {
   const PostDetailCommentInput({
     super.key,
     required this.controller,
+    required this.focusNode,
     required this.onSend,
+    this.replyTargetLabel,
+    this.onClearReplyTarget,
   });
 
   final TextEditingController controller;
+  final FocusNode focusNode;
   final VoidCallback onSend;
+  final String? replyTargetLabel;
+  final VoidCallback? onClearReplyTarget;
 
   @override
   Widget build(BuildContext context) {

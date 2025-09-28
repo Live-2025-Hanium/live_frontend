@@ -12,7 +12,7 @@ import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 
 import 'package:live_frontend/models/forum_post_detail_model.dart';
 import 'package:live_frontend/providers/forum_post_detail_provider.dart';
-import 'package:live_frontend/providers/forum_scrap_controller.dart';
+import 'package:live_frontend/providers/forum_post_comments_controller.dart';
 
 import 'widgets/post_detail_header.dart';
 import 'widgets/post_detail_content.dart';
@@ -33,11 +33,11 @@ class ForumPostScreen extends ConsumerWidget {
         appBar: SaeipAppBar(),
         body: Center(child: CircularProgressIndicator()),
       ),
-      error: (error, stack) => const Scaffold(
+      error: (_, __) => const Scaffold(
         appBar: SaeipAppBar(),
         body: Center(child: Text('게시글을 불러오지 못했습니다.')),
       ),
-      data: (detail) => _ForumPostView(detail: detail as ForumPostDetailModel),
+      data: (detail) => _ForumPostView(detail: detail),
     );
   }
 }
@@ -51,73 +51,66 @@ class _ForumPostView extends ConsumerStatefulWidget {
 }
 
 class _ForumPostViewState extends ConsumerState<_ForumPostView> {
-  final ScrollController _scroll = ScrollController();
-  final TextEditingController _commentInput = TextEditingController();
+  final _scroll = ScrollController();
+  final _commentInput = TextEditingController();
+  final _commentFocus = FocusNode();
 
-  @override
-  void dispose() {
-    _scroll.dispose();
-    _commentInput.dispose();
-    super.dispose();
-  }
-
-  void _onSendComment() {
+  Future<void> _onSendComment() async {
     final text = _commentInput.text.trim();
     if (text.isEmpty) return;
 
-    ref.read(forumPostProvider(widget.detail.id).notifier).addComment(text);
-    _commentInput.clear();
+    final commentsCtrl = ref.read(
+      postCommentsProvider(widget.detail.id).notifier,
+    );
+    final commentsState = ref.read(postCommentsProvider(widget.detail.id));
+
+    try {
+      if (commentsState.replyTo == null) {
+        await commentsCtrl.addComment(text);
+      } else {
+        await commentsCtrl.addReply(commentsState.replyTo!.id, text);
+      }
+      _commentInput.clear();
+      commentsCtrl.cancelReply();
+    } catch (_) {
+      SaeipToastController.showMessage(context, '댓글 등록 실패');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(forumPostProvider(widget.detail.id));
-    final notifier = ref.read(forumPostProvider(widget.detail.id).notifier);
     final d = widget.detail;
-    final ui = ref.watch(forumPostProvider(d.id));
+
+    final detailState = ref.watch(forumPostDetailProvider(d.id));
+    final detailCtrl = ref.read(forumPostDetailProvider(d.id).notifier);
+
+    final commentsState = ref.watch(postCommentsProvider(d.id));
+    final commentsCtrl = ref.read(postCommentsProvider(d.id).notifier);
 
     return Scaffold(
       appBar: SaeipAppBar(
         actions: [
           IconButton(
             icon: SvgPicture.asset(
-              state.isBookmarked
+              detailState.isBookmarked
                   ? 'assets/icons/bookmark_green_filled.svg'
                   : 'assets/icons/bookmark_green_border.svg',
               height: 20.h,
             ),
             onPressed: () async {
-              final wasBookmarked = state.isBookmarked;
-
-              // 1) 낙관적 UI: 먼저 토글
-              notifier.toggleBookmark();
-
+              final prev = detailState.isBookmarked;
               try {
-                // 2) 서버 토글 호출
-                final isScraped = await ref
-                    .read(scrapControllerProvider.notifier)
-                    .toggleScrap(d.id);
-
-                // 3) 서버 결과와 UI 동기화(서버 결과가 다르면 보정)
-                //    - wasBookmarked: 서버 호출 전 상태
-                //    - 현재 UI는 wasBookmarked를 반전시킨 상태
-                //    - 서버 결과(isScraped)가 UI와 다르면 한번 더 토글해서 맞춤
-                final uiNowBookmarked = !wasBookmarked;
-                if (isScraped != uiNowBookmarked) {
-                  notifier.toggleBookmark(); // 보정
-                }
-
-                // 4) 토스트
+                await detailCtrl.toggleBookmark();
                 SaeipToastController.showMessage(
                   context,
-                  isScraped ? '게시글을 스크랩했습니다.' : '게시글 스크랩을 해제했습니다.',
+                  detailState.isBookmarked
+                      ? '게시물 스크랩을 해제했습니다.'
+                      : '게시물을 스크랩했습니다.',
                 );
-              } catch (e) {
-                // 5) 실패 시 롤백
-                notifier.toggleBookmark();
+              } catch (_) {
                 SaeipToastController.showMessage(
                   context,
-                  '스크랩 처리에 실패했습니다. 잠시 후 다시 시도해 주세요.',
+                  prev ? '스크랩 해제에 실패하였습니다' : '스크랩에 실패하였습니다',
                 );
               }
             },
@@ -126,93 +119,70 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
       ),
       bottomNavigationBar: PostDetailCommentInput(
         controller: _commentInput,
+        focusNode: _commentFocus,
         onSend: _onSendComment,
+        replyTargetLabel: commentsState.replyTo != null
+            ? '${commentsState.replyTo!.authorNickname}에게 답글'
+            : null,
+        onClearReplyTarget: commentsState.replyTo == null
+            ? null
+            : commentsCtrl.cancelReply,
       ),
       body: SafeArea(
         child: CustomScrollView(
           controller: _scroll,
           slivers: [
+            // 게시글 본문
             SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-                  // Header
                   PostDetailHeader(
-                    categoryName: widget.detail.category.name,
-                    orgName: widget.detail.relatedOrganization,
-                    authorNickname: widget.detail.authorNickname,
-                    createdAt: widget.detail.createdAt,
-                    viewCount: widget.detail.viewCount,
-                    title: widget.detail.title,
-                    commentCount: widget.detail.commentCount,
+                    categoryName: d.category.name,
+                    orgName: d.relatedOrganization,
+                    authorNickname: d.authorNickname,
+                    createdAt: d.createdAt,
+                    viewCount: d.viewCount,
+                    title: d.title,
+                    commentCount: d.commentCount,
                   ),
                   Gap(8.h),
-
-                  // Content
                   PostDetailContent(
-                    content: widget.detail.content,
-                    imageUrls: widget.detail.images
-                        .map((e) => e.s3Url)
-                        .toList(),
+                    content: d.content,
+                    imageUrls: d.images.map((e) => e.s3Url).toList(),
                   ),
-
-                  // Reactions
-                  PostDetailReactions(
-                    counts: ui.reactions,
-                    selected: ui.selectedReactions,
-                    onToggle: (r) => ref
-                        .read(forumPostProvider(d.id).notifier)
-                        .toggleReaction(r),
+                  PostDetailReaction(
+                    counts: detailState.reactions, // Map<ReactionType, int>
+                    selected:
+                        detailState.selectedReactions, // Set<ReactionType>
+                    onToggle: ref
+                        .read(forumPostDetailProvider(d.id).notifier)
+                        .toggleReaction,
                   ),
                   Gap(12.h),
                 ]),
               ),
             ),
 
-            // Comments
-            if (state.comments.isEmpty)
+            // 댓글 영역
+            if (commentsState.roots.isEmpty)
               const SliverFillRemaining(
                 hasScrollBody: false,
-                child: _EmptyComments(),
+                child: Center(child: Text('첫 댓글을 남겨주세요.')),
               )
             else
               PostDetailComments(
-                comments: state.comments,
-                onTapMore: notifier.showCommentMenu,
-                onTapLike: notifier.likeComment,
+                comments: commentsState.roots,
+                onTapMore: (_) {
+                  // TODO: 대댓글 알림/수정/삭제 메뉴 연결
+                },
+                onTapLike: (c) => commentsCtrl.toggleLike(c.id),
+                onTapReply: commentsCtrl.startReply,
               ),
 
             const SliverToBoxAdapter(child: SizedBox(height: 80)),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _EmptyComments extends StatelessWidget {
-  const _EmptyComments();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SvgPicture.asset(
-            'assets/icons/comment.svg',
-            width: 48.w,
-            height: 48.w,
-            fit: BoxFit.contain,
-          ),
-          Gap(12.h),
-          Text(
-            '첫 댓글을 남겨주세요.',
-            style: AppTextStyles.bodyRegular(
-              context,
-            ).copyWith(color: AppColors.blackBlack4),
-          ),
-        ],
       ),
     );
   }
