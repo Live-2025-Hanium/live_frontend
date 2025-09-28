@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'forum_post_comment_model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class ForumPostCommentModel {
   final int id;
   final String content;
@@ -20,8 +20,9 @@ class ForumPostCommentModel {
   @JsonKey(name: 'isMyComment')
   final bool isMyComment;
 
-  /// Swagger 기준: string 배열
-  final List<String> replies;
+  /// 항상 non-null, 기본값 []
+  @JsonKey(defaultValue: [])
+  final List<ForumPostCommentModel> replies;
 
   const ForumPostCommentModel({
     required this.id,
@@ -36,9 +37,9 @@ class ForumPostCommentModel {
   });
 
   factory ForumPostCommentModel.fromJson(Map<String, dynamic> json) =>
-      _$ForumPostCommentFromJson(json);
+      _$ForumPostCommentModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ForumPostCommentToJson(this);
+  Map<String, dynamic> toJson() => _$ForumPostCommentModelToJson(this);
 
   ForumPostCommentModel copyWith({
     int? id,
@@ -49,7 +50,7 @@ class ForumPostCommentModel {
     int? likeCount,
     bool? isLiked,
     bool? isMyComment,
-    List<String>? replies,
+    List<ForumPostCommentModel>? replies,
   }) {
     return ForumPostCommentModel(
       id: id ?? this.id,

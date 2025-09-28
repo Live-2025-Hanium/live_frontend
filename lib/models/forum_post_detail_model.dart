@@ -1,3 +1,4 @@
+// lib/models/forum_post_detail_model.dart
 import 'package:json_annotation/json_annotation.dart';
 part 'forum_post_detail_model.g.dart';
 
@@ -5,6 +6,14 @@ part 'forum_post_detail_model.g.dart';
 enum ReactionType {
   @JsonValue('EMPATHY')
   empathy,
+  @JsonValue('USEFUL')
+  useful,
+  @JsonValue('HELPFUL')
+  helpful,
+  @JsonValue('INSPIRING')
+  inspiring,
+  @JsonValue('ENCOURAGING')
+  encouraging,
 
   // 서버가 새 타입을 추가해도 안전하게 디코딩하기 위한 기본값
   @JsonValue('UNKNOWN')
@@ -42,10 +51,11 @@ class ReactionCountsConverter
 
   @override
   Map<ReactionType, int> fromJson(Map<String, dynamic>? json) {
-    if (json == null) return {};
+    if (json == null) return <ReactionType, int>{};
     final out = <ReactionType, int>{};
     json.forEach((k, v) {
-      final rt = $enumDecodeNullable(
+      final rt =
+          $enumDecodeNullable(
             _$ReactionTypeEnumMap,
             k,
             unknownValue: ReactionType.unknown,
@@ -74,13 +84,17 @@ class ReactionSetConverter
 
   @override
   Set<ReactionType> fromJson(List<dynamic>? json) {
-    if (json == null) return {};
+    if (json == null) return <ReactionType>{};
     return json
-        .map((e) => $enumDecodeNullable(
-              _$ReactionTypeEnumMap,
-              e,
-              unknownValue: ReactionType.unknown,
-            )!)
+        .map(
+          (e) => $enumDecodeNullable(
+            _$ReactionTypeEnumMap,
+            e,
+            unknownValue: ReactionType.unknown,
+          )!,
+        )
+        // UNKNOWN은 UI/전송에서 다루지 않게 필터링(원하면 제거)
+        .where((e) => e != ReactionType.unknown)
         .toSet();
   }
 
@@ -110,6 +124,9 @@ class ForumPostDetailModel {
   final DateTime createdAt;
   final DateTime modifiedAt;
 
+  /// 상세 스펙: 스크랩 여부
+  final bool scraped;
+
   ForumPostDetailModel({
     required this.id,
     required this.title,
@@ -124,9 +141,29 @@ class ForumPostDetailModel {
     required this.userReactions,
     required this.createdAt,
     required this.modifiedAt,
+    required this.scraped,
   });
 
   factory ForumPostDetailModel.fromJson(Map<String, dynamic> json) =>
-      _$PostDetailFromJson(json);
-  Map<String, dynamic> toJson() => _$PostDetailToJson(this);
+      _$ForumPostDetailModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ForumPostDetailModelToJson(this);
+}
+
+extension ReactionTypeX on ReactionType {
+  String get serverValue {
+    switch (this) {
+      case ReactionType.empathy:
+        return 'EMPATHY';
+      case ReactionType.useful:
+        return 'USEFUL';
+      case ReactionType.helpful:
+        return 'HELPFUL';
+      case ReactionType.inspiring:
+        return 'INSPIRING';
+      case ReactionType.encouraging:
+        return 'ENCOURAGING';
+      case ReactionType.unknown:
+        throw UnsupportedError('UNKNOWN reaction cannot be sent to server');
+    }
+  }
 }
