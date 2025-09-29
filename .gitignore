@@ -73,3 +73,5 @@ android/my-release-key
 
 .env
 .vscode/dart-defines.local.json
+
+/GEMINI.md
