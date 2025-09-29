@@ -14,7 +14,7 @@ import 'package:live_frontend/models/saeip_user_model.dart';
 class AuthController extends StateNotifier<AuthState> {
   final Ref ref;
   AuthController(this.ref)
-      : super(const AuthState(status: AuthStatus.loading)) {
+    : super(const AuthState(status: AuthStatus.loading)) {
     // run restore asynchronously
     Future.microtask(() async {
       await restoreSession();
@@ -29,17 +29,17 @@ class AuthController extends StateNotifier<AuthState> {
       final storage = ref.read(secureStorageProvider);
       final refresh = await storage.readRefresh();
       final accessExisting = await storage.readAccess();
-      if (kDebugMode) {
-        debugPrint(
-          'restoreSession: existing refresh=$refresh access=$accessExisting',
-        );
-      }
+      // if (kDebugMode) {
+      //   debugPrint(
+      //     'restoreSession: existing refresh=$refresh access=$accessExisting',
+      //   );
+      // }
       // If tokens exist, treat user as authenticated and fetch profile.
       if ((refresh != null && refresh.isNotEmpty) ||
           (accessExisting != null && accessExisting.isNotEmpty)) {
         final profileController = ref.read(profileControllerProvider);
         final profile = await profileController.fetchProfile();
-        if (kDebugMode) debugPrint('restoreSession: fetched profile=$profile');
+        // if (kDebugMode) debugPrint('restoreSession: fetched profile=$profile');
         if (profile != null) {
           final user = SaeipUserModel(
             id: profile.id,
@@ -58,7 +58,7 @@ class AuthController extends StateNotifier<AuthState> {
         state = const AuthState(status: AuthStatus.initial);
       }
     } catch (e) {
-      if (kDebugMode) debugPrint('restoreSession failed: $e');
+      // if (kDebugMode) debugPrint('restoreSession failed: $e');
       // Any error during restore means we are not authenticated.
       state = const AuthState(status: AuthStatus.initial);
     }
@@ -77,8 +77,8 @@ class AuthController extends StateNotifier<AuthState> {
       final user = SocialUser.fromGoogle(googleUser);
 
       debugPrint('✅ Google 로그인 성공');
-      debugPrint('accessToken: ${googleAuth.accessToken}');
-      debugPrint('idToken: ${googleAuth.idToken}');
+      // debugPrint('accessToken: ${googleAuth.accessToken}');
+      // debugPrint('idToken: ${googleAuth.idToken}');
 
       state = AuthState(status: AuthStatus.authenticated, socialUser: user);
     } catch (e) {

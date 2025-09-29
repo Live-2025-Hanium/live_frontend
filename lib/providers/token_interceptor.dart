@@ -39,7 +39,7 @@ class TokenInterceptor extends Interceptor {
         options.headers['Authorization'] = 'Bearer $access';
       }
     } catch (e) {
-      if (kDebugMode) debugPrint('TokenInterceptor read access error: $e');
+      // if (kDebugMode) debugPrint('TokenInterceptor read access error: $e');
     }
     return handler.next(options);
   }
@@ -105,8 +105,8 @@ class TokenInterceptor extends Interceptor {
         }
       } catch (e, s) {
         if (kDebugMode) {
-          debugPrint('Token refresh failed: $e');
-          debugPrintStack(stackTrace: s);
+          // debugPrint('Token refresh failed: $e');
+          // debugPrintStack(stackTrace: s);
         }
         // If refresh failed, clear stored tokens and trigger optional logout
         try {
@@ -114,7 +114,7 @@ class TokenInterceptor extends Interceptor {
           await storage.delete(TokenKeys.refresh);
         } catch (e2) {
           if (kDebugMode) {
-            debugPrint('Failed to clear tokens after refresh failure: $e2');
+            // debugPrint('Failed to clear tokens after refresh failure: $e2');
           }
         }
 
@@ -122,7 +122,7 @@ class TokenInterceptor extends Interceptor {
           try {
             onLogout!();
           } catch (e2) {
-            if (kDebugMode) debugPrint('onLogout callback failed: $e2');
+            // if (kDebugMode) debugPrint('onLogout callback failed: $e2');
           }
         }
         // fallthrough to propagate original error
