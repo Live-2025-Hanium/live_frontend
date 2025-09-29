@@ -14,13 +14,15 @@ class PostDetailComments extends StatelessWidget {
     required this.comments,
     required this.onTapMore,
     required this.onTapLike,
+    required this.onTapReply,
     this.avatarUrlBuilder,
   });
 
-  final List<ForumPostComment> comments;
-  final void Function(ForumPostComment) onTapMore;
-  final void Function(ForumPostComment) onTapLike;
-  final String? Function(ForumPostComment comment)? avatarUrlBuilder;
+  final List<ForumPostCommentModel> comments;
+  final void Function(ForumPostCommentModel) onTapMore;
+  final void Function(ForumPostCommentModel) onTapLike;
+  final void Function(ForumPostCommentModel) onTapReply;
+  final String? Function(ForumPostCommentModel comment)? avatarUrlBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,7 @@ class PostDetailComments extends StatelessWidget {
           comment: comments[i],
           onTapMore: onTapMore,
           onTapLike: onTapLike,
+          onTapReply: onTapReply,
           avatarUrl: avatarUrlBuilder?.call(comments[i]),
         ),
         childCount: comments.length,
@@ -44,19 +47,21 @@ class PostDetailComments extends StatelessWidget {
     );
   }
 }
-
-class _CommentTile extends StatelessWidget {
-  const _CommentTile({
-    required this.comment,
-    required this.onTapMore,
-    required this.onTapLike,
-    this.avatarUrl,
-  });
-
-  final ForumPostComment comment;
-  final void Function(ForumPostComment) onTapMore;
-  final void Function(ForumPostComment) onTapLike;
-  final String? avatarUrl;
+  class _CommentTile extends StatelessWidget {
+    const _CommentTile({
+      super.key,
+      required this.comment,
+      required this.onTapMore,
+      required this.onTapLike,
+      required this.onTapReply,
+      this.avatarUrl,
+    });
+  
+    final ForumPostCommentModel comment;
+    final void Function(ForumPostCommentModel) onTapMore;
+    final void Function(ForumPostCommentModel) onTapLike;
+    final void Function(ForumPostCommentModel) onTapReply;
+    final String? avatarUrl;
 
   String _fmt(DateTime d) {
     final mm = d.month.toString().padLeft(2, '0');

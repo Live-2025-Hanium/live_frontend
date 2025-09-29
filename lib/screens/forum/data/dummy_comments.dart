@@ -1,7 +1,7 @@
 import 'package:live_frontend/models/forum_post_comment_model.dart';
 
-final dummyComments = <ForumPostComment>[
-  ForumPostComment(
+final dummyComments = <ForumPostCommentModel>[
+  ForumPostCommentModel(
     id: 1,
     content: '저도 강아지를 키우고 나서 집에 있는 시간이 훨씬 덜 외로워졌어요.',
     authorNickname: 'Karina',
@@ -12,7 +12,7 @@ final dummyComments = <ForumPostComment>[
     isMyComment: false,
     replies: const [],
   ),
-  ForumPostComment(
+  ForumPostCommentModel(
     id: 2,
     content: '근데 같이 살던 강아지 죽으면 더 외로워짐...',
     authorNickname: '민들레',
@@ -23,7 +23,7 @@ final dummyComments = <ForumPostComment>[
     isMyComment: false,
     replies: const [],
   ),
-  ForumPostComment(
+  ForumPostCommentModel(
     id: 3,
     content: '공감이 많이 가는 글입니다.',
     authorNickname: '오늘도 아자아자',

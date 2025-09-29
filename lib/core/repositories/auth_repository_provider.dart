@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:live_frontend/env.dart';
 import 'package:live_frontend/models/common_api_response_model.dart';
 import 'package:live_frontend/models/saeip_user_model.dart';
 import 'package:live_frontend/models/social_user_model.dart';
@@ -29,7 +30,10 @@ class AuthRepository {
           'profileImageUrl': user.profileImageUrl,
         },
         // 백엔드에서 카카오 토큰 검증용으로 Bearer 받는다면 OK
-        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+          extra: {'noAuth': true},
+        ),
       );
 
       final apiResp = ApiResponseModel<LoginData>.fromJson(
@@ -45,6 +49,11 @@ class AuthRepository {
       try {
         await _secureStorage.write(TokenKeys.access, login.accessToken);
         await _secureStorage.write(TokenKeys.refresh, login.refreshToken);
+        if (kDebugMode) {
+          // debugPrint(
+          //   'AuthRepository: stored access=${login.accessToken.isNotEmpty ? '[REDACTED]' : '<empty>'} refresh=${login.refreshToken.isNotEmpty ? '[REDACTED]' : '<empty>'}',
+          // );
+        }
       } catch (e) {
         // if (kDebugMode) debugPrint('Failed to persist tokens: $e');
       }
@@ -77,6 +86,11 @@ class AuthRepository {
       try {
         await _secureStorage.write(TokenKeys.access, login.accessToken);
         await _secureStorage.write(TokenKeys.refresh, login.refreshToken);
+        if (kDebugMode) {
+          debugPrint(
+            'AuthRepository: stored access=${login.accessToken.isNotEmpty ? '[REDACTED]' : '<empty>'} refresh=${login.refreshToken.isNotEmpty ? '[REDACTED]' : '<empty>'}',
+          );
+        }
       } catch (e) {
         // if (kDebugMode) debugPrint('Failed to persist tokens: $e');
       }
@@ -86,6 +100,47 @@ class AuthRepository {
       if (kDebugMode) {
         // debugPrint(
         //   'loginWithGoogleOnBackend DioException: ${e.response?.data}',
+        // );
+        // debugPrintStack(stackTrace: s);
+      }
+      rethrow;
+    }
+  }
+
+  Future<SaeipUserModel> loginWithKakaoWebOnBackend(String code) async {
+    try {
+      final resp = await _dio.post(
+        '/api/v2/auth/kakao/callback',
+        data: {'code': code, 'redirectUri': Env.kakaoRedirectUri},
+        options: Options(extra: {'noAuth': true}),
+      );
+
+      final apiResp = ApiResponseModel<LoginData>.fromJson(
+        resp.data,
+        (raw) => LoginData.fromJson(Map<String, dynamic>.from(raw as Map)),
+      );
+      if (apiResp.data == null) {
+        throw Exception('Login response missing data: ${resp.data}');
+      }
+
+      final login = apiResp.data!;
+      try {
+        await _secureStorage.write(TokenKeys.access, login.accessToken);
+        await _secureStorage.write(TokenKeys.refresh, login.refreshToken);
+        if (kDebugMode) {
+          // debugPrint(
+          //   'AuthRepository: stored access=${login.accessToken.isNotEmpty ? '[REDACTED]' : '<empty>'} refresh=${login.refreshToken.isNotEmpty ? '[REDACTED]' : '<empty>'}',
+          // );
+        }
+      } catch (e) {
+        // if (kDebugMode) debugPrint('Failed to persist tokens: $e');
+      }
+
+      return login.user;
+    } on DioException catch (e, s) {
+      if (kDebugMode) {
+        // debugPrint(
+        //   'loginWithKakaoWebOnBackend DioException: ${e.response?.data}',
         // );
         // debugPrintStack(stackTrace: s);
       }

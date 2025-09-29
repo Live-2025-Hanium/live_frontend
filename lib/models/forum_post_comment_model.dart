@@ -2,8 +2,8 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'forum_post_comment_model.g.dart';
 
-@JsonSerializable()
-class ForumPostComment {
+@JsonSerializable(explicitToJson: true)
+class ForumPostCommentModel {
   final int id;
   final String content;
 
@@ -20,10 +20,11 @@ class ForumPostComment {
   @JsonKey(name: 'isMyComment')
   final bool isMyComment;
 
-  /// Swagger 기준: string 배열
-  final List<String> replies;
+  /// 항상 non-null, 기본값 []
+  @JsonKey(defaultValue: [])
+  final List<ForumPostCommentModel> replies;
 
-  const ForumPostComment({
+  const ForumPostCommentModel({
     required this.id,
     required this.content,
     required this.authorNickname,
@@ -35,12 +36,12 @@ class ForumPostComment {
     this.replies = const [],
   });
 
-  factory ForumPostComment.fromJson(Map<String, dynamic> json) =>
-      _$ForumPostCommentFromJson(json);
+  factory ForumPostCommentModel.fromJson(Map<String, dynamic> json) =>
+      _$ForumPostCommentModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ForumPostCommentToJson(this);
+  Map<String, dynamic> toJson() => _$ForumPostCommentModelToJson(this);
 
-  ForumPostComment copyWith({
+  ForumPostCommentModel copyWith({
     int? id,
     String? content,
     String? authorNickname,
@@ -49,9 +50,9 @@ class ForumPostComment {
     int? likeCount,
     bool? isLiked,
     bool? isMyComment,
-    List<String>? replies,
+    List<ForumPostCommentModel>? replies,
   }) {
-    return ForumPostComment(
+    return ForumPostCommentModel(
       id: id ?? this.id,
       content: content ?? this.content,
       authorNickname: authorNickname ?? this.authorNickname,

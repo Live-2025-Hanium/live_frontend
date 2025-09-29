@@ -30,7 +30,7 @@ class Term extends StatelessWidget {
       bool? checked = await context.pushNamed(
         'terms_detail',
         pathParameters: {'file_path': filePath!},
-        extra: isChecked,
+        queryParameters: {'isChecked': isChecked ? 'true' : 'false'},
       );
       if (checked != null) {
         onChanged(checked);
@@ -38,7 +38,7 @@ class Term extends StatelessWidget {
     }
 
     return ListTile(
-      contentPadding: const EdgeInsets.all(0),
+      contentPadding: EdgeInsets.zero,
       onTap: () => onTap(),
       title: Text(
         title,
@@ -69,11 +69,11 @@ class Term extends StatelessWidget {
       trailing: IconButton(
         style: IconButton.styleFrom(
           padding: EdgeInsets.zero,
-          minimumSize: Size(48.w, 48.w),
+          minimumSize: Size(48, 48),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         icon: const Icon(Icons.expand_more_rounded),
-        iconSize: 24.w,
+        iconSize: 24,
         color: AppColors.blackBlack3,
         onPressed: () => onTap(),
       ),

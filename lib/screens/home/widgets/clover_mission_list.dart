@@ -131,9 +131,15 @@ class _CloverMissionListState extends ConsumerState<CloverMissionList> {
         .read(cloverMissionNotifierProvider.notifier)
         .startMission(mission.userMissionId);
     if (mission.cloverType == CloverMissionType.timer) {
-      context.pushNamed('timer_mission', extra: mission.userMissionId);
+      context.pushNamed(
+        'timer_mission',
+        pathParameters: {'id': mission.userMissionId.toString()},
+      );
     } else if (mission.cloverType == CloverMissionType.photo) {
-      context.pushNamed('photo_mission', extra: mission.userMissionId);
+      context.pushNamed(
+        'photo_mission',
+        pathParameters: {'id': mission.userMissionId.toString()},
+      );
       // 다른 타입의 미션 처리 로직
     }
   }

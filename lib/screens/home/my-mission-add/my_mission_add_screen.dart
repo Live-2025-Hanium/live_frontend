@@ -171,7 +171,6 @@ class _MyMissionAddScreenState extends ConsumerState<MyMissionAddScreen> {
           padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 120.h),
           child: ListView(
             children: [
-              // 1) controller 연결된 TextField
               TextField(
                 controller: _titleController,
                 style: AppTextStyles.bodyRegular(context, color: Colors.black),
@@ -282,7 +281,7 @@ class _MyMissionAddScreenState extends ConsumerState<MyMissionAddScreen> {
               ),
               Gap(16.h),
               SelectionButton(
-                title: '반복',
+                title: '반복   ',
                 selected: _mission.repeatDay?.label,
                 include: _included[3],
                 onToggle: (value) {
@@ -293,7 +292,14 @@ class _MyMissionAddScreenState extends ConsumerState<MyMissionAddScreen> {
                 onPressed: () async {
                   final result = await context.pushNamed(
                     'repeat',
-                    extra: _mission.repeatDay,
+                    queryParameters: _mission.repeatDay != null
+                        ? {
+                            'initial': _mission.repeatDay
+                                .toString()
+                                .split('.')
+                                .last,
+                          }
+                        : {},
                   );
                   if (result != null && result is RepeatDay) {
                     setState(() {

@@ -38,50 +38,57 @@ class ExecuteScreenTemplate extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // 상단 컨텐츠
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    missionTitle,
-                    style: AppTextStyles.titleMedium(
-                      context,
-                      color: AppColors.greenNormal,
-                    ),
+              // 상단 컨텐츠 (스크롤 가능)
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        missionTitle,
+                        style: AppTextStyles.titleMedium(
+                          context,
+                          color: AppColors.greenNormal,
+                        ),
+                      ),
+                      Gap(4.h),
+                      Text('미션을 진행 중이에요.'),
+                      Gap(16.h),
+                      Align(
+                        alignment: Alignment.center,
+                        widthFactor: 1.0,
+                        child: Image.asset(imagePath, fit: BoxFit.contain),
+                      ),
+                      Gap(24.h),
+                      if (child != null) child!,
+                    ],
                   ),
-                  Gap(4.h),
-                  Text('미션을 진행 중이에요.'),
-                  Gap(16.h),
-                  Align(
-                    alignment: Alignment.center,
-                    widthFactor: 1.0,
-                    child: Image.asset(imagePath, fit: BoxFit.scaleDown),
-                  ),
-                  Gap(24.h),
-                  if (child != null) child!,
-                ],
+                ),
               ),
               // 하단 버튼
-              Row(
-                children: [
-                  Expanded(
-                    child: SaeipButton.outlined(
-                      text: leftLabel,
-                      outlineColor: AppColors.blackBlack2,
-                      onPressed: () {
-                        onLeftPressed();
-                      },
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.h),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: SaeipButton.outlined(
+                        text: leftLabel,
+                        outlineColor: AppColors.blackBlack2,
+                        onPressed: () {
+                          onLeftPressed();
+                        },
+                      ),
                     ),
-                  ),
-                  Gap(8.w),
-                  Expanded(
-                    child: SaeipButton(
-                      text: rightLabel,
-                      disabled: onRightPressed == null,
-                      onPressed: onRightPressed ?? () {},
+                    Gap(8.w),
+                    Expanded(
+                      child: SaeipButton(
+                        text: rightLabel,
+                        disabled: onRightPressed == null,
+                        onPressed: onRightPressed ?? () {},
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),

@@ -12,7 +12,6 @@ enum SaeipUserType {
   admin,
 }
 
-// 모델 보완 예시
 @JsonSerializable()
 class LoginData {
   final SaeipUserModel user;

@@ -112,15 +112,14 @@ class _StatisticsScreenState extends State<StatisticsScreen>
               WeeklyBarChart(
                 weeklyData: weeklyData,
                 onBarTapped: (index) {
+                  final refDate = _currentAnchor.add(Duration(days: index));
                   context.pushNamed(
                     'weekly_report',
-                    extra: {
-                      'referenceDate': _currentAnchor.add(
-                        Duration(days: index),
-                      ),
+                    queryParameters: {
+                      'referenceDate': refDate.toUtc().toIso8601String(),
                       'missionType': tabIndex == 0
-                          ? MissionType.clover
-                          : MissionType.my,
+                          ? MissionType.clover.toString().split('.').last
+                          : MissionType.my.toString().split('.').last,
                     },
                   );
                 },
