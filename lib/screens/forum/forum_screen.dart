@@ -12,6 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/models/forum_post_model.dart';
 import 'data/dummy_forum_data.dart';
+import 'forum_scrap_screen.dart';
 
 class ForumScreen extends StatefulWidget {
   const ForumScreen({super.key});
@@ -70,13 +71,19 @@ class _ForumScreenState extends State<ForumScreen> {
 
   // CategoryChips 위젯의 카테고리 목록
   static const _categories = [
-    '전체', // index: 0
-    '지원 사업', // index: 1 = ForumCategory.support
-    '마음 챙김', // index: 2 = ForumCategory.mindcare
-    '생활 습관', // index: 3 = ForumCategory.lifestyle
-    '사회 연결', // index: 4 = ForumCategory.social
-    '진로·직업', // index: 5 = ForumCategory.career
+    '전체',
+    '지원 사업',
+    '마음 챙김',
+    '생활 습관',
+    '사회 연결',
+    '진로·직업',
   ];
+
+  void _openScrap() {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => ForumScrapScreen()));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +95,7 @@ class _ForumScreenState extends State<ForumScreen> {
         actions: [
           IconButton(
             icon: SvgPicture.asset('assets/icons/bookmark.svg', height: 20.h),
-            onPressed: () => debugPrint('bookmark tapped'),
+            onPressed: () => _openScrap(),
           ),
         ],
       ),
