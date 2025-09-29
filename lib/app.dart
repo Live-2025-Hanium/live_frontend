@@ -20,15 +20,6 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> {
   @override
-  void initState() {
-    super.initState();
-    // restore auth session after provider is ready
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(authProvider.notifier).restoreSession();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
 

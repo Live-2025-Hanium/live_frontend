@@ -14,14 +14,10 @@ import 'package:live_frontend/models/saeip_user_model.dart';
 class AuthController extends StateNotifier<AuthState> {
   final Ref ref;
   AuthController(this.ref)
-    : super(const AuthState(status: AuthStatus.loading)) {
+      : super(const AuthState(status: AuthStatus.loading)) {
     // run restore asynchronously
     Future.microtask(() async {
       await restoreSession();
-      // if still loading (no auth set), set to initial
-      if (state.status == AuthStatus.loading) {
-        state = const AuthState();
-      }
     });
   }
 
@@ -54,11 +50,17 @@ class AuthController extends StateNotifier<AuthState> {
           );
           state = AuthState(status: AuthStatus.authenticated, saeipUser: user);
         } else {
-          state = state.copyWith(status: AuthStatus.authenticated);
+          // If profile fetch fails, treat as logged out.
+          state = const AuthState(status: AuthStatus.initial);
         }
+      } else {
+        // No tokens found, so user is not logged in.
+        state = const AuthState(status: AuthStatus.initial);
       }
     } catch (e) {
       if (kDebugMode) debugPrint('restoreSession failed: $e');
+      // Any error during restore means we are not authenticated.
+      state = const AuthState(status: AuthStatus.initial);
     }
   }
 
