@@ -13,9 +13,9 @@ class ProfileController {
   Future<ProfileModel?> fetchProfile() async {
     try {
       final dio = ref.read(dioProvider);
-      if (kDebugMode) debugPrint('ProfileController: fetching /api/members/me');
+      // if (kDebugMode) debugPrint('ProfileController: fetching /api/members/me');
       final resp = await dio.get('/api/members/me');
-      if (kDebugMode) debugPrint('ProfileController: resp=${resp.data}');
+      // if (kDebugMode) debugPrint('ProfileController: resp=${resp.data}');
 
       final apiResp = ApiResponseModel<ProfileModel>.fromJson(
         resp.data as Map<String, dynamic>,

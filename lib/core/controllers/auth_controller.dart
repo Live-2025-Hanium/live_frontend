@@ -18,10 +18,6 @@ class AuthController extends StateNotifier<AuthState> {
     // run restore asynchronously
     Future.microtask(() async {
       await restoreSession();
-      // if still loading (no auth set), set to initial
-      if (state.status == AuthStatus.loading) {
-        state = const AuthState();
-      }
     });
   }
 
@@ -33,17 +29,17 @@ class AuthController extends StateNotifier<AuthState> {
       final storage = ref.read(secureStorageProvider);
       final refresh = await storage.readRefresh();
       final accessExisting = await storage.readAccess();
-      if (kDebugMode) {
-        debugPrint(
-          'restoreSession: existing refresh=$refresh access=$accessExisting',
-        );
-      }
+      // if (kDebugMode) {
+      //   debugPrint(
+      //     'restoreSession: existing refresh=$refresh access=$accessExisting',
+      //   );
+      // }
       // If tokens exist, treat user as authenticated and fetch profile.
       if ((refresh != null && refresh.isNotEmpty) ||
           (accessExisting != null && accessExisting.isNotEmpty)) {
         final profileController = ref.read(profileControllerProvider);
         final profile = await profileController.fetchProfile();
-        if (kDebugMode) debugPrint('restoreSession: fetched profile=$profile');
+        // if (kDebugMode) debugPrint('restoreSession: fetched profile=$profile');
         if (profile != null) {
           final user = SaeipUserModel(
             id: profile.id,
@@ -54,11 +50,17 @@ class AuthController extends StateNotifier<AuthState> {
           );
           state = AuthState(status: AuthStatus.authenticated, saeipUser: user);
         } else {
-          state = state.copyWith(status: AuthStatus.authenticated);
+          // If profile fetch fails, treat as logged out.
+          state = const AuthState(status: AuthStatus.initial);
         }
+      } else {
+        // No tokens found, so user is not logged in.
+        state = const AuthState(status: AuthStatus.initial);
       }
     } catch (e) {
-      if (kDebugMode) debugPrint('restoreSession failed: $e');
+      // if (kDebugMode) debugPrint('restoreSession failed: $e');
+      // Any error during restore means we are not authenticated.
+      state = const AuthState(status: AuthStatus.initial);
     }
   }
 
@@ -75,8 +77,8 @@ class AuthController extends StateNotifier<AuthState> {
       final user = SocialUser.fromGoogle(googleUser);
 
       debugPrint('✅ Google 로그인 성공');
-      debugPrint('accessToken: ${googleAuth.accessToken}');
-      debugPrint('idToken: ${googleAuth.idToken}');
+      // debugPrint('accessToken: ${googleAuth.accessToken}');
+      // debugPrint('idToken: ${googleAuth.idToken}');
 
       state = AuthState(status: AuthStatus.authenticated, socialUser: user);
     } catch (e) {

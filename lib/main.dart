@@ -10,6 +10,8 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Use Path URL strategy for pretty URLs and to keep OAuth redirects
+  // (Kakao login) working as expected. Ensure hosting rewrites are set.
   setUrlStrategy(PathUrlStrategy());
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   KakaoSdk.init(nativeAppKey: Env.kakaoNativeAppKey);

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,6 +23,7 @@ import '../screens/login/profile_setup/profile_setup_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../providers/auth_provider.dart';
 import 'package:live_frontend/screens/forum/forum_post_screen.dart';
+import 'dart:html' as html;
 
 // 라우터 새로고침 트리거
 final routerRefreshProvider = ChangeNotifierProvider<_RouterRefreshNotifier>((
@@ -42,17 +44,38 @@ class _RouterRefreshNotifier extends ChangeNotifier {
 }
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
+  final refreshNotifier = ref.watch(routerRefreshProvider);
 
   return GoRouter(
-    initialLocation: '/login',
-    refreshListenable: ref.watch(routerRefreshProvider),
+    refreshListenable: refreshNotifier,
     redirect: (context, state) {
-      final isLoggedIn = authState.status == AuthStatus.authenticated;
-      final isLoading = authState.status == AuthStatus.loading;
+      // redirect 내부에서 최신 인증 상태를 직접 읽어옵니다.
+      final authStatus = ref.read(authProvider).status;
+      final isLoggedIn = authStatus == AuthStatus.authenticated;
+      final isLoading = authStatus == AuthStatus.loading;
       final isOnLoginPage =
           state.uri.toString() == '/login' ||
           state.uri.toString().startsWith('/auth/callback');
+
+      // GoRouter 웹 새로고침 버그 우회 로직
+      if (kIsWeb && isLoggedIn && state.uri.toString() == '/') {
+        final browserPath = html.window.location.pathname;
+        if (browserPath!.isNotEmpty && browserPath != '/') {
+          return browserPath; // 라우터가 잃어버린 실제 경로로 다시 보내기
+        }
+      }
+
+      // Debug log to help diagnose refresh behavior on web
+      // (check browser console / terminal for these prints)
+      // Prints the raw uri GoRouter receives and current auth status.
+      // Remove these prints once debugging is complete.
+      // Use state.location for the string location and state.uri for parsed Uri.
+      // Example output: GoRouter.redirect: uri=/home, location=/home, authStatus=AuthStatus.loading
+      // (This helps determine whether redirect is caused by auth redirect logic.)
+      // ignore: avoid_print
+      print(
+        'GoRouter.redirect: uri=${state.uri}, pathParams=${state.pathParameters}, extra=${state.extra}, authStatus=$authStatus, isLoggedIn=$isLoggedIn, isLoading=$isLoading',
+      );
 
       // 1. 로딩 중엔 아무것도 리디렉션하지 않음
       if (isLoading) return null;
@@ -60,8 +83,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       // 2. 로그인 안 돼있고 로그인 페이지가 아니면 → 로그인으로
       if (!isLoggedIn && !isOnLoginPage) return '/login';
 
-      // 3. 로그인 돼있는데 로그인 페이지 가려고 하면 → 약관 동의 화면 (임시처리)
-      if (isLoggedIn && isOnLoginPage) return '/login/terms';
+      // 3. 로그인 돼있는데 로그인 페이지 가려고 하면 → 홈으로
+      if (isLoggedIn && isOnLoginPage) return '/home';
 
       return null;
     },
@@ -69,6 +92,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       return NotFoundScreen(error: state.error);
     },
     routes: [
+      GoRoute(path: '/', redirect: (_, __) => '/home'),
       GoRoute(
         name: 'kakao_auth_callback',
         path: '/auth/callback',
@@ -96,10 +120,17 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: ':file_path',
                 builder: (context, state) {
                   final path = state.pathParameters['file_path']!;
-                  final data = state.extra as bool?;
+                  final qp = state.uri.queryParameters;
+                  bool? isChecked;
+                  if (qp.containsKey('isChecked')) {
+                    isChecked = qp['isChecked'] == 'true';
+                  }
+                  if (isChecked == null && state.extra is bool) {
+                    isChecked = state.extra as bool;
+                  }
                   return TermsDetailScreen(
                     path: path,
-                    isChecked: data ?? false,
+                    isChecked: isChecked ?? false,
                   );
                 },
               ),
@@ -119,15 +150,27 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             name: 'timer_mission',
-            path: 'execute/timer_mission',
-            builder: (context, state) =>
-                ExecuteTimerMissionScreen(id: state.extra as int),
+            path: 'execute/timer_mission/:id',
+            builder: (context, state) {
+              final idStr = state.pathParameters['id'];
+              final id = idStr != null
+                  ? int.tryParse(idStr)
+                  : (state.extra as int?);
+              if (id == null) return const NotFoundScreen();
+              return ExecuteTimerMissionScreen(id: id);
+            },
           ),
           GoRoute(
             name: 'photo_mission',
-            path: 'execute/photo_mission',
-            builder: (context, state) =>
-                ExecutePhotoMissionScreen(id: state.extra as int),
+            path: 'execute/photo_mission/:id',
+            builder: (context, state) {
+              final idStr = state.pathParameters['id'];
+              final id = idStr != null
+                  ? int.tryParse(idStr)
+                  : (state.extra as int?);
+              if (id == null) return const NotFoundScreen();
+              return ExecutePhotoMissionScreen(id: id);
+            },
           ),
           GoRoute(
             name: 'my_mission_add',
@@ -140,7 +183,22 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: 'repeat',
                 name: 'repeat',
                 builder: (context, state) {
-                  return RepeatScreen(initial: state.extra as RepeatDay?);
+                  final qp = state.uri.queryParameters;
+                  RepeatDay? initial;
+                  if (qp.containsKey('initial')) {
+                    final val = qp['initial']!;
+                    try {
+                      initial = RepeatDay.values.firstWhere(
+                        (e) => e.toString().split('.').last == val,
+                      );
+                    } catch (_) {
+                      initial = null;
+                    }
+                  }
+                  if (initial == null && state.extra is RepeatDay) {
+                    initial = state.extra as RepeatDay;
+                  }
+                  return RepeatScreen(initial: initial);
                 },
               ),
             ],
@@ -156,9 +214,37 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: 'weekly_report',
             name: 'weekly_report',
             builder: (context, state) {
-              final args = state.extra as Map<String, dynamic>;
-              final referenceDate = args['referenceDate'] as DateTime;
-              final missionType = args['missionType'] as MissionType;
+              DateTime? referenceDate;
+              MissionType? missionType;
+
+              // Try to read from query params first (survives refresh)
+              final qp = state.uri.queryParameters;
+              if (qp.containsKey('referenceDate')) {
+                referenceDate = DateTime.tryParse(qp['referenceDate']!);
+              }
+              if (qp.containsKey('missionType')) {
+                final mtStr = qp['missionType']!;
+                try {
+                  missionType = MissionType.values.firstWhere(
+                    (e) => e.toString().split('.').last == mtStr,
+                  );
+                } catch (_) {
+                  missionType = null;
+                }
+              }
+
+              // Fallback to extra (existing navigation behavior)
+              if (referenceDate == null || missionType == null) {
+                if (state.extra is Map<String, dynamic>) {
+                  final args = state.extra as Map<String, dynamic>;
+                  referenceDate = args['referenceDate'] as DateTime?;
+                  missionType = args['missionType'] as MissionType?;
+                }
+              }
+
+              if (referenceDate == null || missionType == null)
+                return const NotFoundScreen();
+
               return WeeklyReportScreen(
                 referenceDate: referenceDate,
                 missionType: missionType,
