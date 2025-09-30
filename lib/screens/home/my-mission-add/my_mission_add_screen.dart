@@ -4,9 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:live_frontend/core/controllers/my_mission_controller.dart';
+import 'package:live_frontend/core/repositories/my_mission_repository.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/models/mission_models.dart';
-import 'package:live_frontend/providers/home_provider.dart';
 import 'package:live_frontend/screens/home/my-mission-add/widget/selection_button.dart';
 import 'package:live_frontend/screens/home/my-mission-add/widget/selection_tile.dart';
 import 'package:live_frontend/theme/app_colors.dart';
@@ -28,6 +29,7 @@ class MyMissionAddScreen extends ConsumerStatefulWidget {
 class _MyMissionAddScreenState extends ConsumerState<MyMissionAddScreen> {
   late MyMissionAddModel _mission;
   late List<bool> _included;
+  late final MyMissionController _controller;
 
   // 1) TextField controller로 값 관리
   late final TextEditingController _titleController;
@@ -35,6 +37,8 @@ class _MyMissionAddScreenState extends ConsumerState<MyMissionAddScreen> {
   @override
   void initState() {
     super.initState();
+    final repository = ref.read(myMissionRepositoryProvider);
+    _controller = MyMissionController(repository);
     _mission = MyMissionAddModel(
       missionTitle: null,
       startDate: null,
@@ -128,17 +132,15 @@ class _MyMissionAddScreenState extends ConsumerState<MyMissionAddScreen> {
         : null;
 
     try {
-      await ref
-          .read(myMissionNotifierProvider.notifier)
-          .addMyMission(
-            MyMissionAddPayloadModel(
-              missionTitle: _titleController.text.trim(),
-              startDate: _included[0] ? startDate : null,
-              endDate: _included[1] ? endDate : null,
-              scheduledTime: scheduledTime,
-              repeatDay: repeatDay,
-            ),
-          );
+      await _controller.addMyMission(
+        MyMissionAddPayloadModel(
+          missionTitle: _titleController.text.trim(),
+          startDate: _included[0] ? startDate : null,
+          endDate: _included[1] ? endDate : null,
+          scheduledTime: scheduledTime,
+          repeatDay: repeatDay,
+        ),
+      );
       if (!mounted) return;
       SaeipToastController.showMessage(context, '마이 미션이 추가되었습니다.');
       Navigator.of(context).pop();
