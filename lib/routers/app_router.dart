@@ -1,10 +1,7 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/screens/404/not_found_screen.dart';
-import 'package:live_frontend/screens/auth/callback/kakao_auth_callback_screen.dart';
 import 'package:live_frontend/screens/forum/forum_screen.dart';
 import 'package:live_frontend/screens/home/clover-record/mission_record_screen.dart';
 import 'package:live_frontend/screens/home/execute/execute_photo_mission_screen.dart';
@@ -23,59 +20,15 @@ import '../screens/login/profile_setup/profile_setup_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../providers/auth_provider.dart';
 import 'package:live_frontend/screens/forum/forum_post_screen.dart';
-import 'dart:html' as html;
-
-// 라우터 새로고침 트리거
-final routerRefreshProvider = ChangeNotifierProvider<_RouterRefreshNotifier>((
-  ref,
-) {
-  final notifier = _RouterRefreshNotifier();
-  // Ensure notifier is called whenever auth state changes so GoRouter can
-  // re-run redirect logic. Using ref.listen is more robust than listening
-  // to the notifier instance directly.
-  ref.listen<AuthState>(authProvider, (_, __) {
-    notifier.ping();
-  });
-  return notifier;
-});
-
-class _RouterRefreshNotifier extends ChangeNotifier {
-  void ping() => notifyListeners();
-}
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final refreshNotifier = ref.watch(routerRefreshProvider);
-
   return GoRouter(
-    refreshListenable: refreshNotifier,
     redirect: (context, state) {
       // redirect 내부에서 최신 인증 상태를 직접 읽어옵니다.
       final authStatus = ref.read(authProvider).status;
       final isLoggedIn = authStatus == AuthStatus.authenticated;
       final isLoading = authStatus == AuthStatus.loading;
-      final isOnLoginPage =
-          state.uri.toString() == '/login' ||
-          state.uri.toString().startsWith('/auth/callback');
-
-      // GoRouter 웹 새로고침 버그 우회 로직
-      if (kIsWeb && isLoggedIn && state.uri.toString() == '/') {
-        final browserPath = html.window.location.pathname;
-        if (browserPath!.isNotEmpty && browserPath != '/') {
-          return browserPath; // 라우터가 잃어버린 실제 경로로 다시 보내기
-        }
-      }
-
-      // Debug log to help diagnose refresh behavior on web
-      // (check browser console / terminal for these prints)
-      // Prints the raw uri GoRouter receives and current auth status.
-      // Remove these prints once debugging is complete.
-      // Use state.location for the string location and state.uri for parsed Uri.
-      // Example output: GoRouter.redirect: uri=/home, location=/home, authStatus=AuthStatus.loading
-      // (This helps determine whether redirect is caused by auth redirect logic.)
-      // ignore: avoid_print
-      print(
-        'GoRouter.redirect: uri=${state.uri}, pathParams=${state.pathParameters}, extra=${state.extra}, authStatus=$authStatus, isLoggedIn=$isLoggedIn, isLoading=$isLoading',
-      );
+      final isOnLoginPage = state.uri.toString() == '/login';
 
       // 1. 로딩 중엔 아무것도 리디렉션하지 않음
       if (isLoading) return null;
@@ -93,11 +46,6 @@ final routerProvider = Provider<GoRouter>((ref) {
     },
     routes: [
       GoRoute(path: '/', redirect: (_, __) => '/home'),
-      GoRoute(
-        name: 'kakao_auth_callback',
-        path: '/auth/callback',
-        builder: (context, state) => KakaoAuthCallbackScreen(),
-      ),
       GoRoute(
         name: 'login',
         path: '/login',
@@ -217,7 +165,6 @@ final routerProvider = Provider<GoRouter>((ref) {
               DateTime? referenceDate;
               MissionType? missionType;
 
-              // Try to read from query params first (survives refresh)
               final qp = state.uri.queryParameters;
               if (qp.containsKey('referenceDate')) {
                 referenceDate = DateTime.tryParse(qp['referenceDate']!);
@@ -242,8 +189,9 @@ final routerProvider = Provider<GoRouter>((ref) {
                 }
               }
 
-              if (referenceDate == null || missionType == null)
+              if (referenceDate == null || missionType == null) {
                 return const NotFoundScreen();
+              }
 
               return WeeklyReportScreen(
                 referenceDate: referenceDate,

@@ -2,7 +2,7 @@
 // ignore_for_file: type=lint
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, kIsWeb, TargetPlatform;
+    show defaultTargetPlatform, TargetPlatform;
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -16,9 +16,6 @@ import 'package:flutter/foundation.dart'
 /// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
-    if (kIsWeb) {
-      return web;
-    }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
@@ -62,15 +59,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'live-hanium.firebasestorage.app',
     iosBundleId: 'com.example.liveFrontend',
   );
-
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyA7ncJwDMK4TJyfLSwjpktzitp7VWagQfw',
-    appId: '1:67317803547:web:90fbc3d8d26cc7e00f66be',
-    messagingSenderId: '67317803547',
-    projectId: 'live-hanium',
-    authDomain: 'live-hanium.firebaseapp.com',
-    storageBucket: 'live-hanium.firebasestorage.app',
-    measurementId: 'G-0ZJT46LJ31',
-  );
-
 }

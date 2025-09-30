@@ -64,10 +64,6 @@ enum MissionType {
   clover,
 }
 
-/*
-{"userMissionId":1,"missionTitle":"약먹기","myMissionStatus":"ASSIGNED","scheduledTime":null,"repeatType":null}
-*/
-
 @JsonSerializable(explicitToJson: true)
 class MyMissionModel {
   final int userMissionId;

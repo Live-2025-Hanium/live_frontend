@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:live_frontend/models/social_user_model.dart';
@@ -117,35 +117,6 @@ class AuthController extends StateNotifier<AuthState> {
       state = state.copyWith(status: AuthStatus.error, error: e.toString());
     }
   }
-
-  void loginWithKakaoWeb(String authUri) async {
-    if (!kIsWeb) {
-      return;
-    }
-    state = state.copyWith(status: AuthStatus.loading);
-    try {
-      // search param에서 code 꺼내기
-      final uri = Uri.parse(authUri);
-      final code = uri.queryParameters['code'];
-      if (code == null) {
-        throw Exception('코드를 찾을 수 없습니다.');
-      }
-
-      debugPrint('✅ Kakao 웹 로그인 성공');
-      // debugPrint('accessToken: ${token.accessToken}');
-
-      final repo = ref.read(authRepositoryProvider);
-      final saeipUser = await repo.loginWithKakaoWebOnBackend(code);
-      debugPrint('✅ 백엔드 로그인 성공');
-
-      state = AuthState(status: AuthStatus.authenticated, saeipUser: saeipUser);
-    } catch (e) {
-      debugPrint('❌ Kakao 웹 로그인 실패: $e');
-      state = state.copyWith(status: AuthStatus.error, error: e.toString());
-    }
-  }
-
-  void loginToBackendWeb() {}
 
   void logout() {
     state = const AuthState();
