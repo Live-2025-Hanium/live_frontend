@@ -44,7 +44,7 @@ class MyMissionRepository {
 
   Future<void> completeMyMission(int userMissionId) async {
     try {
-      await _dio.patch('/my-missions/$userMissionId/complete');
+      await _dio.patch('/api/v1/missions/my/$userMissionId/complete');
     } catch (e) {
       debugPrint('Failed to complete my mission via API: $e');
       rethrow;
