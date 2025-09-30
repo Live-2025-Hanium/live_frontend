@@ -21,13 +21,14 @@ class MyMissionRepository {
       final apiResponse = ApiResponseModel<List<MyMissionModel>>.fromJson(
         response.data,
         (json) => (json as List)
-            .map((item) => MyMissionModel.fromJson(item as Map<String, dynamic>))
+            .map(
+              (item) => MyMissionModel.fromJson(item as Map<String, dynamic>),
+            )
             .toList(),
       );
       return apiResponse.data ?? [];
     } catch (e) {
       debugPrint('Failed to fetch my missions: $e');
-      // In case of an error, return an empty list or handle it as needed.
       return [];
     }
   }

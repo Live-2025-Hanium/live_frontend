@@ -67,13 +67,9 @@ enum MissionType {
 @JsonSerializable(explicitToJson: true)
 class MyMissionModel {
   final int userMissionId;
-
   final String missionTitle;
   final MissionStatus myMissionStatus;
-
-  /// 예시: ["08:30", "21:00"] (24시간 기준 권장)
   final String? scheduledTime;
-
   final RepeatDay? repeatType;
 
   const MyMissionModel({
