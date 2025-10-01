@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SaeipNavigationBar extends StatefulWidget {
@@ -18,7 +18,7 @@ class SaeipNavigationBar extends StatefulWidget {
 class _SaeipNavigationBarState extends State<SaeipNavigationBar> {
   late int _currentIndex;
 
-  final bool isIOS = !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
+  final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS;
 
   @override
   void initState() {

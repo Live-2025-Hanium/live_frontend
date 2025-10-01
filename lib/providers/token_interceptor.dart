@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:live_frontend/models/common_api_response_model.dart';
+import 'package:live_frontend/models/token_model.dart';
 import 'package:live_frontend/providers/secure_storage_provider.dart';
 
-/// A Dio interceptor that attaches access token and handles automatic refresh.
 class TokenInterceptor extends Interceptor {
   final SecureStorageService storage;
   final void Function()? onLogout;
@@ -62,23 +63,24 @@ class TokenInterceptor extends Interceptor {
               throw Exception('No refresh token available');
             }
 
-            final resp = await _refreshDio.post(
+            final response = await _refreshDio.post(
               refreshEndpoint,
               data: {'refreshToken': refreshToken},
             );
 
-            // Backend returns envelope: { success: true, data: { accessToken, refreshToken, ... } }
-            final respMap = resp.data as Map<String, dynamic>?;
-            final payload = respMap != null && respMap.containsKey('data')
-                ? respMap['data'] as Map<String, dynamic>
-                : (respMap ?? <String, dynamic>{});
-            final newAccess = payload['accessToken'] as String?;
-            final newRefresh = payload['refreshToken'] as String?;
-            if (newAccess == null || newRefresh == null) {
-              throw Exception('Invalid refresh response: ${resp.data}');
+            final data = ApiResponseModel.fromJson(
+              response.data,
+              (json) => TokenModel.fromJson(json as Map<String, dynamic>),
+            );
+
+            if (data.data == null) {
+              throw Exception('Invalid refresh response: ${response.data}');
             }
 
-            await _writeTokens(newAccess, newRefresh);
+            final newAccessToken = data.data!.accessToken;
+            final newRefreshToken = data.data!.refreshToken;
+
+            await _writeTokens(newAccessToken, newRefreshToken);
           } finally {
             _refreshCompleter?.complete();
             _refreshCompleter = null;
@@ -104,28 +106,17 @@ class TokenInterceptor extends Interceptor {
           return handler.resolve(cloneReq);
         }
       } catch (e, s) {
-        if (kDebugMode) {
-          // debugPrint('Token refresh failed: $e');
-          // debugPrintStack(stackTrace: s);
-        }
-        // If refresh failed, clear stored tokens and trigger optional logout
+        if (kDebugMode) {}
         try {
           await storage.delete(TokenKeys.access);
           await storage.delete(TokenKeys.refresh);
-        } catch (e2) {
-          if (kDebugMode) {
-            // debugPrint('Failed to clear tokens after refresh failure: $e2');
-          }
-        }
+        } catch (e) {}
 
         if (onLogout != null) {
           try {
             onLogout!();
-          } catch (e2) {
-            // if (kDebugMode) debugPrint('onLogout callback failed: $e2');
-          }
+          } catch (e) {}
         }
-        // fallthrough to propagate original error
       }
     }
 

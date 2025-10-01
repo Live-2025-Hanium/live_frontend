@@ -14,8 +14,6 @@ class AuthRepository {
 
   AuthRepository(this._dio, this._secureStorage);
 
-  /// 카카오 액세스 토큰을 백엔드로 전달하고, 회원 정보를 받아옵니다.
-  /// NOTE: 백엔드 응답은 { success, message, data: { user, accessToken, refreshToken, newUser }, ... } 형태
   Future<SaeipUserModel> loginWithKakaoOnBackend(
     SocialUser user,
     String accessToken,

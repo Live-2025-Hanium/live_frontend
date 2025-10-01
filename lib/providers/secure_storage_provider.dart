@@ -1,41 +1,21 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-/// A small wrapper that uses secure storage on native and SharedPreferences on web.
+/// A small wrapper that uses secure storage.
 class SecureStorageService {
   final FlutterSecureStorage _storage;
 
   SecureStorageService() : _storage = const FlutterSecureStorage();
 
   Future<String?> read(String key) async {
-    if (kIsWeb) {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getString(key);
-    }
     return _storage.read(key: key);
   }
 
   Future<void> write(String key, String? value) async {
-    if (kIsWeb) {
-      final prefs = await SharedPreferences.getInstance();
-      if (value == null) {
-        await prefs.remove(key);
-      } else {
-        await prefs.setString(key, value);
-      }
-      return;
-    }
     await _storage.write(key: key, value: value);
   }
 
   Future<void> delete(String key) async {
-    if (kIsWeb) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(key);
-      return;
-    }
     await _storage.delete(key: key);
   }
 
