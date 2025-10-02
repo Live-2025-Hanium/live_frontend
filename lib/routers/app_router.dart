@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/screens/404/not_found_screen.dart';
 import 'package:live_frontend/screens/forum/forum_screen.dart';
@@ -162,12 +163,12 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: 'weekly_report',
             name: 'weekly_report',
             builder: (context, state) {
-              DateTime? referenceDate;
+              Jiffy? referenceDate;
               MissionType? missionType;
 
               final qp = state.uri.queryParameters;
               if (qp.containsKey('referenceDate')) {
-                referenceDate = DateTime.tryParse(qp['referenceDate']!);
+                referenceDate = Jiffy.parse(qp['referenceDate']!);
               }
               if (qp.containsKey('missionType')) {
                 final mtStr = qp['missionType']!;
@@ -184,7 +185,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               if (referenceDate == null || missionType == null) {
                 if (state.extra is Map<String, dynamic>) {
                   final args = state.extra as Map<String, dynamic>;
-                  referenceDate = args['referenceDate'] as DateTime?;
+                  referenceDate = args['referenceDate'] as Jiffy?;
                   missionType = args['missionType'] as MissionType?;
                 }
               }

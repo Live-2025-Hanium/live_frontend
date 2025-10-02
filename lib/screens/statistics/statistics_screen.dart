@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jiffy/jiffy.dart';
+import 'package:live_frontend/core/controllers/statistics_controller.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
+import 'package:live_frontend/models/statistics_model.dart';
 import 'package:live_frontend/screens/statistics/widgets/mission_completion_gauge.dart';
 import 'package:live_frontend/screens/statistics/widgets/monthly_compare_list.dart';
 import 'package:live_frontend/screens/statistics/widgets/week_navigator.dart';
@@ -11,18 +15,52 @@ import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
 
-class StatisticsScreen extends StatefulWidget {
+class MonthlyCompletionRatePayload {
+  final String yearMonth;
+  final MissionType missionType;
+
+  MonthlyCompletionRatePayload({
+    required this.yearMonth,
+    required this.missionType,
+  });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MonthlyCompletionRatePayload &&
+          runtimeType == other.runtimeType &&
+          yearMonth == other.yearMonth &&
+          missionType == other.missionType;
+
+  @override
+  int get hashCode => yearMonth.hashCode ^ missionType.hashCode;
+}
+
+final monthlyCompletionRateProvider =
+    FutureProvider.family<
+      MonthlyCompletionRateModel?,
+      MonthlyCompletionRatePayload
+    >((ref, payload) {
+      final controller = ref.read(statisticsControllerProvider);
+      if (payload.missionType == MissionType.clover) {
+        return controller.fetchMonthlyCloverRate(payload.yearMonth);
+      } else {
+        return controller.fetchMonthlyMyRate(payload.yearMonth);
+      }
+    });
+
+class StatisticsScreen extends ConsumerStatefulWidget {
   const StatisticsScreen({super.key});
 
   @override
-  State<StatisticsScreen> createState() => _StatisticsScreenState();
+  ConsumerState<StatisticsScreen> createState() => _StatisticsScreenState();
 }
 
-class _StatisticsScreenState extends State<StatisticsScreen>
+class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     with SingleTickerProviderStateMixin {
-  DateTime _currentAnchor = DateTime.now().subtract(
-    Duration(days: DateTime.now().weekday - 1),
-  );
+  String _currentAnchor = Jiffy.now()
+      .startOf(Unit.week)
+      .format(pattern: 'yyyy-MM-dd');
   late TabController _tabController;
 
   @override
@@ -39,6 +77,23 @@ class _StatisticsScreenState extends State<StatisticsScreen>
 
   @override
   Widget build(BuildContext context) {
+    final cloverRateAsync = ref.watch(
+      monthlyCompletionRateProvider(
+        MonthlyCompletionRatePayload(
+          yearMonth: _currentAnchor.substring(0, 7),
+          missionType: MissionType.clover,
+        ),
+      ),
+    );
+    final myRateAsync = ref.watch(
+      monthlyCompletionRateProvider(
+        MonthlyCompletionRatePayload(
+          yearMonth: _currentAnchor.substring(0, 7),
+          missionType: MissionType.my,
+        ),
+      ),
+    );
+
     return Scaffold(
       backgroundColor: AppColors.blackBlack0,
       appBar: SaeipAppBar(appBarStyle: AppBarStyle.common),
@@ -70,17 +125,43 @@ class _StatisticsScreenState extends State<StatisticsScreen>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  // 클로버 미션 탭 내용 - tabIndex를 0으로 고정
-                  _buildStatisticsContent(
-                    percentage: 80.1,
-                    weeklyData: [5, 10, 15, 20, 25, 30, 35],
-                    tabIndex: 0, // 클로버 미션은 0
+                  // 클로버 미션 탭 내용
+                  cloverRateAsync.when(
+                    data: (data) => _buildStatisticsContent(
+                      percentage: data?.completionRate ?? 0.0,
+                      weeklyData: [
+                        5,
+                        10,
+                        15,
+                        20,
+                        25,
+                        30,
+                        35,
+                      ], // TODO: Replace with actual data
+                      tabIndex: 0,
+                    ),
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
+                    error: (err, stack) => Center(child: Text('Error: $err')),
                   ),
-                  // 마이 미션 탭 내용 - tabIndex를 1로 고정
-                  _buildStatisticsContent(
-                    percentage: 65.5,
-                    weeklyData: [3, 8, 12, 18, 22, 28, 32],
-                    tabIndex: 1, // 마이 미션은 1
+                  // 마이 미션 탭 내용
+                  myRateAsync.when(
+                    data: (data) => _buildStatisticsContent(
+                      percentage: data?.completionRate ?? 0.0,
+                      weeklyData: [
+                        3,
+                        8,
+                        12,
+                        18,
+                        22,
+                        28,
+                        32,
+                      ], // TODO: Replace with actual data
+                      tabIndex: 1,
+                    ),
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
+                    error: (err, stack) => Center(child: Text('Error: $err')),
                   ),
                 ],
               ),
@@ -106,17 +187,19 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                 padding: EdgeInsets.symmetric(horizontal: 36.w, vertical: 36.h),
                 child: MissionCompletionGauge(
                   percentage: percentage,
-                  month: _currentAnchor.month,
+                  month: Jiffy.parse(_currentAnchor).month,
                 ),
               ),
               WeeklyBarChart(
                 weeklyData: weeklyData,
                 onBarTapped: (index) {
-                  final refDate = _currentAnchor.add(Duration(days: index));
+                  final refDate = Jiffy.parse(
+                    _currentAnchor,
+                  ).startOf(Unit.week).add(days: index);
                   context.pushNamed(
                     'weekly_report',
                     queryParameters: {
-                      'referenceDate': refDate.toUtc().toIso8601String(),
+                      'referenceDate': refDate.format(pattern: 'yyyy-MM-dd'),
                       'missionType': tabIndex == 0
                           ? MissionType.clover.toString().split('.').last
                           : MissionType.my.toString().split('.').last,
@@ -125,30 +208,23 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                 },
               ),
               WeekNavigator(
-                currentDate: _currentAnchor,
+                currentAnchor: Jiffy.parse(_currentAnchor),
                 onChanged: (start, end) {
                   setState(() {
-                    _currentAnchor = start;
+                    _currentAnchor = start
+                        .startOf(Unit.week)
+                        .format(pattern: 'yyyy-MM-dd');
                   });
                 },
               ),
               if (tabIndex == 0)
-                MonthlyCompareList(referenceDate: _currentAnchor),
+                MonthlyCompareList(
+                  referenceDate: Jiffy.parse(_currentAnchor).dateTime,
+                ),
             ],
           ),
         ),
       ],
     );
-  }
-
-  DateTime _startOfWeek(DateTime d, int weekStart) {
-    int diff = (d.weekday - weekStart) % 7;
-    if (diff < 0) diff += 7;
-    final start = DateTime(
-      d.year,
-      d.month,
-      d.day,
-    ).subtract(Duration(days: diff));
-    return DateTime(start.year, start.month, start.day);
   }
 }
