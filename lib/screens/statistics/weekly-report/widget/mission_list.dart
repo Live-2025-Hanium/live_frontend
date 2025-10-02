@@ -8,7 +8,7 @@ import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
 class MissionList extends StatelessWidget {
-  final DateTime referenceDate;
+  final Jiffy referenceDate;
   final MissionType type;
   const MissionList({
     super.key,
@@ -25,9 +25,7 @@ class MissionList extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            Jiffy.parseFromDateTime(
-              referenceDate,
-            ).format(pattern: 'yyyy년 MM월 dd일'),
+            referenceDate.format(pattern: 'yyyy년 MM월 dd일'),
             style: AppTextStyles.subtitleMedium(context),
             textAlign: TextAlign.left,
           ),
