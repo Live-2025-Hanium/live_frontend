@@ -19,10 +19,10 @@ val localProperties = Properties().apply {
 
 android {
     namespace = "com.example.live_frontend"
-	compileSdk = 35
+	compileSdk = 36
     defaultConfig {
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
     }
     ndkVersion = "27.0.12077973"
 
@@ -41,7 +41,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         // minSdk = flutter.minSdkVersion
-        minSdk = 23
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
