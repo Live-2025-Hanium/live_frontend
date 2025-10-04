@@ -31,6 +31,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_web_plugins:
+    sdk: flutter
+  webview_flutter: ^4.13.0
+  webview_flutter_web: ^0.2.3+4
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -64,7 +68,12 @@ dependencies:
   carousel_slider: ^5.1.1
   table_calendar: ^3.2.0
   time_picker_spinner: ^1.0.2
-  fl_chart: ^1.0.0
+  fl_chart: ">=1.0.0 <1.1.0"
+  kakao_map_plugin: ^0.3.7
+  url_launcher: ^6.3.2
+
+dependency_overrides:
+  webview_flutter_platform_interface: ^2.14.0
 
 dev_dependencies:
   flutter_test:
@@ -82,8 +91,6 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   riverpod_lint: ^2.6.5
   riverpod_generator: ^2.6.5
-
-
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -110,6 +117,8 @@ flutter:
     - assets/icons/
     - assets/surveys/
     - assets/icons/forum_post_detail/
+    - assets/icons/map_category/
+    - assets/images/mock_marker.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
