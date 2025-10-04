@@ -67,23 +67,17 @@ enum MissionType {
 @JsonSerializable(explicitToJson: true)
 class MyMissionModel {
   final int userMissionId;
-  final MissionType missionType; // "MY" / "CLOVER"
-
   final String missionTitle;
-  final MissionStatus missionStatus;
-
-  /// 예시: ["08:30", "21:00"] (24시간 기준 권장)
+  final MissionStatus myMissionStatus;
   final String? scheduledTime;
-
-  final RepeatDay? repeatDay;
+  final RepeatDay? repeatType;
 
   const MyMissionModel({
     required this.userMissionId,
-    required this.missionType,
     required this.missionTitle,
-    required this.missionStatus,
+    required this.myMissionStatus,
     this.scheduledTime,
-    this.repeatDay,
+    this.repeatType,
   });
 
   factory MyMissionModel.fromJson(Map<String, dynamic> json) =>
@@ -102,11 +96,10 @@ class MyMissionModel {
   }) {
     return MyMissionModel(
       userMissionId: myMissionId ?? userMissionId,
-      missionType: missionType,
       missionTitle: missionTitle ?? this.missionTitle,
-      missionStatus: missionStatus,
+      myMissionStatus: myMissionStatus ?? myMissionStatus,
       scheduledTime: scheduledTime ?? this.scheduledTime,
-      repeatDay: repeatDay ?? this.repeatDay,
+      repeatType: repeatType ?? repeatType,
     );
   }
 }

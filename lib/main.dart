@@ -21,7 +21,7 @@ Future<void> main() async {
   if (kIsWeb) {
     WebViewPlatform.instance = WebWebViewPlatform();
   }
-
+  
   setUrlStrategy(PathUrlStrategy());
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Jiffy.setLocale('ko');

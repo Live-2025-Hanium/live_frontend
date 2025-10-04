@@ -14,8 +14,6 @@ class AuthRepository {
 
   AuthRepository(this._dio, this._secureStorage);
 
-  /// 카카오 액세스 토큰을 백엔드로 전달하고, 회원 정보를 받아옵니다.
-  /// NOTE: 백엔드 응답은 { success, message, data: { user, accessToken, refreshToken, newUser }, ... } 형태
   Future<SaeipUserModel> loginWithKakaoOnBackend(
     SocialUser user,
     String accessToken,
@@ -50,9 +48,9 @@ class AuthRepository {
         await _secureStorage.write(TokenKeys.access, login.accessToken);
         await _secureStorage.write(TokenKeys.refresh, login.refreshToken);
         if (kDebugMode) {
-          debugPrint(
-            'AuthRepository: stored access=${login.accessToken.isNotEmpty ? '[REDACTED]' : '<empty>'} refresh=${login.refreshToken.isNotEmpty ? '[REDACTED]' : '<empty>'}',
-          );
+          // debugPrint(
+          //   'AuthRepository: stored access=${login.accessToken.isNotEmpty ? '[REDACTED]' : '<empty>'} refresh=${login.refreshToken.isNotEmpty ? '[REDACTED]' : '<empty>'}',
+          // );
         }
       } catch (e) {
         // if (kDebugMode) debugPrint('Failed to persist tokens: $e');
@@ -128,21 +126,21 @@ class AuthRepository {
         await _secureStorage.write(TokenKeys.access, login.accessToken);
         await _secureStorage.write(TokenKeys.refresh, login.refreshToken);
         if (kDebugMode) {
-          debugPrint(
-            'AuthRepository: stored access=${login.accessToken.isNotEmpty ? '[REDACTED]' : '<empty>'} refresh=${login.refreshToken.isNotEmpty ? '[REDACTED]' : '<empty>'}',
-          );
+          // debugPrint(
+          //   'AuthRepository: stored access=${login.accessToken.isNotEmpty ? '[REDACTED]' : '<empty>'} refresh=${login.refreshToken.isNotEmpty ? '[REDACTED]' : '<empty>'}',
+          // );
         }
       } catch (e) {
-        if (kDebugMode) debugPrint('Failed to persist tokens: $e');
+        // if (kDebugMode) debugPrint('Failed to persist tokens: $e');
       }
 
       return login.user;
     } on DioException catch (e, s) {
       if (kDebugMode) {
-        debugPrint(
-          'loginWithKakaoWebOnBackend DioException: ${e.response?.data}',
-        );
-        debugPrintStack(stackTrace: s);
+        // debugPrint(
+        //   'loginWithKakaoWebOnBackend DioException: ${e.response?.data}',
+        // );
+        // debugPrintStack(stackTrace: s);
       }
       rethrow;
     }

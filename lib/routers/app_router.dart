@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/screens/404/not_found_screen.dart';
-import 'package:live_frontend/screens/auth/callback/kakao_auth_callback_screen.dart';
 import 'package:live_frontend/screens/forum/forum_screen.dart';
 import 'package:live_frontend/screens/home/clover-record/mission_record_screen.dart';
 import 'package:live_frontend/screens/home/execute/execute_photo_mission_screen.dart';
@@ -23,36 +22,14 @@ import '../screens/home/home_screen.dart';
 import '../providers/auth_provider.dart';
 import 'package:live_frontend/screens/forum/forum_post_screen.dart';
 
-// 라우터 새로고침 트리거
-final routerRefreshProvider = ChangeNotifierProvider<_RouterRefreshNotifier>((
-  ref,
-) {
-  final notifier = _RouterRefreshNotifier();
-  // Ensure notifier is called whenever auth state changes so GoRouter can
-  // re-run redirect logic. Using ref.listen is more robust than listening
-  // to the notifier instance directly.
-  ref.listen<AuthState>(authProvider, (_, __) {
-    notifier.ping();
-  });
-  return notifier;
-});
-
-class _RouterRefreshNotifier extends ChangeNotifier {
-  void ping() => notifyListeners();
-}
-
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
-
   return GoRouter(
-    initialLocation: '/login',
-    refreshListenable: ref.watch(routerRefreshProvider),
     redirect: (context, state) {
-      final isLoggedIn = authState.status == AuthStatus.authenticated;
-      final isLoading = authState.status == AuthStatus.loading;
-      final isOnLoginPage =
-          state.uri.toString() == '/login' ||
-          state.uri.toString().startsWith('/auth/callback');
+      // redirect 내부에서 최신 인증 상태를 직접 읽어옵니다.
+      final authStatus = ref.read(authProvider).status;
+      final isLoggedIn = authStatus == AuthStatus.authenticated;
+      final isLoading = authStatus == AuthStatus.loading;
+      final isOnLoginPage = state.uri.toString() == '/login';
 
       // 1. 로딩 중엔 아무것도 리디렉션하지 않음
       if (isLoading) return null;
@@ -60,8 +37,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       // 2. 로그인 안 돼있고 로그인 페이지가 아니면 → 로그인으로
       if (!isLoggedIn && !isOnLoginPage) return '/login';
 
-      // 3. 로그인 돼있는데 로그인 페이지 가려고 하면 → 약관 동의 화면 (임시처리)
-      if (isLoggedIn && isOnLoginPage) return '/login/terms';
+      // 3. 로그인 돼있는데 로그인 페이지 가려고 하면 → 홈으로
+      if (isLoggedIn && isOnLoginPage) return '/home';
 
       return null;
     },
@@ -69,11 +46,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       return NotFoundScreen(error: state.error);
     },
     routes: [
-      GoRoute(
-        name: 'kakao_auth_callback',
-        path: '/auth/callback',
-        builder: (context, state) => KakaoAuthCallbackScreen(),
-      ),
+      GoRoute(path: '/', redirect: (_, __) => '/home'),
       GoRoute(
         name: 'login',
         path: '/login',
@@ -96,10 +69,17 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: ':file_path',
                 builder: (context, state) {
                   final path = state.pathParameters['file_path']!;
-                  final data = state.extra as bool?;
+                  final qp = state.uri.queryParameters;
+                  bool? isChecked;
+                  if (qp.containsKey('isChecked')) {
+                    isChecked = qp['isChecked'] == 'true';
+                  }
+                  if (isChecked == null && state.extra is bool) {
+                    isChecked = state.extra as bool;
+                  }
                   return TermsDetailScreen(
                     path: path,
-                    isChecked: data ?? false,
+                    isChecked: isChecked ?? false,
                   );
                 },
               ),
@@ -119,15 +99,27 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             name: 'timer_mission',
-            path: 'execute/timer_mission',
-            builder: (context, state) =>
-                ExecuteTimerMissionScreen(id: state.extra as int),
+            path: 'execute/timer_mission/:id',
+            builder: (context, state) {
+              final idStr = state.pathParameters['id'];
+              final id = idStr != null
+                  ? int.tryParse(idStr)
+                  : (state.extra as int?);
+              if (id == null) return const NotFoundScreen();
+              return ExecuteTimerMissionScreen(id: id);
+            },
           ),
           GoRoute(
             name: 'photo_mission',
-            path: 'execute/photo_mission',
-            builder: (context, state) =>
-                ExecutePhotoMissionScreen(id: state.extra as int),
+            path: 'execute/photo_mission/:id',
+            builder: (context, state) {
+              final idStr = state.pathParameters['id'];
+              final id = idStr != null
+                  ? int.tryParse(idStr)
+                  : (state.extra as int?);
+              if (id == null) return const NotFoundScreen();
+              return ExecutePhotoMissionScreen(id: id);
+            },
           ),
           GoRoute(
             name: 'my_mission_add',
@@ -140,7 +132,22 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: 'repeat',
                 name: 'repeat',
                 builder: (context, state) {
-                  return RepeatScreen(initial: state.extra as RepeatDay?);
+                  final qp = state.uri.queryParameters;
+                  RepeatDay? initial;
+                  if (qp.containsKey('initial')) {
+                    final val = qp['initial']!;
+                    try {
+                      initial = RepeatDay.values.firstWhere(
+                        (e) => e.toString().split('.').last == val,
+                      );
+                    } catch (_) {
+                      initial = null;
+                    }
+                  }
+                  if (initial == null && state.extra is RepeatDay) {
+                    initial = state.extra as RepeatDay;
+                  }
+                  return RepeatScreen(initial: initial);
                 },
               ),
             ],
@@ -156,9 +163,37 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: 'weekly_report',
             name: 'weekly_report',
             builder: (context, state) {
-              final args = state.extra as Map<String, dynamic>;
-              final referenceDate = args['referenceDate'] as DateTime;
-              final missionType = args['missionType'] as MissionType;
+              Jiffy? referenceDate;
+              MissionType? missionType;
+
+              final qp = state.uri.queryParameters;
+              if (qp.containsKey('referenceDate')) {
+                referenceDate = Jiffy.parse(qp['referenceDate']!);
+              }
+              if (qp.containsKey('missionType')) {
+                final mtStr = qp['missionType']!;
+                try {
+                  missionType = MissionType.values.firstWhere(
+                    (e) => e.toString().split('.').last == mtStr,
+                  );
+                } catch (_) {
+                  missionType = null;
+                }
+              }
+
+              // Fallback to extra (existing navigation behavior)
+              if (referenceDate == null || missionType == null) {
+                if (state.extra is Map<String, dynamic>) {
+                  final args = state.extra as Map<String, dynamic>;
+                  referenceDate = args['referenceDate'] as Jiffy?;
+                  missionType = args['missionType'] as MissionType?;
+                }
+              }
+
+              if (referenceDate == null || missionType == null) {
+                return const NotFoundScreen();
+              }
+
               return WeeklyReportScreen(
                 referenceDate: referenceDate,
                 missionType: missionType,

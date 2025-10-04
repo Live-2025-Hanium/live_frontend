@@ -22,7 +22,9 @@ Map<String, dynamic> _$PostImageToJson(PostImage instance) => <String, dynamic>{
   's3Url': instance.s3Url,
 };
 
-PostDetail _$PostDetailFromJson(Map<String, dynamic> json) => PostDetail(
+ForumPostDetailModel _$ForumPostDetailModelFromJson(
+  Map<String, dynamic> json,
+) => ForumPostDetailModel(
   id: (json['id'] as num).toInt(),
   title: json['title'] as String,
   content: json['content'] as String,
@@ -42,10 +44,11 @@ PostDetail _$PostDetailFromJson(Map<String, dynamic> json) => PostDetail(
   ),
   createdAt: DateTime.parse(json['createdAt'] as String),
   modifiedAt: DateTime.parse(json['modifiedAt'] as String),
+  scraped: json['scraped'] as bool,
 );
 
-Map<String, dynamic> _$PostDetailToJson(
-  PostDetail instance,
+Map<String, dynamic> _$ForumPostDetailModelToJson(
+  ForumPostDetailModel instance,
 ) => <String, dynamic>{
   'id': instance.id,
   'title': instance.title,
@@ -62,9 +65,14 @@ Map<String, dynamic> _$PostDetailToJson(
   'userReactions': const ReactionSetConverter().toJson(instance.userReactions),
   'createdAt': instance.createdAt.toIso8601String(),
   'modifiedAt': instance.modifiedAt.toIso8601String(),
+  'scraped': instance.scraped,
 };
 
 const _$ReactionTypeEnumMap = {
   ReactionType.empathy: 'EMPATHY',
+  ReactionType.useful: 'USEFUL',
+  ReactionType.helpful: 'HELPFUL',
+  ReactionType.inspiring: 'INSPIRING',
+  ReactionType.encouraging: 'ENCOURAGING',
   ReactionType.unknown: 'UNKNOWN',
 };

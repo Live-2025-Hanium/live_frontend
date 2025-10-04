@@ -1,14 +1,12 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'widgets/login_button.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:live_frontend/env.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
@@ -17,6 +15,12 @@ class LoginScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
     final isLoading = authState.status == AuthStatus.loading;
+
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (next.status == AuthStatus.authenticated) {
+        context.go('/home');
+      }
+    });
 
     return Scaffold(
       body: SafeArea(
@@ -51,32 +55,7 @@ class LoginScreen extends ConsumerWidget {
                     ),
                     LoginButton(
                       onPressed: () {
-                        if (kIsWeb) {
-                          // 브라우저라면
-                          // 웹에서는 OAuth authorize URL로 리다이렉트
-                          final restApiKey = Env.kakaoRestApiKey;
-                          final redirectUri = Env.kakaoRedirectUri;
-                          if (restApiKey.isEmpty || redirectUri.isEmpty) {
-                            // env missing: inform developer
-                            debugPrint(
-                              'Kakao web OAuth env missing: set KAKAO_REST_API_KEY and KAKAO_REDIRECT_URI',
-                            );
-                          } else {
-                            final uri = Uri.https(
-                              'kauth.kakao.com',
-                              '/oauth/authorize',
-                              {
-                                'client_id': restApiKey,
-                                'redirect_uri': redirectUri,
-                                'response_type': 'code',
-                              },
-                            );
-                            launchUrl(uri, webOnlyWindowName: '_self');
-                          }
-                        } else {
-                          // 모바일이라면
-                          ref.read(authProvider.notifier).loginWithKakao();
-                        }
+                        ref.read(authProvider.notifier).loginWithKakao();
                       },
                       label: '카카오로 시작하기',
                       icon: SvgPicture.asset(

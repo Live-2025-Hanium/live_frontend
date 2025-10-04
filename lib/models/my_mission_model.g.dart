@@ -9,27 +9,23 @@ part of 'my_mission_model.dart';
 MyMissionModel _$MyMissionModelFromJson(Map<String, dynamic> json) =>
     MyMissionModel(
       userMissionId: (json['userMissionId'] as num).toInt(),
-      missionType: $enumDecode(_$MissionTypeEnumMap, json['missionType']),
       missionTitle: json['missionTitle'] as String,
-      missionStatus: $enumDecode(_$MissionStatusEnumMap, json['missionStatus']),
+      myMissionStatus: $enumDecode(
+        _$MissionStatusEnumMap,
+        json['myMissionStatus'],
+      ),
       scheduledTime: json['scheduledTime'] as String?,
-      repeatDay: $enumDecodeNullable(_$RepeatDayEnumMap, json['repeatDay']),
+      repeatType: $enumDecodeNullable(_$RepeatDayEnumMap, json['repeatType']),
     );
 
 Map<String, dynamic> _$MyMissionModelToJson(MyMissionModel instance) =>
     <String, dynamic>{
       'userMissionId': instance.userMissionId,
-      'missionType': _$MissionTypeEnumMap[instance.missionType]!,
       'missionTitle': instance.missionTitle,
-      'missionStatus': _$MissionStatusEnumMap[instance.missionStatus]!,
+      'myMissionStatus': _$MissionStatusEnumMap[instance.myMissionStatus]!,
       'scheduledTime': instance.scheduledTime,
-      'repeatDay': _$RepeatDayEnumMap[instance.repeatDay],
+      'repeatType': _$RepeatDayEnumMap[instance.repeatType],
     };
-
-const _$MissionTypeEnumMap = {
-  MissionType.my: 'MY',
-  MissionType.clover: 'CLOVER',
-};
 
 const _$MissionStatusEnumMap = {
   MissionStatus.assigned: 'ASSIGNED',

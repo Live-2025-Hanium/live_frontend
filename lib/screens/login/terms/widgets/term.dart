@@ -30,7 +30,7 @@ class Term extends StatelessWidget {
       bool? checked = await context.pushNamed(
         'terms_detail',
         pathParameters: {'file_path': filePath!},
-        extra: isChecked,
+        queryParameters: {'isChecked': isChecked ? 'true' : 'false'},
       );
       if (checked != null) {
         onChanged(checked);

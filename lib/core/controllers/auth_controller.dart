@@ -1,15 +1,13 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:live_frontend/models/social_user_model.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 import 'package:live_frontend/core/repositories/auth_repository_provider.dart';
 import 'package:live_frontend/providers/google_signin_provider.dart';
-// ...existing code...
 import 'package:live_frontend/providers/secure_storage_provider.dart';
 import 'package:live_frontend/core/controllers/profile_controller.dart';
 import 'package:live_frontend/models/saeip_user_model.dart';
-// ...existing code...
 
 class AuthController extends StateNotifier<AuthState> {
   final Ref ref;
@@ -18,32 +16,18 @@ class AuthController extends StateNotifier<AuthState> {
     // run restore asynchronously
     Future.microtask(() async {
       await restoreSession();
-      // if still loading (no auth set), set to initial
-      if (state.status == AuthStatus.loading) {
-        state = const AuthState();
-      }
     });
   }
 
-  /// Attempt to restore session on app startup.
-  /// Reads stored refresh token and calls refresh endpoint to obtain fresh tokens
-  /// and user info. If successful, sets authenticated state.
   Future<void> restoreSession() async {
     try {
       final storage = ref.read(secureStorageProvider);
       final refresh = await storage.readRefresh();
       final accessExisting = await storage.readAccess();
-      if (kDebugMode) {
-        debugPrint(
-          'restoreSession: existing refresh=$refresh access=$accessExisting',
-        );
-      }
-      // If tokens exist, treat user as authenticated and fetch profile.
       if ((refresh != null && refresh.isNotEmpty) ||
           (accessExisting != null && accessExisting.isNotEmpty)) {
         final profileController = ref.read(profileControllerProvider);
         final profile = await profileController.fetchProfile();
-        if (kDebugMode) debugPrint('restoreSession: fetched profile=$profile');
         if (profile != null) {
           final user = SaeipUserModel(
             id: profile.id,
@@ -54,11 +38,15 @@ class AuthController extends StateNotifier<AuthState> {
           );
           state = AuthState(status: AuthStatus.authenticated, saeipUser: user);
         } else {
-          state = state.copyWith(status: AuthStatus.authenticated);
+          // 프로필 못가져오면 인증 안된 상태
+          state = const AuthState(status: AuthStatus.initial);
         }
+      } else {
+        // 토큰 없으면 인증 안된 상태
+        state = const AuthState(status: AuthStatus.initial);
       }
     } catch (e) {
-      if (kDebugMode) debugPrint('restoreSession failed: $e');
+      state = const AuthState(status: AuthStatus.initial);
     }
   }
 
@@ -75,8 +63,8 @@ class AuthController extends StateNotifier<AuthState> {
       final user = SocialUser.fromGoogle(googleUser);
 
       debugPrint('✅ Google 로그인 성공');
-      debugPrint('accessToken: ${googleAuth.accessToken}');
-      debugPrint('idToken: ${googleAuth.idToken}');
+      // debugPrint('accessToken: ${googleAuth.accessToken}');
+      // debugPrint('idToken: ${googleAuth.idToken}');
 
       state = AuthState(status: AuthStatus.authenticated, socialUser: user);
     } catch (e) {
@@ -98,7 +86,6 @@ class AuthController extends StateNotifier<AuthState> {
       final user = SocialUser.fromKakao(kakaoUser);
 
       debugPrint('✅ Kakao 로그인 성공');
-      // debugPrint('accessToken: ${token.accessToken}');
 
       final repo = ref.read(authRepositoryProvider);
       final saeipUser = await repo.loginWithKakaoOnBackend(
@@ -115,35 +102,6 @@ class AuthController extends StateNotifier<AuthState> {
       state = state.copyWith(status: AuthStatus.error, error: e.toString());
     }
   }
-
-  void loginWithKakaoWeb(String authUri) async {
-    if (!kIsWeb) {
-      return;
-    }
-    state = state.copyWith(status: AuthStatus.loading);
-    try {
-      // search param에서 code 꺼내기
-      final uri = Uri.parse(authUri);
-      final code = uri.queryParameters['code'];
-      if (code == null) {
-        throw Exception('코드를 찾을 수 없습니다.');
-      }
-
-      debugPrint('✅ Kakao 웹 로그인 성공');
-      // debugPrint('accessToken: ${token.accessToken}');
-
-      final repo = ref.read(authRepositoryProvider);
-      final saeipUser = await repo.loginWithKakaoWebOnBackend(code);
-      debugPrint('✅ 백엔드 로그인 성공');
-
-      state = AuthState(status: AuthStatus.authenticated, saeipUser: saeipUser);
-    } catch (e) {
-      debugPrint('❌ Kakao 웹 로그인 실패: $e');
-      state = state.copyWith(status: AuthStatus.error, error: e.toString());
-    }
-  }
-
-  void loginToBackendWeb() {}
 
   void logout() {
     state = const AuthState();

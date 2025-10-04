@@ -7,11 +7,17 @@ class PostDetailCommentInput extends StatelessWidget {
   const PostDetailCommentInput({
     super.key,
     required this.controller,
+    required this.focusNode,
     required this.onSend,
+    this.replyTargetLabel,
+    this.onClearReplyTarget,
   });
 
   final TextEditingController controller;
+  final FocusNode focusNode;
   final VoidCallback onSend;
+  final String? replyTargetLabel;
+  final VoidCallback? onClearReplyTarget;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +25,7 @@ class PostDetailCommentInput extends StatelessWidget {
       top: false,
       child: Container(
         color: Colors.transparent,
-        padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 10.h),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
         child: ValueListenableBuilder<TextEditingValue>(
           valueListenable: controller,
           builder: (context, value, _) {

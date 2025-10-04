@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/screens/statistics/weekly-report/widget/mission_list.dart';
 import 'package:live_frontend/screens/statistics/widgets/week_navigator.dart';
@@ -6,7 +7,7 @@ import 'package:live_frontend/screens/statistics/widgets/weekly_bar_chart.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 
 class WeeklyReportScreen extends StatefulWidget {
-  final DateTime referenceDate;
+  final Jiffy referenceDate;
   final MissionType missionType;
 
   const WeeklyReportScreen({
@@ -20,14 +21,14 @@ class WeeklyReportScreen extends StatefulWidget {
 }
 
 class _WeeklyReportScreenState extends State<WeeklyReportScreen> {
-  late DateTime _anchor; // Monday of the reference week
+  late Jiffy _anchor; // Monday of the reference week
   late int _selectedIndex; // 0..6 where 0 = Monday
 
   @override
   void initState() {
     super.initState();
-    _anchor = _startOfWeek(widget.referenceDate, DateTime.monday);
-    _selectedIndex = (widget.referenceDate.weekday - DateTime.monday) % 7;
+    _anchor = widget.referenceDate.startOf(Unit.week);
+    _selectedIndex = (widget.referenceDate.date - DateTime.monday) % 7;
   }
 
   @override
@@ -53,7 +54,7 @@ class _WeeklyReportScreenState extends State<WeeklyReportScreen> {
                 },
               ),
               WeekNavigator(
-                currentDate: _anchor,
+                currentAnchor: _anchor,
                 onChanged: (start, end) {
                   setState(() {
                     _anchor = start;
@@ -72,16 +73,5 @@ class _WeeklyReportScreenState extends State<WeeklyReportScreen> {
         ),
       ),
     );
-  }
-
-  DateTime _startOfWeek(DateTime d, int weekStart) {
-    int diff = (d.weekday - weekStart) % 7;
-    if (diff < 0) diff += 7;
-    final start = DateTime(
-      d.year,
-      d.month,
-      d.day,
-    ).subtract(Duration(days: diff));
-    return DateTime(start.year, start.month, start.day);
   }
 }
