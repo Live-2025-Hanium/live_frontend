@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'package:kakao_map_plugin/kakao_map_plugin.dart' as mobile;
 
-import 'web/kakao_map_web.dart' show KakaoMapWeb;
+import 'web/kakao_map_stub.dart'
+  if (dart.library.html) 'web/kakao_map_web.dart';
 
 class LatLngPoint {
   final double lat;
