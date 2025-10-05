@@ -18,6 +18,8 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   final _searchController = TextEditingController();
   final MapController mapController = MapController();
+  
+  bool serviceEnabled = false;
 
   KakaoMapController? _mapController;
   final _sheetController = DraggableScrollableController();
@@ -129,7 +131,28 @@ class _MapScreenState extends State<MapScreen> {
 
   // 현재 내 위치를 조회 (위도, 경도 기반)
   void _fetchLatLng() async {
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('Location permissions are permanently denied, we cannot request permissions.');
+    }
+
     final pos = await mapController.fetchLatLng();
+    debugPrint("pos: ${pos}");
+
     setState(() {
       _currentPosition = pos;
 
@@ -138,7 +161,6 @@ class _MapScreenState extends State<MapScreen> {
         Marker(
           markerId: 'my_location',
           latLng: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-          markerImageSrc: 'assets/icons/my_location.svg',
           width: 40,
           height: 40,
         ),
@@ -182,22 +204,26 @@ class _MapScreenState extends State<MapScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          Positioned.fill(
-            child: PlatformKakaoMap(
-              centerLat: 37.611846,
-              centerLng: 126.834059,
-              zoomLevel: 3,
-              points: _markers
-                  .map(
-                    (marker) => LatLngPoint(
-                      marker.latLng.latitude,
-                      marker.latLng.longitude,
-                      label: marker.infoWindowContent,
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
+          // 위치 서비스가 켜져 있고, _currentPosition이 null이 아닐 때만 지도 렌더
+          if (serviceEnabled && _currentPosition != null)
+            Positioned.fill(
+              child: PlatformKakaoMap(
+                centerLat: _currentPosition!.latitude,
+                centerLng: _currentPosition!.longitude,
+                zoomLevel: 3,
+                points: _markers
+                    .map(
+                      (marker) => LatLngPoint(
+                    marker.latLng.latitude,
+                    marker.latLng.longitude,
+                    label: marker.infoWindowContent,
+                  ),
+                )
+                    .toList(),
+              ),
+            )
+          else
+            const Center(child: CircularProgressIndicator()),
 
           // 검색바(탭 시 검색 화면으로 이동)
           SafeArea(

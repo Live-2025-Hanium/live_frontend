@@ -50,8 +50,12 @@ class PlatformKakaoMap extends StatelessWidget {
     }).toList();
 
     return mobile.KakaoMap(
-      onMapCreated: (_) {},
-      markers: markers,
+      center: mobile.LatLng(centerLat, centerLng),
+      onMapCreated: (controller) {
+        controller.addMarker(
+          markers: markers
+        );
+      },
       // 카메라 초기 위치는 마커가 있으면 첫 마커로 세팅되므로
       // 강제 중앙값을 쓰고 싶다면 아래처럼 setCenter를 onMapCreated에서 호출 가능
       // onMapCreated: (c) => c.setCenter(mobile.LatLng(centerLat, centerLng)),
