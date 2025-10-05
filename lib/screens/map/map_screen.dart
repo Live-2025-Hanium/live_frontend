@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
+import 'package:live_frontend/core/controllers/map_controller.dart';
 import 'package:live_frontend/screens/map/map_search_screen.dart';
 import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
 import 'package:live_frontend/widgets/saeip_search_bar.dart';
@@ -15,6 +17,7 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   final _searchController = TextEditingController();
+  final MapController mapController = MapController();
 
   KakaoMapController? _mapController;
   final _sheetController = DraggableScrollableController();
@@ -22,6 +25,9 @@ class _MapScreenState extends State<MapScreen> {
   // 화면에 그릴 마커/서클 목록
   List<Marker> _markers = [];
   List<Circle> _circles = [];
+
+  // 현재 내 위치 조회 (Position)
+  Position? _currentPosition;
 
   // 현재 위치(예시)
   static final myLocation = LatLng(37.611846, 126.834059);
@@ -54,44 +60,8 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
 
-    // 초기 마커
-    _markers = [
-      Marker(
-        markerId: 'my_location',
-        latLng: myLocation,
-        markerImageSrc: 'assets/icons/my_location.svg',
-        width: 40,
-        height: 40,
-      ),
-    ];
-
-    // SVG 비주얼을 Circle 두 개로 재현 (지도의 단위는 '미터')
-    const int outerRadiusM = 25;
-    const int innerRadiusM = 10;
-
-    _circles = [
-      // 바깥 원: #F294A3, opacity 0.5
-      Circle(
-        circleId: 'pink_outer',
-        center: myLocation,
-        radius: outerRadiusM.toDouble(),
-        fillColor: const Color(0xFFF294A3),
-        fillOpacity: 0.5, // fillOpacity를 높게 설정
-        strokeWidth: 2, // 테두리 추가 (디버깅용)
-        strokeOpacity: 1.0,
-      ),
-      // 안쪽 원: #DA8593 + 흰색 테두리 2px
-      Circle(
-        circleId: 'pink_inner',
-        center: myLocation,
-        radius: innerRadiusM.toDouble(),
-        fillColor: const Color(0xFFDA8593),
-        fillOpacity: 1.0,
-        strokeColor: Colors.white, // 테두리 색상 변경 (디버깅용)
-        strokeWidth: 3,
-        strokeOpacity: 1.0,
-      ),
-    ];
+    // 위치 조회
+    _fetchLatLng();
   }
 
   @override
@@ -155,6 +125,53 @@ class _MapScreenState extends State<MapScreen> {
         curve: Curves.easeOut,
       );
     }
+  }
+
+  // 현재 내 위치를 조회 (위도, 경도 기반)
+  void _fetchLatLng() async {
+    final pos = await mapController.fetchLatLng();
+    setState(() {
+      _currentPosition = pos;
+
+      // 초기 마커
+      _markers = [
+        Marker(
+          markerId: 'my_location',
+          latLng: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+          markerImageSrc: 'assets/icons/my_location.svg',
+          width: 40,
+          height: 40,
+        ),
+      ];
+
+      // SVG 비주얼을 Circle 두 개로 재현 (지도의 단위는 '미터')
+      const int outerRadiusM = 25;
+      const int innerRadiusM = 10;
+
+      _circles = [
+        // 바깥 원: #F294A3, opacity 0.5
+        Circle(
+          circleId: 'pink_outer',
+          center: myLocation,
+          radius: outerRadiusM.toDouble(),
+          fillColor: const Color(0xFFF294A3),
+          fillOpacity: 0.5, // fillOpacity를 높게 설정
+          strokeWidth: 2, // 테두리 추가 (디버깅용)
+          strokeOpacity: 1.0,
+        ),
+        // 안쪽 원: #DA8593 + 흰색 테두리 2px
+        Circle(
+          circleId: 'pink_inner',
+          center: myLocation,
+          radius: innerRadiusM.toDouble(),
+          fillColor: const Color(0xFFDA8593),
+          fillOpacity: 1.0,
+          strokeColor: Colors.white, // 테두리 색상 변경 (디버깅용)
+          strokeWidth: 3,
+          strokeOpacity: 1.0,
+        ),
+      ];
+    });
   }
 
   @override
