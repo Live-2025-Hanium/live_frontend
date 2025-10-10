@@ -2,11 +2,21 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Flutter (Android)",
+      "name": "Flutter (Chrome 3000 localhost)",
       "request": "launch",
       "type": "dart",
       "args": [
-        "-d", "android",
+        "-d", "chrome",
+        "--web-port", "3000",
+        "--web-hostname", "localhost",
+        "--dart-define-from-file=.vscode/dart-defines.local.json"
+      ]
+    },
+    {
+      "name": "Flutter",
+      "request": "launch",
+      "type": "dart",
+      "args": [
         "--dart-define-from-file=.vscode/dart-defines.local.json"
       ]
     },
