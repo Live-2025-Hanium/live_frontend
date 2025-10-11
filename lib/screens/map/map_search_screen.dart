@@ -195,7 +195,11 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
         }
         return _recentTile(_recents[i]);
       },
-      separatorBuilder: (_, __) => const Divider(height: 0),
+      separatorBuilder: (_, __) => const Divider(
+        height: 0,
+        color: AppColors.blackBlack3,
+        thickness: 1,
+      ),
       itemCount: _recents.length,
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
     );
