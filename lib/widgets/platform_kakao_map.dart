@@ -42,20 +42,23 @@ class PlatformKakaoMap extends StatelessWidget {
 
     // 모바일: kakao_map_plugin 그대로
     final markers = points.map((p) {
+      debugPrint("PlatformKakaoMap: ${p.lat} ${p.lng}");
       return mobile.Marker(
         markerId: 'm_${p.lat}_${p.lng}',
         latLng: mobile.LatLng(p.lat, p.lng),
         infoWindowContent: p.label ?? '',
-        markerImageSrc: 'assets/images/mock_marker.png',
+        markerImageSrc: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png',
       );
     }).toList();
 
+    // 지도 객체가 아직 준비되지 않았을 수도 있으므로 딜레이를 준다.
     return mobile.KakaoMap(
       center: mobile.LatLng(centerLat, centerLng),
-      onMapCreated: (controller) {
-        controller.addMarker(
-          markers: markers
-        );
+      markers: markers,
+      onMapCreated: (controller) async {
+        debugPrint("Map created. markers count: ${markers.length}");
+        await Future.delayed(const Duration(milliseconds: 300));
+        controller.addMarker(markers: markers);
       },
     );
   }

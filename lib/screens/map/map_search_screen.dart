@@ -92,7 +92,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
           lat: 37.611846 + (i * 0.002),
           lng: 126.834059 + (i * 0.002),
         );
-      });
+      }).where((p) => p.name.contains(query)).toList();
     }
 
     // _Place → 공통 포인트로 변환
@@ -238,6 +238,8 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
 
   // 검색 이후 화면 (지도 + 바텀시트)
   Widget _buildAfterSearch(ThemeData theme) {
+    debugPrint("CenterLat: $_points");
+
     return Stack(
       children: [
         // 지도
@@ -263,8 +265,8 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
             alignment: Alignment.bottomCenter,
             child: Container(
               width: double.infinity,
-              margin: EdgeInsets.fromLTRB(12.w, 0, 12.w, 14.h),
-              padding: EdgeInsets.symmetric(vertical: 28.h),
+              height: 240,
+              padding: EdgeInsets.symmetric(vertical: 52.h),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
@@ -283,7 +285,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                   Gap(12.h),
                   Text(
                     '검색 결과가 없습니다.',
-                    style: AppTextStyles.titleMedium(context),
+                    style: AppTextStyles.bodyRegular(context),
                   ),
                 ],
               ),
