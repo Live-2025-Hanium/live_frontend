@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:live_frontend/core/controllers/map_controller.dart';
 import 'package:live_frontend/screens/map/map_search_screen.dart';
+import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
 import 'package:live_frontend/widgets/saeip_search_bar.dart';
 import 'widgets/category_bottom_sheet.dart';
 import 'package:live_frontend/widgets/platform_kakao_map.dart';
 
-class MapScreen extends StatefulWidget {
+class MapScreen extends ConsumerStatefulWidget {
   const MapScreen({super.key});
   @override
-  State<MapScreen> createState() => _MapScreenState();
+  ConsumerState<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _MapScreenState extends ConsumerState<MapScreen> {
   final _searchController = TextEditingController();
-  final MapController mapController = MapController();
+  late final MapController mapController;
   
   bool serviceEnabled = false;
 
@@ -62,6 +64,8 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
 
+    mapController = ref.read(mapControllerProvider);
+    
     // 위치 조회
     _fetchLatLng();
   }
@@ -151,7 +155,6 @@ class _MapScreenState extends State<MapScreen> {
     }
 
     final pos = await mapController.fetchLatLng();
-    debugPrint("pos: ${pos}");
 
     setState(() {
       _currentPosition = pos;
@@ -186,14 +189,25 @@ class _MapScreenState extends State<MapScreen> {
           circleId: 'pink_inner',
           center: myLocation,
           radius: innerRadiusM.toDouble(),
-          fillColor: const Color(0xFFDA8593),
+          fillColor: AppColors.pinkNormalHover,
           fillOpacity: 1.0,
-          strokeColor: Colors.white, // 테두리 색상 변경 (디버깅용)
+          strokeColor: AppColors.blackBlack0,
           strokeWidth: 3,
           strokeOpacity: 1.0,
         ),
       ];
     });
+
+    debugPrint("1234");
+
+    _fetchAddress();
+  }
+
+  // 현재 내 주소를 조회
+  void _fetchAddress() {
+    final address = mapController.fetchAddress(_currentPosition!.latitude, _currentPosition!.longitude);
+
+    debugPrint("MapScreen: $address");
   }
 
   @override

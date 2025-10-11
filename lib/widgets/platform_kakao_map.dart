@@ -46,6 +46,7 @@ class PlatformKakaoMap extends StatelessWidget {
         markerId: 'm_${p.lat}_${p.lng}',
         latLng: mobile.LatLng(p.lat, p.lng),
         infoWindowContent: p.label ?? '',
+        markerImageSrc: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png',
       );
     }).toList();
 
@@ -56,9 +57,6 @@ class PlatformKakaoMap extends StatelessWidget {
           markers: markers
         );
       },
-      // 카메라 초기 위치는 마커가 있으면 첫 마커로 세팅되므로
-      // 강제 중앙값을 쓰고 싶다면 아래처럼 setCenter를 onMapCreated에서 호출 가능
-      // onMapCreated: (c) => c.setCenter(mobile.LatLng(centerLat, centerLng)),
     );
   }
 }
