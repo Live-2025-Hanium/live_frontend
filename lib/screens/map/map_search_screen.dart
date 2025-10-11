@@ -296,11 +296,11 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
         if (_results.isNotEmpty)
           DraggableScrollableSheet(
             controller: _sheetCtrl,
-            initialChildSize: 0.20,
-            minChildSize: 0.20,
+            initialChildSize: 0.35,
+            minChildSize: 0.35,
             maxChildSize: 0.95,
             snap: true,
-            snapSizes: const [0.20, 0.45, 0.95],
+            snapSizes: const [0.35, 0.70, 0.95],
             builder: (context, scrollController) {
               return SafeArea(
                 top: false,
