@@ -33,7 +33,7 @@ class MapRepository {
         final address = documents[0]['address'];
         final road = documents[0]['road_address'];
 
-        debugPrint("MapRepository: $road");
+        debugPrint("MapRepository: $address");
 
         return road != null
             ? road['address_name']

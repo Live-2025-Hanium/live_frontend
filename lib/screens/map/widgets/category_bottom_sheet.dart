@@ -21,10 +21,14 @@ class CategoryAction {
 class CategoryBottomSheet extends StatelessWidget {
   const CategoryBottomSheet({
     super.key,
+    required this.address,
     required this.items,
     required this.onCategoryTap,
     this.controller,
   });
+
+  // 현재 주소
+  final String address;
 
   final List<CategoryAction> items;
   final void Function(CategoryAction action) onCategoryTap;
@@ -96,8 +100,7 @@ class CategoryBottomSheet extends StatelessWidget {
 
                             Flexible(
                               child: Text(
-                                // TODO: 실제 현재 위치로 변경
-                                '경기 고양시 덕양구 소원로 102',
+                                address,
                                 style: AppTextStyles.smallMedium(context),
                                 overflow: TextOverflow.ellipsis,
                               ),

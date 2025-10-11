@@ -28,10 +28,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   // 화면에 그릴 마커/서클 목록
   List<Marker> _markers = [];
-  List<Circle> _circles = [];
 
   // 현재 내 위치 조회 (Position)
   Position? _currentPosition;
+
+  // 현재 주소
+  String? _currentAddress;
 
   // 현재 위치(예시)
   static final myLocation = LatLng(37.611846, 126.834059);
@@ -168,46 +170,23 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           height: 40,
         ),
       ];
-
-      // SVG 비주얼을 Circle 두 개로 재현 (지도의 단위는 '미터')
-      const int outerRadiusM = 25;
-      const int innerRadiusM = 10;
-
-      _circles = [
-        // 바깥 원: #F294A3, opacity 0.5
-        Circle(
-          circleId: 'pink_outer',
-          center: myLocation,
-          radius: outerRadiusM.toDouble(),
-          fillColor: const Color(0xFFF294A3),
-          fillOpacity: 0.5, // fillOpacity를 높게 설정
-          strokeWidth: 2, // 테두리 추가 (디버깅용)
-          strokeOpacity: 1.0,
-        ),
-        // 안쪽 원: #DA8593 + 흰색 테두리 2px
-        Circle(
-          circleId: 'pink_inner',
-          center: myLocation,
-          radius: innerRadiusM.toDouble(),
-          fillColor: AppColors.pinkNormalHover,
-          fillOpacity: 1.0,
-          strokeColor: AppColors.blackBlack0,
-          strokeWidth: 3,
-          strokeOpacity: 1.0,
-        ),
-      ];
     });
-
-    debugPrint("1234");
 
     _fetchAddress();
   }
 
   // 현재 내 주소를 조회
-  void _fetchAddress() {
-    final address = mapController.fetchAddress(_currentPosition!.latitude, _currentPosition!.longitude);
+  void _fetchAddress() async {
+    final address = await mapController.fetchAddress(
+        _currentPosition!.latitude,
+        _currentPosition!.longitude
+    );
 
-    debugPrint("MapScreen: $address");
+    if (address != null) {
+      setState(() {
+        _currentAddress = address;
+      });
+    }
   }
 
   @override
@@ -219,7 +198,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       body: Stack(
         children: [
           // 위치 서비스가 켜져 있고, _currentPosition이 null이 아닐 때만 지도 렌더
-          if (serviceEnabled && _currentPosition != null)
+          if (serviceEnabled && _currentPosition != null && _currentAddress != null)
             Positioned.fill(
               child: PlatformKakaoMap(
                 centerLat: _currentPosition!.latitude,
@@ -283,12 +262,14 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             ),
           ),
 
-          // 카테고리 선택 바텀시트
-          CategoryBottomSheet(
-            items: categoryItems,
-            controller: _sheetController,
-            onCategoryTap: _mockSearchByCategory,
-          ),
+          if (_currentAddress != null)
+            // 카테고리 선택 바텀시트
+            CategoryBottomSheet(
+              address: _currentAddress!,
+              items: categoryItems,
+              controller: _sheetController,
+              onCategoryTap: _mockSearchByCategory,
+            ),
 
           // (선택) 하단 정보 영역 자리(애니메이션 컨테이너)
           Align(

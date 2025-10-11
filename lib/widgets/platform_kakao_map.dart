@@ -46,7 +46,7 @@ class PlatformKakaoMap extends StatelessWidget {
         markerId: 'm_${p.lat}_${p.lng}',
         latLng: mobile.LatLng(p.lat, p.lng),
         infoWindowContent: p.label ?? '',
-        markerImageSrc: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png',
+        markerImageSrc: 'assets/images/mock_marker.png',
       );
     }).toList();
 
