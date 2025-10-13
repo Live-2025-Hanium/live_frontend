@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/env.dart';
@@ -58,6 +59,11 @@ class AuthRepository {
 
       return login.user;
     } on DioException catch (e, s) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        s,
+        reason: 'Kakao Backend Login Failed',
+      );
       if (kDebugMode) {
         // debugPrint('loginWithKakaoOnBackend DioException: ${e.response?.data}');
         // debugPrintStack(stackTrace: s);
@@ -136,6 +142,11 @@ class AuthRepository {
 
       return login.user;
     } on DioException catch (e, s) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        s,
+        reason: 'Kakao Web Backend Login Failed',
+      );
       if (kDebugMode) {
         // debugPrint(
         //   'loginWithKakaoWebOnBackend DioException: ${e.response?.data}',

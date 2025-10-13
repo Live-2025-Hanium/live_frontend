@@ -26,7 +26,7 @@ val keystoreProperties = Properties().apply {
 }
 
 android {
-    namespace = "com.example.live_frontend"
+    namespace = "app.live.hanium.livefrontend"
     compileSdk = 36
     ndkVersion = "27.0.12077973"
 
@@ -61,6 +61,10 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
+			proguardFiles(
+                getDefaultProguardFile("proguard-android.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }
