@@ -39,7 +39,6 @@ android {
         jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
-    // defaultConfig 블록 통합 및 Kotlin DSL 문법 적용
     defaultConfig {
         applicationId = "app.live.hanium.livefrontend"
         minSdk = flutter.minSdkVersion

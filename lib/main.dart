@@ -11,8 +11,7 @@ import 'dart:ui';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Use Path URL strategy for pretty URLs and to keep OAuth redirects
-  // (Kakao login) working as expected. Ensure hosting rewrites are set.
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   FlutterError.onError = (errorDetails) {
