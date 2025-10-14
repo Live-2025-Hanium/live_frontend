@@ -9,7 +9,6 @@ import 'package:live_frontend/providers/google_signin_provider.dart';
 import 'package:live_frontend/providers/secure_storage_provider.dart';
 import 'package:live_frontend/core/controllers/profile_controller.dart';
 import 'package:live_frontend/models/saeip_user_model.dart';
-import 'package:kakao_flutter_sdk_common/kakao_flutter_sdk_common.dart';
 
 class AuthController extends StateNotifier<AuthState> {
   final Ref ref;
