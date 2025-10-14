@@ -6,7 +6,7 @@
         android:icon="@mipmap/launcher_icon"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".MainActivity"
+            android:name="app.live.hanium.livefrontend.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:taskAffinity=""
