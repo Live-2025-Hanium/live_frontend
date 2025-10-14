@@ -45,20 +45,16 @@ class _WeeklyReportScreenState extends State<WeeklyReportScreen> {
           child: Column(
             children: [
               WeeklyBarChart(
-                weeklyData: [5, 10, 15, 20, 25, 30, 35],
+                missionType: widget.missionType,
+                currentAnchor: _anchor.format(pattern: 'yyyy-MM-dd'),
                 selectedIndex: _selectedIndex,
-                onBarTapped: (index) {
-                  setState(() {
-                    _selectedIndex = index;
-                  });
-                },
               ),
               WeekNavigator(
                 currentAnchor: _anchor,
-                onChanged: (start, end) {
+                onChanged: (start) {
                   setState(() {
                     _anchor = start;
-                    _selectedIndex = 0; // reset selection to Monday of new week
+                    _selectedIndex = 0;
                   });
                 },
               ),
@@ -67,7 +63,7 @@ class _WeeklyReportScreenState extends State<WeeklyReportScreen> {
                   referenceDate: _anchor,
                   type: widget.missionType,
                 ),
-              ), // Updated here
+              ),
             ],
           ),
         ),

@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
@@ -13,9 +14,7 @@ class MonthlyComparePercentCard extends StatelessWidget {
   final int maxValue; // 분모
   final int currentValue; // 이번달 값
   final int previousValue; // 지난달 값
-  final DateTime? referenceMonth; // 기준 월(미지정 시 now)
-
-  // 스타일 커스터마이즈
+  final Jiffy? referenceMonth; // 기준 월(미지정 시 now)
 
   const MonthlyComparePercentCard({
     super.key,
@@ -29,14 +28,14 @@ class MonthlyComparePercentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ref = referenceMonth ?? DateTime.now();
-    final prevDate = DateTime(ref.year, ref.month - 1);
+    final ref = referenceMonth ?? Jiffy.now().startOf(Unit.month);
+    final prevDate = ref.subtract(months: 1);
 
     final currRatio = _ratio(currentValue);
     final prevRatio = _ratio(previousValue);
 
     final deltaText = _deltaPercentText(currentValue, previousValue);
-    final deltaIsMinus = deltaText.startsWith('-');
+    // final deltaIsMinus = deltaText.startsWith('-');
 
     final baseTrack = Colors.white;
 

@@ -1,50 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
 /// 주간 네비게이터: "7월 둘째 주" 형태로 표시하고 좌/우로 주 단위 이동
 class WeekNavigator extends StatelessWidget {
-  /// 현재 기준 날짜 (필수)
   final Jiffy currentAnchor;
+  final Jiffy _today = Jiffy.now().startOf(Unit.week); // 이번 주 월요일
 
-  /// 주 시작 요일 (기본: 월요일). DateTime.monday ~ DateTime.sunday
-  final int weekStart;
+  /// 주가 변경될 때 호출되는 콜백 (새로운 주의 시작 날짜)
+  final void Function(Jiffy weekStart) onChanged;
 
-  /// 주가 바뀔 때 콜백 (해당 주의 시작/끝 날짜 제공)
-  final void Function(Jiffy weekStart, Jiffy weekEnd)? onChanged;
-
-  /// 타이틀 스타일/화살표 색
-  final TextStyle? titleStyle;
-  final Color? arrowColor;
-
-  const WeekNavigator({
+  WeekNavigator({
     super.key,
     required this.currentAnchor,
-    this.weekStart = DateTime.monday,
-    this.onChanged,
-    this.titleStyle,
-    this.arrowColor,
+    required this.onChanged,
   });
 
-  // 달의 몇째 주인지 Jiffy 로직으로 계산
-  int _calculateWeekOfMonth(Jiffy anchor) {
-    // 1. 현재 날짜가 그 해의 몇째 주인지
-    final currentWeekOfYear = anchor.weekOfYear;
+  /// "해당 날짜가 속한 주"가, "그 달 기준 몇째 주인지" 계산
+  int _weekOfMonth(Jiffy date) {
+    // 이 달 1일
+    final dt = date.dateTime;
+    final firstOfMonth = DateTime(dt.year, dt.month, 1);
 
-    // 2. 현재 달의 1일이 그 해의 몇째 주인지
-    final firstDayOfMonthWeekOfYear = anchor.startOf(Unit.month).weekOfYear;
+    // 이 달 '첫 주의 시작일' (Jiffy의 week 시작 요일 규칙을 그대로 따름: 기본 월요일)
+    final firstWeekStart = Jiffy.parseFromDateTime(
+      firstOfMonth,
+    ).startOf(Unit.week).dateTime;
 
-    // 3. 차이 + 1
-    return currentWeekOfYear - firstDayOfMonthWeekOfYear + 1;
+    // 현재 날짜가 속한 '주 시작일'
+    final thisWeekStart = date.startOf(Unit.week).dateTime;
+
+    // 두 주 시작일 사이의 일수 차이를 7로 나눠 주차 산정
+    final diffDays = thisWeekStart.difference(firstWeekStart).inDays;
+    return (diffDays ~/ 7) + 1;
+  }
+
+  String _monthWeekLabel(Jiffy date) {
+    final month = date.month;
+    final nth = _weekOfMonth(date);
+    return '$month월 ${_koreanOrdinal(nth)} 주';
   }
 
   @override
   Widget build(BuildContext context) {
-    // 주차 계산
-    final nth = _calculateWeekOfMonth(currentAnchor);
-    final month = currentAnchor.month;
-    final nthLabel = _koreanOrdinal(nth); // 첫째·둘째·셋째·…
+    final weekStart = currentAnchor.startOf(Unit.week);
+    final weekEnd = currentAnchor.endOf(Unit.week);
+
+    // 주가 한 달 안에서만 끝나면 하나만, 월 경계 걸치면 양쪽 달 라벨을 함께 표기
+    final label = (weekStart.month == weekEnd.month)
+        ? _monthWeekLabel(weekStart)
+        : '${_monthWeekLabel(weekStart)} · ${_monthWeekLabel(weekEnd)}';
 
     return SizedBox(
       height: 48,
@@ -56,23 +63,14 @@ class WeekNavigator extends StatelessWidget {
             child: IconButton(
               visualDensity: VisualDensity.compact,
               onPressed: () {
-                // [이전 주]
-                // 1. 7일을 뺀 새로운 Jiffy 객체를 만듦
                 final newAnchor = currentAnchor.subtract(days: 7);
-
-                // 2. 그 주의 시작 날짜를 구함 (startOf(Unit.WEEK)는 이미 설정된 weekStart를 따름)
                 final start = newAnchor.startOf(Unit.week);
-
-                // 3. 시작 날짜에서 6일을 더하여 끝 날짜를 구함
-                final end = start.add(days: 6);
-
-                // 콜백 호출 시 DateTime 객체로 변환
-                onChanged?.call(start, end);
+                onChanged.call(start);
               },
               icon: Icon(
                 Icons.chevron_left,
                 size: 24,
-                color: arrowColor ?? Colors.grey[400],
+                color: AppColors.blackBlack2,
               ),
               tooltip: '이전 주',
             ),
@@ -80,10 +78,8 @@ class WeekNavigator extends StatelessWidget {
           Expanded(
             child: Center(
               child: Text(
-                '$month월 $nthLabel 주',
-                style:
-                    titleStyle ??
-                    AppTextStyles.bodyMedium(context, color: Colors.black),
+                label, // ← 수정 포인트
+                style: AppTextStyles.bodyMedium(context, color: Colors.black),
               ),
             ),
           ),
@@ -92,23 +88,17 @@ class WeekNavigator extends StatelessWidget {
             height: 40.w,
             child: IconButton(
               visualDensity: VisualDensity.compact,
-              onPressed: () {
-                // [다음 주]
-                // 1. 7일을 더한 새로운 Jiffy 객체를 만듦
-                final newAnchor = currentAnchor.add(days: 7);
-
-                // 2. 그 주의 시작 날짜를 구함
-                final start = newAnchor.startOf(Unit.week);
-
-                // 3. 시작 날짜에서 6일을 더하여 끝 날짜를 구함
-                final end = start.add(days: 6);
-
-                onChanged?.call(start, end);
-              },
+              onPressed: currentAnchor.isSame(_today)
+                  ? null
+                  : () {
+                      final newAnchor = currentAnchor.add(days: 7);
+                      final start = newAnchor.startOf(Unit.week);
+                      onChanged.call(start);
+                    },
               icon: Icon(
                 Icons.chevron_right,
                 size: 24,
-                color: arrowColor ?? Colors.grey[400],
+                color: AppColors.blackBlack2,
               ),
               tooltip: '다음 주',
             ),
@@ -131,7 +121,9 @@ String _koreanOrdinal(int n) {
       return '넷째';
     case 5:
       return '다섯째';
+    case 6:
+      return '여섯째';
     default:
-      return '여섯째'; // 일부 달은 6주 차까지 표시될 수 있음
+      return '$n째'; // 예외적으로 7주 표시 등 대비
   }
 }
