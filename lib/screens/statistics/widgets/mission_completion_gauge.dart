@@ -1,17 +1,22 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:live_frontend/models/my_mission_model.dart';
+import 'package:live_frontend/providers/statistics_provider.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
-class MissionCompletionGauge extends StatelessWidget {
-  final double percentage; // 0~100
-  final int? month; // optional month override (1-12)
+class MissionCompletionGauge extends ConsumerWidget {
+  final String yearMonth;
+  final MissionType missionType;
+  final int? month;
 
   const MissionCompletionGauge({
     super.key,
-    required this.percentage,
+    required this.yearMonth,
+    required this.missionType,
     this.month,
   });
 
@@ -21,65 +26,88 @@ class MissionCompletionGauge extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (ctx, c) {
-        final w = c.maxWidth.isFinite ? c.maxWidth : 288.w;
-        final h = w / 2;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final monthlyRateAsync = ref.watch(
+      monthlyCompletionRateProvider(
+        StatisticsApiPayload(yearMonth: yearMonth, missionType: missionType),
+      ),
+    );
 
-        return SizedBox(
-          width: w,
-          height: h, // 실제로 반원 높이만 차지
-          child: CustomPaint(
-            painter: _SemiGaugePainter(
-              percent: percentage.clamp(0, 100).toDouble(),
-              trackColor: AppColors.blackBlack1,
-              progressColor: AppColors.greenNormal,
-              thickness: 10.w, // 필요하면 고정값(예: 16.0)으로 변경
-            ),
-            child: Center(
-              child: Padding(
-                padding: EdgeInsets.only(top: 32.h),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 32.w,
-                      height: 32.w,
-                      decoration: BoxDecoration(
-                        color: AppColors.blackBlack1,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.trending_up,
-                        size: 20,
-                        color: AppColors.blackBlack2,
-                      ),
+    return monthlyRateAsync.when(
+      data: (data) {
+        final percentage = data?.completionRate ?? 0.0;
+        return LayoutBuilder(
+          builder: (ctx, c) {
+            final w = c.maxWidth.isFinite ? c.maxWidth : 288.w;
+            final h = w / 2;
+
+            return SizedBox(
+              width: w,
+              height: h,
+              child: CustomPaint(
+                painter: _SemiGaugePainter(
+                  percent: percentage.clamp(0, 100).toDouble(),
+                  trackColor: AppColors.blackBlack1,
+                  progressColor: AppColors.greenNormal,
+                  thickness: 10.w,
+                ),
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 32.h),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 32.w,
+                          height: 32.w,
+                          decoration: BoxDecoration(
+                            color: AppColors.blackBlack1,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.trending_up,
+                            size: 20,
+                            color: AppColors.blackBlack2,
+                          ),
+                        ),
+                        Gap(12.h),
+                        Text(
+                          '${percentage.toStringAsFixed(1)}%',
+                          style: const TextStyle(
+                            fontFamily: 'pretendard',
+                            fontSize: 28,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Text(
+                          _currentMonthText,
+                          style: AppTextStyles.bodyRegular(
+                            context,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
                     ),
-                    Gap(12.h),
-                    Text(
-                      '${percentage.toStringAsFixed(1)}%',
-                      style: const TextStyle(
-                        fontFamily: 'pretendard',
-                        fontSize: 28,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                    ),
-                    Text(
-                      _currentMonthText,
-                      style: AppTextStyles.bodyRegular(
-                        context,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
+      loading: () => SizedBox(
+        height: 144.w,
+        width: 144.w,
+        child: Center(
+          child: SizedBox(
+            height: 40.w,
+            width: 40.w,
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      ),
+      error: (err, stack) => Center(child: Text('Error: $err')),
     );
   }
 }
