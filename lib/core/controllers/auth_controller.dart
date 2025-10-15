@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
@@ -8,6 +9,7 @@ import 'package:live_frontend/providers/google_signin_provider.dart';
 import 'package:live_frontend/providers/secure_storage_provider.dart';
 import 'package:live_frontend/core/controllers/profile_controller.dart';
 import 'package:live_frontend/models/saeip_user_model.dart';
+import 'package:kakao_flutter_sdk_common/kakao_flutter_sdk_common.dart';
 
 class AuthController extends StateNotifier<AuthState> {
   final Ref ref;
@@ -75,6 +77,8 @@ class AuthController extends StateNotifier<AuthState> {
   Future<void> loginWithKakao() async {
     state = state.copyWith(status: AuthStatus.loading);
     try {
+      debugPrint('✅ Current Key Hash: ${await KakaoSdk.origin}');
+
       OAuthToken token;
       if (await isKakaoTalkInstalled()) {
         token = await UserApi.instance.loginWithKakaoTalk();
@@ -97,8 +101,9 @@ class AuthController extends StateNotifier<AuthState> {
 
       // final storage = ref.read(secureStorageProvider);
       state = AuthState(status: AuthStatus.authenticated, saeipUser: saeipUser);
-    } catch (e) {
+    } catch (e, s) {
       debugPrint('❌ Kakao 로그인 실패: $e');
+      FirebaseCrashlytics.instance.recordError(e, s, reason: '카카오 로그인 실패');
       state = state.copyWith(status: AuthStatus.error, error: e.toString());
     }
   }
