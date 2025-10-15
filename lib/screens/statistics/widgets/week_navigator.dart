@@ -78,7 +78,7 @@ class WeekNavigator extends StatelessWidget {
           Expanded(
             child: Center(
               child: Text(
-                label, // ← 수정 포인트
+                label,
                 style: AppTextStyles.bodyMedium(context, color: Colors.black),
               ),
             ),
