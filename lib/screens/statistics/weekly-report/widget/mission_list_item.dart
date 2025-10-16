@@ -22,7 +22,7 @@ class MissionListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: Colors.white,
       child: InkWell(
         onTap: onTap,
         child: Container(

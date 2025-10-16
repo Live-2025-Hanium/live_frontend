@@ -4,6 +4,7 @@ import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/screens/statistics/weekly-report/widget/mission_list.dart';
 import 'package:live_frontend/screens/statistics/widgets/week_navigator.dart';
 import 'package:live_frontend/screens/statistics/widgets/weekly_bar_chart.dart';
+import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 
 class WeeklyReportScreen extends StatefulWidget {
@@ -49,23 +50,30 @@ class _WeeklyReportScreenState extends State<WeeklyReportScreen> {
       ),
       body: SafeArea(
         child: Container(
-          padding: const EdgeInsets.all(16.0),
+          color: AppColors.blackBlack0,
           child: Column(
             children: [
-              WeeklyBarChart(
-                missionType: widget.missionType,
-                currentAnchor: _anchor.format(pattern: 'yyyy-MM-dd'),
-                selectedIndex: _selectedIndex,
-                onBarTapped: onBarTapped,
-              ),
-              WeekNavigator(
-                currentAnchor: _anchor,
-                onChanged: (start) {
-                  setState(() {
-                    _anchor = start;
-                    _selectedIndex = 0;
-                  });
-                },
+              Container(
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    WeeklyBarChart(
+                      missionType: widget.missionType,
+                      currentAnchor: _anchor.format(pattern: 'yyyy-MM-dd'),
+                      selectedIndex: _selectedIndex,
+                      onBarTapped: onBarTapped,
+                    ),
+                    WeekNavigator(
+                      currentAnchor: _anchor,
+                      onChanged: (start) {
+                        setState(() {
+                          _anchor = start;
+                          _selectedIndex = 0;
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
               Expanded(
                 child: MissionList(
