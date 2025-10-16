@@ -90,11 +90,22 @@ class WeeklyBarChart extends ConsumerWidget {
                       if (value.toInt() < days.length) {
                         return Padding(
                           padding: EdgeInsets.only(top: 8.h),
-                          child: Text(
-                            days[value.toInt()],
-                            style: AppTextStyles.smallMedium(
-                              context,
-                              color: Colors.black,
+                          child: TextButton(
+                            onPressed: () {
+                              onBarTapped(value.toInt());
+                            },
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size(24.w, 24.h),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              alignment: Alignment.center,
+                            ),
+                            child: Text(
+                              days[value.toInt()],
+                              style: AppTextStyles.smallMedium(
+                                context,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         );
