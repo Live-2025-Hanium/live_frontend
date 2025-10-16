@@ -101,3 +101,37 @@ const _$CloverMissionCategoryEnumMap = {
   CloverMissionCategory.hobby: 'HOBBY',
   CloverMissionCategory.study: 'STUDY',
 };
+
+DailyCompletedMissionsModel _$DailyCompletedMissionsModelFromJson(
+  Map<String, dynamic> json,
+) => DailyCompletedMissionsModel(
+  date: json['date'] as String,
+  dayOfWeek: const DayOfWeekConverter().fromJson(json['dayOfWeek'] as String),
+  completedMissions: (json['completedMissions'] as List<dynamic>)
+      .map((e) => CompletedMission.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
+
+Map<String, dynamic> _$DailyCompletedMissionsModelToJson(
+  DailyCompletedMissionsModel instance,
+) => <String, dynamic>{
+  'date': instance.date,
+  'dayOfWeek': const DayOfWeekConverter().toJson(instance.dayOfWeek),
+  'completedMissions': instance.completedMissions,
+};
+
+CompletedMission _$CompletedMissionFromJson(Map<String, dynamic> json) =>
+    CompletedMission(
+      missionId: (json['missionId'] as num).toInt(),
+      missionRecordId: (json['missionRecordId'] as num).toInt(),
+      missionTitle: json['missionTitle'] as String,
+      completedAt: json['completedAt'] as String,
+    );
+
+Map<String, dynamic> _$CompletedMissionToJson(CompletedMission instance) =>
+    <String, dynamic>{
+      'missionId': instance.missionId,
+      'missionRecordId': instance.missionRecordId,
+      'missionTitle': instance.missionTitle,
+      'completedAt': instance.completedAt,
+    };

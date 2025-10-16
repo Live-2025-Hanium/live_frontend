@@ -84,4 +84,31 @@ class StatisticsRepository {
       return null;
     }
   }
+
+  Future<DailyCompletedMissionsModel?> fetchDailyCompletedMissions(
+    String date,
+    MissionType missionType,
+  ) async {
+    try {
+      final endpoint = missionType == MissionType.clover
+          ? '/api/v1/analysis/clover/daily'
+          : '/api/v1/analysis/my/daily';
+      final response = await _dio.get(
+        endpoint,
+        queryParameters: {'date': date},
+      );
+      final apiResponse =
+          ApiResponseModel<DailyCompletedMissionsModel>.fromJson(
+            response.data,
+            (json) => DailyCompletedMissionsModel.fromJson(
+              json as Map<String, dynamic>,
+            ),
+          );
+
+      return apiResponse.data;
+    } catch (e) {
+      debugPrint('Failed to fetch daily completed missions: $e');
+      return null;
+    }
+  }
 }

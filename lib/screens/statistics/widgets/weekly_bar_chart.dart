@@ -24,6 +24,7 @@ class WeeklyBarChart extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void onBarTapped(int index) {
+      debugPrint('Bar $index tapped');
       final refDate = Jiffy.parse(
         currentAnchor,
       ).startOf(Unit.week).add(days: index);
@@ -140,7 +141,7 @@ class WeeklyBarChart extends ConsumerWidget {
                 touchCallback: (event, response) {
                   if (event is FlTapUpEvent && response?.spot != null) {
                     final index = response!.spot!.touchedBarGroupIndex;
-                    onBarTapped.call(index);
+                    onBarTapped(index);
                   }
                 },
               ),
