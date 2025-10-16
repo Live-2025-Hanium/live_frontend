@@ -18,7 +18,11 @@ class LoginScreen extends ConsumerWidget {
 
     ref.listen<AuthState>(authProvider, (previous, next) {
       if (next.status == AuthStatus.authenticated) {
-        context.go('/home');
+        if (next.isNewUser == true) {
+          context.go('/login/terms');
+        } else {
+          context.go('/home');
+        }
       }
     });
 

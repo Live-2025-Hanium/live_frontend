@@ -207,7 +207,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
   }
 
   Widget _buildUserInfoWidget() {
-    final userName = ref.watch(authProvider).saeipUser?.nickname ?? "userName";
+    final userName = ref.watch(authProvider).nickname ?? "사용자";
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -267,18 +267,16 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
             children: List.generate(5, (i) {
               return Padding(
                 padding: EdgeInsets.only(
-                  right:
-                      i == 0
-                          ? 24.w
-                          : i == 1
-                          ? 16.w
-                          : 0,
-                  left:
-                      i == 4
-                          ? 24.w
-                          : i == 3
-                          ? 16.w
-                          : 0,
+                  right: i == 0
+                      ? 24.w
+                      : i == 1
+                      ? 16.w
+                      : 0,
+                  left: i == 4
+                      ? 24.w
+                      : i == 3
+                      ? 16.w
+                      : 0,
                 ),
                 child: _buildCustomRadioButton(
                   width: widths[i],

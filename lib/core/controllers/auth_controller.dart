@@ -8,13 +8,12 @@ import 'package:live_frontend/core/repositories/auth_repository_provider.dart';
 import 'package:live_frontend/providers/google_signin_provider.dart';
 import 'package:live_frontend/providers/secure_storage_provider.dart';
 import 'package:live_frontend/core/controllers/profile_controller.dart';
-import 'package:live_frontend/models/saeip_user_model.dart';
 
 class AuthController extends StateNotifier<AuthState> {
   final Ref ref;
+
   AuthController(this.ref)
     : super(const AuthState(status: AuthStatus.loading)) {
-    // run restore asynchronously
     Future.microtask(() async {
       await restoreSession();
     });
@@ -30,14 +29,11 @@ class AuthController extends StateNotifier<AuthState> {
         final profileController = ref.read(profileControllerProvider);
         final profile = await profileController.fetchProfile();
         if (profile != null) {
-          final user = SaeipUserModel(
-            id: profile.id,
-            email: '',
+          state = AuthState(
+            status: AuthStatus.authenticated,
             nickname: profile.nickname,
-            profileImageUrl: profile.profileImageUrl,
-            role: SaeipUserType.user,
+            isNewUser: false,
           );
-          state = AuthState(status: AuthStatus.authenticated, saeipUser: user);
         } else {
           // 프로필 못가져오면 인증 안된 상태
           state = const AuthState(status: AuthStatus.initial);
@@ -91,15 +87,18 @@ class AuthController extends StateNotifier<AuthState> {
       debugPrint('✅ Kakao 로그인 성공');
 
       final repo = ref.read(authRepositoryProvider);
-      final saeipUser = await repo.loginWithKakaoOnBackend(
+      final loginData = await repo.loginWithKakaoOnBackend(
         user,
         token.accessToken,
       );
 
       debugPrint('✅ 백엔드 로그인 성공');
 
-      // final storage = ref.read(secureStorageProvider);
-      state = AuthState(status: AuthStatus.authenticated, saeipUser: saeipUser);
+      state = AuthState(
+        status: AuthStatus.authenticated,
+        nickname: loginData.user.nickname,
+        isNewUser: loginData.newUser,
+      );
     } catch (e, s) {
       debugPrint('❌ Kakao 로그인 실패: $e');
       FirebaseCrashlytics.instance.recordError(e, s, reason: '카카오 로그인 실패');
@@ -107,7 +106,10 @@ class AuthController extends StateNotifier<AuthState> {
     }
   }
 
-  void logout() {
+  Future<void> logout() async {
     state = const AuthState();
+
+    final repo = ref.read(authRepositoryProvider);
+    await repo.logout();
   }
 }

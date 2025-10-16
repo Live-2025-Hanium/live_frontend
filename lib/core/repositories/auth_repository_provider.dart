@@ -15,7 +15,7 @@ class AuthRepository {
 
   AuthRepository(this._dio, this._secureStorage);
 
-  Future<SaeipUserModel> loginWithKakaoOnBackend(
+  Future<LoginData> loginWithKakaoOnBackend(
     SocialUser user,
     String accessToken,
   ) async {
@@ -57,7 +57,7 @@ class AuthRepository {
         // if (kDebugMode) debugPrint('Failed to persist tokens: $e');
       }
 
-      return login.user;
+      return login;
     } on DioException catch (e, s) {
       FirebaseCrashlytics.instance.recordError(
         e,
@@ -154,6 +154,26 @@ class AuthRepository {
         // debugPrintStack(stackTrace: s);
       }
       rethrow;
+    }
+  }
+
+  Future<void> logout() async {
+    try {
+      await _dio.post(
+        '/api/auth/logout',
+        data: {'refreshToken': await _secureStorage.readRefresh()},
+      );
+    } catch (e) {
+      // if (kDebugMode) debugPrint('Logout request failed: $e');
+    }
+
+    try {
+      await _secureStorage.deleteAll();
+      if (kDebugMode) {
+        // debugPrint('AuthRepository: cleared stored tokens');
+      }
+    } catch (e) {
+      // if (kDebugMode) debugPrint('Failed to clear stored tokens: $e');
     }
   }
 }
