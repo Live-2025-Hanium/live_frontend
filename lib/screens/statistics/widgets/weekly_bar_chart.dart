@@ -2,46 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/providers/statistics_provider.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
-import 'package:go_router/go_router.dart';
 
 class WeeklyBarChart extends ConsumerWidget {
   final int? selectedIndex;
   final MissionType missionType;
   final String currentAnchor;
+  final Function(int index) onBarTapped;
 
   const WeeklyBarChart({
     super.key,
     this.selectedIndex,
     required this.missionType,
     required this.currentAnchor,
+    required this.onBarTapped,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    void onBarTapped(int index) {
-      debugPrint('Bar $index tapped');
-      final refDate = Jiffy.parse(
-        currentAnchor,
-      ).startOf(Unit.week).add(days: index);
-
-      debugPrint(
-        'Navigating to date: ${refDate.format(pattern: 'yyyy-MM-dd')}',
-      );
-      context.pushNamed(
-        'weekly_report',
-        queryParameters: {
-          'referenceDate': refDate.format(pattern: 'yyyy-MM-dd'),
-          'missionType': missionType.name,
-          'selectedIndex': index.toString(),
-        },
-      );
-    }
-
     final weeklyMissionSummaryAsync = ref.watch(
       weeklyCompletionRatesProvider(
         StatisticsApiPayload(

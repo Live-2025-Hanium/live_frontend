@@ -35,6 +35,12 @@ class _WeeklyReportScreenState extends State<WeeklyReportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    void onBarTapped(int index) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+
     return Scaffold(
       appBar: SaeipAppBar(
         title: widget.missionType == MissionType.my
@@ -50,6 +56,7 @@ class _WeeklyReportScreenState extends State<WeeklyReportScreen> {
                 missionType: widget.missionType,
                 currentAnchor: _anchor.format(pattern: 'yyyy-MM-dd'),
                 selectedIndex: _selectedIndex,
+                onBarTapped: onBarTapped,
               ),
               WeekNavigator(
                 currentAnchor: _anchor,
