@@ -28,11 +28,16 @@ class WeeklyBarChart extends ConsumerWidget {
       final refDate = Jiffy.parse(
         currentAnchor,
       ).startOf(Unit.week).add(days: index);
+
+      debugPrint(
+        'Navigating to date: ${refDate.format(pattern: 'yyyy-MM-dd')}',
+      );
       context.pushNamed(
         'weekly_report',
         queryParameters: {
           'referenceDate': refDate.format(pattern: 'yyyy-MM-dd'),
           'missionType': missionType.name,
+          'selectedIndex': index.toString(),
         },
       );
     }

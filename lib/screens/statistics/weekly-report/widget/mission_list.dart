@@ -44,15 +44,6 @@ class MissionList extends ConsumerWidget {
                 textAlign: TextAlign.left,
               ),
 
-              // Gap(16.h),
-              // MissionListItem(
-              //   type: type,
-              //   missionTitle: 'My Mission',
-              //   completedTime: '09:23',
-              //   onTap: () {
-              //     // Handle tap
-              //   },
-              // ),
               if (data == null || data.completedMissions.isEmpty) ...[
                 Gap(16.h),
                 Text(

@@ -197,6 +197,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               return WeeklyReportScreen(
                 referenceDate: referenceDate,
                 missionType: missionType,
+                selectedIndex: int.tryParse(qp['selectedIndex'] ?? '') ?? 0,
               );
             },
           ),

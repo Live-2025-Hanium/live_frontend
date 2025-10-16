@@ -9,11 +9,13 @@ import 'package:live_frontend/widgets/saeip_app_bar.dart';
 class WeeklyReportScreen extends StatefulWidget {
   final Jiffy referenceDate;
   final MissionType missionType;
+  final int selectedIndex;
 
   const WeeklyReportScreen({
     super.key,
     required this.referenceDate,
     required this.missionType,
+    required this.selectedIndex,
   });
 
   @override
@@ -21,14 +23,14 @@ class WeeklyReportScreen extends StatefulWidget {
 }
 
 class _WeeklyReportScreenState extends State<WeeklyReportScreen> {
-  late Jiffy _anchor; // Monday of the reference week
-  late int _selectedIndex; // 0..6 where 0 = Monday
+  late Jiffy _anchor;
+  late int _selectedIndex;
 
   @override
   void initState() {
     super.initState();
     _anchor = widget.referenceDate.startOf(Unit.week);
-    _selectedIndex = (widget.referenceDate.date - DateTime.monday) % 7;
+    _selectedIndex = widget.selectedIndex;
   }
 
   @override
@@ -60,7 +62,7 @@ class _WeeklyReportScreenState extends State<WeeklyReportScreen> {
               ),
               Expanded(
                 child: MissionList(
-                  referenceDate: _anchor,
+                  referenceDate: _anchor.add(days: _selectedIndex),
                   type: widget.missionType,
                 ),
               ),
