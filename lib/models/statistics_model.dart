@@ -122,3 +122,38 @@ class GrowthSummary {
       _$GrowthSummaryFromJson(json);
   Map<String, dynamic> toJson() => _$GrowthSummaryToJson(this);
 }
+
+@JsonSerializable()
+class DailyCompletedMissionsModel {
+  final String date;
+  @DayOfWeekConverter()
+  final DayOfWeek dayOfWeek;
+  final List<CompletedMission> completedMissions;
+  DailyCompletedMissionsModel({
+    required this.date,
+    required this.dayOfWeek,
+    required this.completedMissions,
+  });
+
+  factory DailyCompletedMissionsModel.fromJson(Map<String, dynamic> json) =>
+      _$DailyCompletedMissionsModelFromJson(json);
+  Map<String, dynamic> toJson() => _$DailyCompletedMissionsModelToJson(this);
+}
+
+@JsonSerializable()
+class CompletedMission {
+  final int missionId;
+  final int missionRecordId;
+  final String missionTitle;
+  final String completedAt;
+
+  CompletedMission({
+    required this.missionId,
+    required this.missionRecordId,
+    required this.missionTitle,
+    required this.completedAt,
+  });
+  factory CompletedMission.fromJson(Map<String, dynamic> json) =>
+      _$CompletedMissionFromJson(json);
+  Map<String, dynamic> toJson() => _$CompletedMissionToJson(this);
+}
