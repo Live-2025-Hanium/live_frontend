@@ -19,6 +19,10 @@ class SecureStorageService {
     await _storage.delete(key: key);
   }
 
+  Future<void> deleteAll() async {
+    await _storage.deleteAll();
+  }
+
   // token specific helpers
   Future<String?> readAccess() => read(TokenKeys.access);
   Future<String?> readRefresh() => read(TokenKeys.refresh);

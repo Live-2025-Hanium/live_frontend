@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jiffy/jiffy.dart';
@@ -26,9 +27,9 @@ final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     redirect: (context, state) {
       // redirect 내부에서 최신 인증 상태를 직접 읽어옵니다.
-      final authStatus = ref.read(authProvider).status;
-      final isLoggedIn = authStatus == AuthStatus.authenticated;
-      final isLoading = authStatus == AuthStatus.loading;
+      final authStatus = ref.read(authProvider);
+      final isLoggedIn = authStatus.status == AuthStatus.authenticated;
+      final isLoading = authStatus.status == AuthStatus.loading;
       final isOnLoginPage = state.uri.toString() == '/login';
 
       // 1. 로딩 중엔 아무것도 리디렉션하지 않음
@@ -38,7 +39,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (!isLoggedIn && !isOnLoginPage) return '/login';
 
       // 3. 로그인 돼있는데 로그인 페이지 가려고 하면 → 홈으로
-      if (isLoggedIn && isOnLoginPage) return '/home';
+      if (isLoggedIn && isOnLoginPage) {
+        debugPrint('✅ 로그인 상태에서 /login 접근 시도, 홈으로 리디렉트');
+        debugPrint('isNewUser: ${authStatus.isNewUser}');
+        if (authStatus.isNewUser == true) {
+          return '/login/terms';
+        } else {
+          return '/home';
+        }
+      }
 
       return null;
     },
