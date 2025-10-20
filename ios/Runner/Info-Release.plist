@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -52,6 +54,8 @@
 	<string>앱에서 카메라를 사용하기 위해 권한이 필요합니다.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>현재 위치 기반 서비스를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>앱이 백그라운드에서도 사용자에게 관련 서비스를 제공하기 위해 정확한 위치 정보가 필요합니다.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>사진을 업로드하거나 선택하기 위해 사진 라이브러리 접근 권한이 필요합니다.</string>
 	<key>NSUserNotificationUsageDescription</key>
