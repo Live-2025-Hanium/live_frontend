@@ -44,4 +44,15 @@ class StatisticsController {
       return null;
     }
   }
+
+  Future<DailyCompletedMissionsModel?> fetchDailyCompletedMissions(
+    String date,
+    MissionType missionType,
+  ) async {
+    try {
+      return await _repository.fetchDailyCompletedMissions(date, missionType);
+    } catch (e) {
+      return null;
+    }
+  }
 }

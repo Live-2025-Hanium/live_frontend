@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/screens/statistics/widgets/mission_completion_gauge.dart';
@@ -87,6 +88,27 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
   Widget _buildStatisticsContent({
     required int tabIndex, // 0: 클로버 미션, 1: 마이 미션
   }) {
+    void onBarTapped(int index) {
+      debugPrint('Bar $index tapped');
+      final refDate = Jiffy.parse(
+        _currentAnchor,
+      ).startOf(Unit.week).add(days: index);
+
+      debugPrint(
+        'Navigating to date: ${refDate.format(pattern: 'yyyy-MM-dd')}',
+      );
+      context.pushNamed(
+        'weekly_report',
+        queryParameters: {
+          'referenceDate': refDate.format(pattern: 'yyyy-MM-dd'),
+          'missionType': tabIndex == 0
+              ? MissionType.clover.name
+              : MissionType.my.name,
+          'selectedIndex': index.toString(),
+        },
+      );
+    }
+
     return ListView(
       children: [
         Container(
@@ -108,6 +130,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                     ? MissionType.clover
                     : MissionType.my,
                 currentAnchor: _currentAnchor,
+                onBarTapped: onBarTapped,
               ),
               WeekNavigator(
                 currentAnchor: Jiffy.parse(_currentAnchor),

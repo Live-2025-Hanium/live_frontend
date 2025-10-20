@@ -50,3 +50,15 @@ final monthlyGrowthProvider =
       final controller = ref.read(statisticsControllerProvider);
       return controller.fetchMonthlyGrowth(yearMonth);
     });
+
+final dailyCompletedMissionsProvider =
+    FutureProvider.family<DailyCompletedMissionsModel?, StatisticsApiPayload>((
+      ref,
+      payload,
+    ) {
+      final controller = ref.read(statisticsControllerProvider);
+      return controller.fetchDailyCompletedMissions(
+        payload.yearMonth,
+        payload.missionType,
+      );
+    });
