@@ -28,3 +28,28 @@ class ProfileModel {
       _$ProfileModelFromJson(json);
   Map<String, dynamic> toJson() => _$ProfileModelToJson(this);
 }
+
+@JsonSerializable()
+class NicknameDuplicationCheckModel {
+  final bool available;
+  final String message;
+
+  NicknameDuplicationCheckModel({
+    required this.available,
+    required this.message,
+  });
+
+  factory NicknameDuplicationCheckModel.fromJson(Map<String, dynamic> json) =>
+      _$NicknameDuplicationCheckModelFromJson(json);
+  Map<String, dynamic> toJson() => _$NicknameDuplicationCheckModelToJson(this);
+}
+
+class NicknameDuplicationCheckResponse {
+  final String message;
+  final bool available;
+
+  NicknameDuplicationCheckResponse({
+    required this.message,
+    required this.available,
+  });
+}

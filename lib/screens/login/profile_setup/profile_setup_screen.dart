@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:go_router/go_router.dart';
-import 'package:live_frontend/models/saeip_user_model.dart';
 import 'package:live_frontend/screens/login/profile_setup/widgets/nickname_field.dart';
 import 'package:live_frontend/screens/login/profile_setup/widgets/profile_image_picker.dart';
 import 'package:live_frontend/screens/login/profile_setup/widgets/gender_selector.dart';

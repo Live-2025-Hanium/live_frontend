@@ -28,3 +28,17 @@ Map<String, dynamic> _$ProfileModelToJson(ProfileModel instance) =>
       'occupationDetail': instance.occupationDetail,
       'lastSurveySubmittedAt': instance.lastSurveySubmittedAt,
     };
+
+NicknameDuplicationCheckModel _$NicknameDuplicationCheckModelFromJson(
+  Map<String, dynamic> json,
+) => NicknameDuplicationCheckModel(
+  available: json['available'] as bool,
+  message: json['message'] as String,
+);
+
+Map<String, dynamic> _$NicknameDuplicationCheckModelToJson(
+  NicknameDuplicationCheckModel instance,
+) => <String, dynamic>{
+  'available': instance.available,
+  'message': instance.message,
+};
