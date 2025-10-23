@@ -42,22 +42,24 @@ class GenderSelector extends StatelessWidget {
                 final textColor = isSelected
                     ? Colors.black
                     : (selectedGender == null
-                        ? Colors.black
-                        : AppColors.blackBlack4);
+                          ? Colors.black
+                          : AppColors.blackBlack4);
                 final underlineColor = isSelected || selectedGender == null
                     ? AppColors.blackBlack1
                     : Colors.transparent;
 
                 return Expanded(
-                  child: GestureDetector(
-                    onTap: () => field.didChange(gender),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minWidth: 160.w,
-                        minHeight: 48.h,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 0),
+                    child: TextButton(
+                      onPressed: () => field.didChange(gender),
+                      style: TextButton.styleFrom(
+                        minimumSize: Size(160.w, 48.h),
+                        padding: EdgeInsets.zero,
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           // 텍스트
                           Text(
@@ -69,10 +71,7 @@ class GenderSelector extends StatelessWidget {
                           ),
                           const Gap(6),
                           // 밑줄
-                          Container(
-                            height: 1,
-                            color: underlineColor,
-                          ),
+                          Container(height: 1, color: underlineColor),
                         ],
                       ),
                     ),
