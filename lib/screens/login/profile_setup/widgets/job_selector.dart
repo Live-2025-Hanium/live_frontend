@@ -44,41 +44,52 @@ class JobSelector extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               crossAxisCount: 2, // 2열 고정
+              // GridView의 자식 요소는 TextButton의 최소 크기와 동일한 비율로 설정하는 것이 좋습니다.
+              // TextButton이 ConstrainedBox의 역할을 하므로, 필요하다면 childAspectRatio를 조정하세요.
               childAspectRatio: 160.w / 48.h,
               children: jobs.map((job) {
                 final isSelected = selectedJob == job;
 
-                return GestureDetector(
-                  onTap: () => field.didChange(job),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minWidth: 160.w,
-                      minHeight: 48.h,
+                // 색상 로직
+                final textColor = isSelected
+                    ? Colors.black
+                    : (selectedJob == null
+                          ? Colors.black
+                          : AppColors.blackBlack4);
+                final underlineColor = isSelected || selectedJob == null
+                    ? AppColors.blackBlack1
+                    : Colors.transparent;
+
+                return Padding(
+                  // GridView의 기본 간격(spacing) 외에 TextButton 주변 여백이 필요하다면 사용
+                  padding: EdgeInsets
+                      .zero, // TextButton의 기본 패딩이 GridItem을 너무 채우지 않도록 설정
+                  child: TextButton(
+                    onPressed: () => field.didChange(job),
+                    style: TextButton.styleFrom(
+                      // ConstrainedBox 역할을 대신하는 최소 크기 설정
+                      minimumSize: Size(160.w, 48.h),
+                      // TextButton의 기본 패딩 제거
+                      padding: EdgeInsets.zero,
+                      // 버튼 눌림 효과(splash, overlay) 색상을 투명하게 하거나 원하는 색으로 설정
+                      foregroundColor: Colors.transparent, // 눌릴 때 물결 효과 색상
                     ),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min, // Column이 차지하는 높이를 최소화
                       children: [
                         // 직업명
                         Text(
                           job,
                           style: AppTextStyles.bodyRegular(
                             context,
-                            color: isSelected
-                                ? Colors.black
-                                : (selectedJob == null
-                                    ? Colors.black
-                                    : AppColors.blackBlack4),
+                            color: textColor,
                           ),
                           textAlign: TextAlign.center,
                         ),
                         Gap(6.h),
                         // 밑줄
-                        Container(
-                          height: 1,
-                          color: isSelected || selectedJob == null
-                              ? AppColors.blackBlack1
-                              : Colors.transparent,
-                        ),
+                        Container(height: 1, color: underlineColor),
                       ],
                     ),
                   ),
