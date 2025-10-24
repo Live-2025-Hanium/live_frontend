@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:live_frontend/core/controllers/presigned_url_controller.dart';
+import 'package:live_frontend/core/repositories/presigned_url_repository.dart';
+import 'package:live_frontend/providers/dio_provider.dart';
 import 'package:live_frontend/screens/login/profile_setup/widgets/nickname_field.dart';
 import 'package:live_frontend/screens/login/profile_setup/widgets/profile_image_picker.dart';
 import 'package:live_frontend/screens/login/profile_setup/widgets/gender_selector.dart';
@@ -11,17 +15,19 @@ import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:gap/gap.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ProfileSetupScreen extends StatefulWidget {
+class ProfileSetupScreen extends ConsumerStatefulWidget {
   const ProfileSetupScreen({super.key});
 
   @override
-  State<ProfileSetupScreen> createState() => _ProfileSetupScreenState();
+  ConsumerState<ProfileSetupScreen> createState() => _ProfileSetupScreenState();
 }
 
-class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
+class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   final _nicknameKey = GlobalKey<NicknameFieldState>();
   final ValueNotifier<bool> _isFormValidNotifier = ValueNotifier(false);
+  String? _pickedImagePath;
+  String? _pickedImageExtension;
 
   @override
   void dispose() {
@@ -46,14 +52,38 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       return;
     }
 
-    // final formData = _formKey.currentState!.value;
-    // final saeipUser = SaeipUserModel.fromFormData(formData);
-
     try {
-      context.pushNamed('survey');
+      if (_pickedImagePath != null && _pickedImageExtension != null) {
+        final presignedUrlRepository = PresignedUrlRepository(
+          ref.read(dioProvider),
+        );
+
+        final presignedUrlController = PresignedUrlController(
+          presignedUrlRepository,
+        );
+        // presigned URL 생성
+        final presigned = await presignedUrlController.createPresignedUrl(
+          '$_pickedImagePath.$_pickedImageExtension',
+          'image/$_pickedImageExtension',
+          'PROFILE',
+        );
+
+        if (presigned == null) {
+          // 토스트 띄우기
+          debugPrint('❌ 프리사인드 URL 생성 실패');
+          return;
+        }
+
+        // 프로필 이미지 업로드
+        await presignedUrlController.uploadImage(_pickedImagePath!, presigned);
+      }
+
+      // final formData = _formKey.currentState!.value;
+      // final saeipUser = SaeipUserModel.fromFormData(formData);
     } catch (e) {
       debugPrint('❌ 네트워크 오류: $e');
     }
+    context.pushNamed('survey');
   }
 
   @override
@@ -69,7 +99,14 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const ProfileImagePicker(),
+                ProfileImagePicker(
+                  onImagePicked: (path, extension) {
+                    setState(() {
+                      _pickedImagePath = path;
+                      _pickedImageExtension = extension;
+                    });
+                  },
+                ),
                 Gap(16.h),
                 NicknameField(key: _nicknameKey),
                 Gap(28.h),
