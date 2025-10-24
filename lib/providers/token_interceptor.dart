@@ -49,8 +49,10 @@ class TokenInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     // If original request asked to skip auth, don't attempt refresh/retry.
     final originalNoAuth = err.requestOptions.extra['noAuth'] == true;
+    final isLogout = err.requestOptions.path == '/api/auth/logout';
+
     // Only handle 401 from server (unauthorized)
-    if (!originalNoAuth && err.response?.statusCode == 401) {
+    if (!originalNoAuth && err.response?.statusCode == 401 && !isLogout) {
       try {
         // If a refresh is already in progress, wait for it
         if (_refreshCompleter != null) {
