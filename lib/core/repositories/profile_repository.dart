@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/models/common_api_response_model.dart';
 import 'package:live_frontend/models/profile_model.dart';
@@ -47,7 +48,18 @@ class ProfileRepository {
 
       return apiResp.data;
     } catch (e) {
+      debugPrint('❌ 닉네임 중복 확인 실패: $e');
       return null;
+    }
+  }
+
+  Future<bool> updateProfile(ProfileUpdatePayloadModel payload) async {
+    try {
+      await _dio.post('/api/members/profile', data: payload.toJson());
+      return true;
+    } catch (e) {
+      debugPrint('❌ 프로필 업데이트 실패: $e');
+      return false;
     }
   }
 }

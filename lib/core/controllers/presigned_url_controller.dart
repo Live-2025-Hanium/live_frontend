@@ -23,9 +23,13 @@ class PresignedUrlController {
     }
   }
 
-  Future<void> uploadImage(String filePath, PresignedUrlModel presigned) async {
+  Future<void> uploadImage(
+    String filePath,
+    String fileType,
+    PresignedUrlModel presigned,
+  ) async {
     try {
-      await _presignedUrlRepository.uploadImage(filePath, presigned);
+      await _presignedUrlRepository.uploadImage(filePath, fileType, presigned);
     } catch (e) {
       rethrow;
     }

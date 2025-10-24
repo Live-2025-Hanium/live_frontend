@@ -36,14 +36,18 @@ class PresignedUrlRepository {
     }
   }
 
-  Future<void> uploadImage(String filePath, PresignedUrlModel presigned) async {
+  Future<void> uploadImage(
+    String filePath,
+    String fileType,
+    PresignedUrlModel presigned,
+  ) async {
     try {
       final dio = Dio();
       final fileBytes = await MultipartFile.fromFile(filePath);
       await dio.put(
         presigned.uploadUrl,
         data: fileBytes,
-        options: Options(headers: {'Content-Type': 'image/jpeg'}),
+        options: Options(headers: {'Content-Type': 'image/$fileType'}),
       );
     } catch (e) {
       rethrow;

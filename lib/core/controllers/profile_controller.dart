@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/core/repositories/profile_repository.dart';
 import 'package:live_frontend/models/common_api_response_model.dart';
@@ -8,7 +9,6 @@ final profileControllerProvider = Provider(
   (ref) => ProfileController(ref.read(profileRepositoryProvider)),
 );
 
-// 나중에 레포지토리 패턴 지켜서 리팩토링하기
 class ProfileController {
   final ProfileRepository _repository;
 
@@ -55,6 +55,16 @@ class ProfileController {
       return notAvailable;
     } catch (e) {
       return notAvailable;
+    }
+  }
+
+  Future<bool> updateProfile(ProfileUpdatePayloadModel payload) async {
+    try {
+      debugPrint('✅ 프로필 업데이트 페이로드: ${payload.toJson()}');
+      await _repository.updateProfile(payload);
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }

@@ -3,17 +3,18 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:live_frontend/models/profile_model.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
 class GenderSelector extends StatelessWidget {
   const GenderSelector({super.key});
 
-  static const List<String> genders = ['남자', '여자'];
+  static const List<Gender> genders = [Gender.male, Gender.female];
 
   @override
   Widget build(BuildContext context) {
-    return FormBuilderField<String>(
+    return FormBuilderField<Gender>(
       name: 'gender',
       validator: FormBuilderValidators.required(errorText: ''),
       builder: (field) {
@@ -63,7 +64,7 @@ class GenderSelector extends StatelessWidget {
                         children: [
                           // 텍스트
                           Text(
-                            gender,
+                            gender.description,
                             style: AppTextStyles.bodyRegular(
                               context,
                               color: textColor,

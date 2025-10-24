@@ -3,7 +3,9 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/core/controllers/presigned_url_controller.dart';
+import 'package:live_frontend/core/controllers/profile_controller.dart';
 import 'package:live_frontend/core/repositories/presigned_url_repository.dart';
+import 'package:live_frontend/models/profile_model.dart';
 import 'package:live_frontend/providers/dio_provider.dart';
 import 'package:live_frontend/screens/login/profile_setup/widgets/nickname_field.dart';
 import 'package:live_frontend/screens/login/profile_setup/widgets/profile_image_picker.dart';
@@ -39,9 +41,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     _isFormValidNotifier.value = _formKey.currentState?.isValid ?? false;
   }
 
-  Future<void> profileSetupSubmit() async {
+  Future<bool> profileSetupSubmit() async {
     final isValid = _formKey.currentState?.saveAndValidate() ?? false;
-    if (!isValid) return;
+    if (!isValid) return false;
 
     final nicknameState = _nicknameKey.currentState;
     if (nicknameState == null || !nicknameState.isNicknameValid) {
@@ -49,8 +51,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       _formKey.currentState?.fields['nickname']?.invalidate(
         '닉네임 중복 확인을 완료해주세요.',
       );
-      return;
+      return false;
     }
+
+    final formData = _formKey.currentState!.value;
+
+    debugPrint('✅ 프로필 설정 폼 데이터: $formData');
 
     try {
       if (_pickedImagePath != null && _pickedImageExtension != null) {
@@ -71,11 +77,28 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         if (presigned == null) {
           // 토스트 띄우기
           debugPrint('❌ 프리사인드 URL 생성 실패');
-          return;
+          return false;
         }
 
         // 프로필 이미지 업로드
-        await presignedUrlController.uploadImage(_pickedImagePath!, presigned);
+        await presignedUrlController.uploadImage(
+          _pickedImagePath!,
+          _pickedImageExtension!,
+          presigned,
+        );
+
+        final profileController = ref.read(profileControllerProvider);
+        final payload = ProfileUpdatePayloadModel(
+          nickname: formData['nickname'] as String,
+          gender: (formData['gender'] as Gender).value,
+          occupation: (formData['job'] as Occupation).value,
+          profileImageUrl: presigned.accessUrl,
+          birthYear: formData['year'],
+          birthMonth: formData['month'],
+          birthDay: formData['day'],
+        );
+
+        return await profileController.updateProfile(payload);
       }
 
       // final formData = _formKey.currentState!.value;
@@ -83,7 +106,8 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     } catch (e) {
       debugPrint('❌ 네트워크 오류: $e');
     }
-    context.pushNamed('survey');
+    return false;
+    // context.pushNamed('survey');
   }
 
   @override
@@ -121,7 +145,16 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   builder: (context, isFormValid, _) {
                     return SaeipButton(
                       text: '확인',
-                      onPressed: profileSetupSubmit,
+                      onPressed: () async {
+                        final success = await profileSetupSubmit();
+                        debugPrint('✅ 프로필 설정 완료: $success');
+                        if (success == true) {
+                          if (!mounted) return;
+                          context.pushNamed('survey');
+                        } else {
+                          debugPrint('❌ 프로필 설정 실패');
+                        }
+                      },
                       disabled: !isFormValid,
                     );
                   },
