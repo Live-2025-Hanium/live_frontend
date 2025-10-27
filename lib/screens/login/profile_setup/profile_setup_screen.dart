@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:live_frontend/core/controllers/presigned_url_controller.dart';
 import 'package:live_frontend/core/controllers/profile_controller.dart';
 import 'package:live_frontend/core/repositories/presigned_url_repository.dart';
+import 'package:live_frontend/models/presigned_url_model.dart';
 import 'package:live_frontend/models/profile_model.dart';
 import 'package:live_frontend/providers/dio_provider.dart';
 import 'package:live_frontend/screens/login/profile_setup/widgets/nickname_field.dart';
@@ -56,6 +57,8 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
     final formData = _formKey.currentState!.value;
 
+    PresignedUrlModel? presigned;
+
     debugPrint('✅ 프로필 설정 폼 데이터: $formData');
 
     try {
@@ -68,38 +71,32 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           presignedUrlRepository,
         );
         // presigned URL 생성
-        final presigned = await presignedUrlController.createPresignedUrl(
+        presigned = await presignedUrlController.createPresignedUrl(
           '$_pickedImagePath.$_pickedImageExtension',
           'image/$_pickedImageExtension',
           'PROFILE',
         );
 
-        if (presigned == null) {
-          // 토스트 띄우기
-          debugPrint('❌ 프리사인드 URL 생성 실패');
-          return false;
-        }
-
         // 프로필 이미지 업로드
         await presignedUrlController.uploadImage(
           _pickedImagePath!,
           _pickedImageExtension!,
-          presigned,
+          presigned!,
         );
-
-        final profileController = ref.read(profileControllerProvider);
-        final payload = ProfileUpdatePayloadModel(
-          nickname: formData['nickname'] as String,
-          gender: (formData['gender'] as Gender).value,
-          occupation: (formData['job'] as Occupation).value,
-          profileImageUrl: presigned.accessUrl,
-          birthYear: formData['year'],
-          birthMonth: formData['month'],
-          birthDay: formData['day'],
-        );
-
-        return await profileController.updateProfile(payload);
       }
+
+      final profileController = ref.read(profileControllerProvider);
+      final payload = ProfileUpdatePayloadModel(
+        nickname: formData['nickname'] as String,
+        gender: (formData['gender'] as Gender).value,
+        occupation: (formData['job'] as Occupation).value,
+        profileImageUrl: presigned == null ? '' : presigned.accessUrl,
+        birthYear: formData['year'],
+        birthMonth: formData['month'],
+        birthDay: formData['day'],
+      );
+
+      return await profileController.updateProfile(payload);
 
       // final formData = _formKey.currentState!.value;
       // final saeipUser = SaeipUserModel.fromFormData(formData);

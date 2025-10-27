@@ -36,4 +36,16 @@ class PresignedUrlModel {
       _$PresignedUrlModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$PresignedUrlModelToJson(this);
+
+  PresignedUrlModel copyWith({
+    String? uploadUrl,
+    String? s3Key,
+    String? accessUrl,
+  }) {
+    return PresignedUrlModel(
+      uploadUrl: uploadUrl ?? this.uploadUrl,
+      s3Key: s3Key ?? this.s3Key,
+      accessUrl: accessUrl ?? this.accessUrl,
+    );
+  }
 }
