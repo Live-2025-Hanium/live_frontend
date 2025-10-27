@@ -25,6 +25,6 @@ void main() async {
   };
 
   KakaoSdk.init(nativeAppKey: Env.kakaoNativeAppKey);
-  await Jiffy.setLocale('ko_Kr', startOfWeek: StartOfWeek.monday);
+  await Jiffy.setLocale('ko_kr', startOfWeek: StartOfWeek.monday);
   runApp(const ProviderScope(child: MyApp()));
 }
