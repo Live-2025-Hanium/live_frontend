@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
+import 'package:live_frontend/env.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -44,19 +45,27 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDEz010keKj8GB5EGrdDF_-6MBKhx4wXv0',
-    appId: '1:67317803547:android:26240e5f911ffefc0f66be',
-    messagingSenderId: '67317803547',
-    projectId: 'live-hanium',
-    storageBucket: 'live-hanium.firebasestorage.app',
+    apiKey: Env.firebaseAndroidApiKey,
+    appId: Env.firebaseAndroidAppId,
+    messagingSenderId: Env.firebaseMessagingSenderId,
+    projectId: Env.firebaseProjectId,
+    storageBucket: Env.firebaseStorageBucket,
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAcaZPFhZWvsohjtjRLKot727PsyGAzHrg',
-    appId: '1:67317803547:ios:cbe369ad3a0296650f66be',
-    messagingSenderId: '67317803547',
-    projectId: 'live-hanium',
-    storageBucket: 'live-hanium.firebasestorage.app',
-    iosBundleId: 'com.example.liveFrontend',
+    apiKey: Env.firebaseIosApiKey,
+    appId: Env.firebaseIosAppId,
+    messagingSenderId: Env.firebaseMessagingSenderId,
+    projectId: Env.firebaseProjectId,
+    storageBucket: Env.firebaseStorageBucket,
+    iosBundleId: Env.iosBundleId,
+  );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: Env.firebaseWebApiKey,
+    appId: Env.firebaseWebAppId,
+    messagingSenderId: Env.firebaseMessagingSenderId,
+    projectId: Env.firebaseProjectId,
+    storageBucket: Env.firebaseStorageBucket,
   );
 }

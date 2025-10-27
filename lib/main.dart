@@ -2,6 +2,8 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:live_frontend/providers/auth_provider.dart';
+
 import 'firebase_options.dart';
 import 'app.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
@@ -9,10 +11,20 @@ import 'package:live_frontend/env.dart';
 import 'package:jiffy/jiffy.dart';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.web,
+    );
+  } else {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
 
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
@@ -26,5 +38,9 @@ void main() async {
 
   KakaoSdk.init(nativeAppKey: Env.kakaoNativeAppKey);
   await Jiffy.setLocale('ko_kr', startOfWeek: StartOfWeek.monday);
-  runApp(const ProviderScope(child: MyApp()));
+
+  final container = ProviderContainer();
+  await container.read(authProvider.notifier).restoreSession();
+
+  runApp(ProviderScope(parent: container, child: const MyApp()));
 }

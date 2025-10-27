@@ -18,7 +18,7 @@ class LoginScreen extends ConsumerWidget {
 
     ref.listen<AuthState>(authProvider, (previous, next) {
       if (next.status == AuthStatus.authenticated) {
-        if (next.isNewUser != true) {
+        if (next.isNewUser == true) {
           context.go('/login/terms');
         } else {
           context.go('/home');
@@ -40,13 +40,13 @@ class LoginScreen extends ConsumerWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        spacing: 12,
                         children: [
                           SvgPicture.asset(
                             'assets/logo/logo.svg',
                             width: 204,
                             height: 56,
                           ),
+                          const SizedBox(height: 12),
                           Text(
                             '세상 밖으로 한 발짝',
                             style: AppTextStyles.titleSemibold(

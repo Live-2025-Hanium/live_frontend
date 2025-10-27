@@ -25,12 +25,15 @@ import 'package:live_frontend/screens/forum/forum_post_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
+    initialLocation: '/login',
     redirect: (context, state) {
       // redirect 내부에서 최신 인증 상태를 직접 읽어옵니다.
-      final authStatus = ref.read(authProvider);
+      final authStatus = ref.watch(authProvider);
       final isLoggedIn = authStatus.status == AuthStatus.authenticated;
       final isLoading = authStatus.status == AuthStatus.loading;
       final isOnLoginPage = state.uri.toString() == '/login';
+
+      debugPrint('isLoading: $isLoading, isLoggedIn: $isLoggedIn, isOnLoginPage: $isOnLoginPage');
 
       // 1. 로딩 중엔 아무것도 리디렉션하지 않음
       if (isLoading) return null;
@@ -55,7 +58,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       return NotFoundScreen(error: state.error);
     },
     routes: [
-      GoRoute(path: '/', redirect: (_, __) => '/home'),
+      GoRoute(path: '/', redirect: (_, __) => '/login'),
       GoRoute(
         name: 'login',
         path: '/login',

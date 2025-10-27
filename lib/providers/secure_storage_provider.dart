@@ -1,26 +1,56 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-/// A small wrapper that uses secure storage.
+/// A small wrapper that uses secure storage on mobile and shared_preferences on web.
 class SecureStorageService {
-  final FlutterSecureStorage _storage;
+  final FlutterSecureStorage _secureStorage;
+  SharedPreferences? _prefs;
 
-  SecureStorageService() : _storage = const FlutterSecureStorage();
+  SecureStorageService() : _secureStorage = const FlutterSecureStorage();
+
+  Future<void> _initPrefs() async {
+    _prefs ??= await SharedPreferences.getInstance();
+  }
 
   Future<String?> read(String key) async {
-    return _storage.read(key: key);
+    if (kIsWeb) {
+      await _initPrefs();
+      return _prefs!.getString(key);
+    }
+    return _secureStorage.read(key: key);
   }
 
   Future<void> write(String key, String? value) async {
-    await _storage.write(key: key, value: value);
+    if (kIsWeb) {
+      await _initPrefs();
+      if (value == null) {
+        await _prefs!.remove(key);
+      } else {
+        await _prefs!.setString(key, value);
+      }
+      return;
+    }
+    await _secureStorage.write(key: key, value: value);
   }
 
   Future<void> delete(String key) async {
-    await _storage.delete(key: key);
+    if (kIsWeb) {
+      await _initPrefs();
+      await _prefs!.remove(key);
+      return;
+    }
+    await _secureStorage.delete(key: key);
   }
 
   Future<void> deleteAll() async {
-    await _storage.deleteAll();
+    if (kIsWeb) {
+      await _initPrefs();
+      await _prefs!.clear();
+      return;
+    }
+    await _secureStorage.deleteAll();
   }
 
   // token specific helpers

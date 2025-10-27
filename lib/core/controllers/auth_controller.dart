@@ -13,11 +13,7 @@ class AuthController extends StateNotifier<AuthState> {
   final Ref ref;
 
   AuthController(this.ref)
-    : super(const AuthState(status: AuthStatus.loading)) {
-    Future.microtask(() async {
-      await restoreSession();
-    });
-  }
+      : super(const AuthState(status: AuthStatus.initial));
 
   Future<void> restoreSession() async {
     try {
