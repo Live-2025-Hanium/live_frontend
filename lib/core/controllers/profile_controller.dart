@@ -1,30 +1,70 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:live_frontend/core/repositories/profile_repository.dart';
 import 'package:live_frontend/models/common_api_response_model.dart';
 import 'package:live_frontend/models/profile_model.dart';
-import 'package:live_frontend/providers/dio_provider.dart';
 
 final profileControllerProvider = Provider(
-  (ref) => ProfileController(ref.read(dioProvider)),
+  (ref) => ProfileController(ref.read(profileRepositoryProvider)),
 );
 
-// 나중에 레포지토리 패턴 지켜서 리팩토링하기
 class ProfileController {
-  final Dio _dio;
-  ProfileController(this._dio);
+  final ProfileRepository _repository;
+
+  ProfileController(this._repository);
 
   Future<ProfileModel?> fetchProfile() async {
     try {
-      final resp = await _dio.get('/api/members/me');
-
-      final apiResp = ApiResponseModel<ProfileModel>.fromJson(
-        resp.data as Map<String, dynamic>,
-        (raw) => ProfileModel.fromJson(Map<String, dynamic>.from(raw as Map)),
-      );
-
-      return apiResp.data;
+      return await _repository.fetchProfile();
     } catch (e) {
       return null;
+    }
+  }
+
+  Future<NicknameDuplicationCheckResponse> checkNicknameDuplicated(
+    String nickname,
+  ) async {
+    final notAvailable = NicknameDuplicationCheckResponse(
+      message: '네트워크 오류가 발생했습니다.',
+      available: false,
+    );
+
+    try {
+      final response = await _repository.checkNicknameDuplicated(nickname);
+
+      return NicknameDuplicationCheckResponse(
+        message: response?.message ?? '네트워크 오류가 발생했습니다.',
+        available: response?.available ?? false,
+      );
+    } on DioException catch (e) {
+      if (e.response != null) {
+        final apiResp = ApiResponseModel<Null>.fromJson(
+          e.response!.data,
+          (raw) => null,
+        );
+        if (apiResp.error == null) {
+          return notAvailable;
+        }
+
+        return NicknameDuplicationCheckResponse(
+          message: apiResp.error!.message,
+          available: false,
+        );
+      }
+      return notAvailable;
+    } catch (e) {
+      return notAvailable;
+    }
+  }
+
+  Future<bool> updateProfile(ProfileUpdatePayloadModel payload) async {
+    try {
+      debugPrint('✅ 프로필 업데이트 페이로드: ${payload.toJson()}');
+      await _repository.updateProfile(payload);
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }

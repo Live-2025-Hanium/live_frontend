@@ -3,17 +3,18 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:live_frontend/models/profile_model.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
 class GenderSelector extends StatelessWidget {
   const GenderSelector({super.key});
 
-  static const List<String> genders = ['남자', '여자'];
+  static const List<Gender> genders = [Gender.male, Gender.female];
 
   @override
   Widget build(BuildContext context) {
-    return FormBuilderField<String>(
+    return FormBuilderField<Gender>(
       name: 'gender',
       validator: FormBuilderValidators.required(errorText: ''),
       builder: (field) {
@@ -42,26 +43,28 @@ class GenderSelector extends StatelessWidget {
                 final textColor = isSelected
                     ? Colors.black
                     : (selectedGender == null
-                        ? Colors.black
-                        : AppColors.blackBlack4);
+                          ? Colors.black
+                          : AppColors.blackBlack4);
                 final underlineColor = isSelected || selectedGender == null
                     ? AppColors.blackBlack1
                     : Colors.transparent;
 
                 return Expanded(
-                  child: GestureDetector(
-                    onTap: () => field.didChange(gender),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minWidth: 160.w,
-                        minHeight: 48.h,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 0),
+                    child: TextButton(
+                      onPressed: () => field.didChange(gender),
+                      style: TextButton.styleFrom(
+                        minimumSize: Size(160.w, 48.h),
+                        padding: EdgeInsets.zero,
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           // 텍스트
                           Text(
-                            gender,
+                            gender.description,
                             style: AppTextStyles.bodyRegular(
                               context,
                               color: textColor,
@@ -69,10 +72,7 @@ class GenderSelector extends StatelessWidget {
                           ),
                           const Gap(6),
                           // 밑줄
-                          Container(
-                            height: 1,
-                            color: underlineColor,
-                          ),
+                          Container(height: 1, color: underlineColor),
                         ],
                       ),
                     ),

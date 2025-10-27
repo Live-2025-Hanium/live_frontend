@@ -3,15 +3,14 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:live_frontend/core/controllers/profile_controller.dart';
+import 'package:live_frontend/models/profile_model.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:live_frontend/providers/dio_provider.dart';
-import 'package:live_frontend/models/common_api_response_model.dart';
 
 class NicknameField extends ConsumerStatefulWidget {
   const NicknameField({super.key});
@@ -44,29 +43,6 @@ class NicknameFieldState extends ConsumerState<NicknameField> {
     super.dispose();
   }
 
-  Future<bool> _checkNickname(String nickname) async {
-    final dio = ref.read(dioProvider);
-    try {
-      final resp = await dio.get(
-        '/api/members/nickname/check',
-        queryParameters: {'nickname': nickname},
-      );
-
-      final apiResp = ApiResponseModel<Map<String, dynamic>>.fromJson(
-        resp.data as Map<String, dynamic>,
-        (raw) => Map<String, dynamic>.from(raw as Map),
-      );
-      final available = apiResp.data?['available'] as bool?;
-      return available ?? false;
-    } on DioException catch (e) {
-      debugPrint('nickname check error: ${e.response?.data ?? e.message}');
-      return false;
-    } catch (e) {
-      debugPrint('nickname check unexpected error: $e');
-      return false;
-    }
-  }
-
   Future<void> _handleDuplicateCheck() async {
     final formState = FormBuilder.of(context);
     final nicknameField = formState?.fields['nickname'];
@@ -76,21 +52,23 @@ class NicknameFieldState extends ConsumerState<NicknameField> {
     if (!isValid) return;
 
     final nickname = nicknameField?.value?.trim() ?? '';
-    final available = await _checkNickname(nickname);
+    final nicknameCheckResponse = await ref
+        .read(profileControllerProvider)
+        .checkNicknameDuplicated(nickname);
 
     if (!mounted) return;
 
     setState(() {
       _isDuplicateChecked = true;
-      _isAvailable = available;
+      _isAvailable = nicknameCheckResponse.available;
     });
 
-    if (!available) {
-      nicknameField?.invalidate('이미 사용 중인 닉네임입니다.');
+    if (!nicknameCheckResponse.available) {
+      nicknameField?.invalidate(nicknameCheckResponse.message);
       await showDialog<void>(
         context: context,
         builder: (ctx) => SaeipModal(
-          message: '이미 사용 중인 닉네임입니다.',
+          message: nicknameCheckResponse.message,
           confirmText: '확인',
           confirmBackgroundColor: AppColors.errorError3,
           onConfirm: () {

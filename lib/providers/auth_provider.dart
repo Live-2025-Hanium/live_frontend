@@ -10,6 +10,7 @@ class AuthState {
   final String? nickname;
   final String? error;
   final bool? isNewUser;
+  final String? pickedImagePath;
 
   const AuthState({
     this.status = AuthStatus.initial,
@@ -17,6 +18,7 @@ class AuthState {
     this.nickname,
     this.error,
     this.isNewUser,
+    this.pickedImagePath,
   });
 
   AuthState copyWith({
@@ -24,13 +26,16 @@ class AuthState {
     SocialUser? socialUser,
     String? nickname,
     String? error,
+    bool? isNewUser,
+    String? pickedImagePath,
   }) {
     return AuthState(
       status: status ?? this.status,
       socialUser: socialUser ?? this.socialUser,
       nickname: nickname ?? this.nickname,
       error: error,
-      isNewUser: isNewUser,
+      isNewUser: isNewUser ?? this.isNewUser,
+      pickedImagePath: pickedImagePath ?? this.pickedImagePath,
     );
   }
 }

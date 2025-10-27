@@ -1,17 +1,50 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
+import 'package:image_picker/image_picker.dart';
 
-class ProfileImagePicker extends ConsumerWidget {
-  const ProfileImagePicker({super.key});
+class ProfileImagePicker extends ConsumerStatefulWidget {
+  const ProfileImagePicker({
+    super.key,
+    this.onImagePicked,
+  });
+
+  final void Function(String path, String extension)? onImagePicked;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ProfileImagePicker> createState() => _ProfileImagePickerState();
+}
+
+class _ProfileImagePickerState extends ConsumerState<ProfileImagePicker> {
+  late ImagePicker _imagePicker;
+  String _pickedImagePath = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _imagePicker = ImagePicker();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final imageUrl = ref.watch(authProvider).socialUser?.profileImageUrl;
+
     return GestureDetector(
-      onTap: () {
-        // TODO: 이미지 변경 처리
+      onTap: () async {
+        final pickedFile = await _imagePicker.pickImage(
+          source: ImageSource.gallery,
+        );
+
+        if (pickedFile != null) {
+          final path = pickedFile.path;
+          final extension = path.split('.').last;
+          setState(() {
+            _pickedImagePath = path;
+          });
+          widget.onImagePicked?.call(path, extension);
+        }
       },
       child: Stack(
         alignment: Alignment.center,
@@ -19,11 +52,12 @@ class ProfileImagePicker extends ConsumerWidget {
           CircleAvatar(
             radius: 44.w,
             backgroundColor: Colors.grey[200],
-            backgroundImage: imageUrl != null ? NetworkImage(imageUrl!) : null,
-            child:
-                imageUrl == null
-                    ? const Icon(Icons.person, size: 44, color: Colors.grey)
-                    : null,
+            backgroundImage: _pickedImagePath == ""
+                ? null
+                : FileImage(File(_pickedImagePath)) as ImageProvider,
+            child: _pickedImagePath == "" && imageUrl == null
+                ? const Icon(Icons.person, size: 44, color: Colors.grey)
+                : null,
           ),
           // 검정색 그라데이션 오버레이
           Container(

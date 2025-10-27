@@ -28,3 +28,43 @@ Map<String, dynamic> _$ProfileModelToJson(ProfileModel instance) =>
       'occupationDetail': instance.occupationDetail,
       'lastSurveySubmittedAt': instance.lastSurveySubmittedAt,
     };
+
+NicknameDuplicationCheckModel _$NicknameDuplicationCheckModelFromJson(
+  Map<String, dynamic> json,
+) => NicknameDuplicationCheckModel(
+  available: json['available'] as bool,
+  message: json['message'] as String,
+);
+
+Map<String, dynamic> _$NicknameDuplicationCheckModelToJson(
+  NicknameDuplicationCheckModel instance,
+) => <String, dynamic>{
+  'available': instance.available,
+  'message': instance.message,
+};
+
+ProfileUpdatePayloadModel _$ProfileUpdatePayloadModelFromJson(
+  Map<String, dynamic> json,
+) => ProfileUpdatePayloadModel(
+  nickname: json['nickname'] as String,
+  profileImageUrl: json['profileImageUrl'] as String?,
+  gender: json['gender'] as String,
+  birthYear: (json['birthYear'] as num).toInt(),
+  birthMonth: (json['birthMonth'] as num).toInt(),
+  birthDay: (json['birthDay'] as num).toInt(),
+  occupation: json['occupation'] as String,
+  occupationDetail: json['occupationDetail'] as String?,
+);
+
+Map<String, dynamic> _$ProfileUpdatePayloadModelToJson(
+  ProfileUpdatePayloadModel instance,
+) => <String, dynamic>{
+  'nickname': instance.nickname,
+  'profileImageUrl': instance.profileImageUrl,
+  'gender': instance.gender,
+  'birthYear': instance.birthYear,
+  'birthMonth': instance.birthMonth,
+  'birthDay': instance.birthDay,
+  'occupation': instance.occupation,
+  'occupationDetail': instance.occupationDetail,
+};
