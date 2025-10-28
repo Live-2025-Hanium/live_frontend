@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/theme/app_colors.dart';
@@ -26,14 +25,14 @@ class MissionListItem extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          height: 48.h,
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          height: 48,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
           child: Row(
             children: [
               // 타입에 따른 이미지
               _buildTypeImage(),
-              Gap(16.w),
+              Gap(16),
               // 미션 제목
               Expanded(
                 child: Text(
@@ -65,17 +64,17 @@ class MissionListItem extends StatelessWidget {
     return SizedBox(
       child: Image.asset(
         imagePath,
-        width: 16.w,
-        height: 16.w,
+        width: 16,
+        height: 16,
         fit: BoxFit.contain,
         errorBuilder: (context, error, stackTrace) {
           // Log the error to make debugging easier (asset path, error message)
           debugPrint('Failed to load asset: $imagePath -> $error');
           if (stackTrace != null) debugPrint(stackTrace.toString());
           return SizedBox(
-            width: 16.w,
-            height: 16.w,
-            child: Icon(Icons.task_alt, size: 20.w, color: Colors.green[600]),
+            width: 16,
+            height: 16,
+            child: Icon(Icons.task_alt, size: 20, color: Colors.green[600]),
           );
         },
       ),

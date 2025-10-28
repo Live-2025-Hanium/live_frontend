@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
@@ -32,7 +31,7 @@ class MissionList extends ConsumerWidget {
     return dailyCompletedMissionsAsync.when(
       data: (data) {
         return Container(
-          padding: EdgeInsets.symmetric(vertical: 32.h, horizontal: 16.w),
+          padding: EdgeInsets.symmetric(vertical: 32, horizontal: 16),
           width: double.infinity,
           color: AppColors.blackBlack0,
           child: Column(
@@ -45,7 +44,7 @@ class MissionList extends ConsumerWidget {
               ),
 
               if (data == null || data.completedMissions.isEmpty) ...[
-                Gap(16.h),
+                Gap(16),
                 Text(
                   '완료한 미션이 없습니다.',
                   style: AppTextStyles.bodyMedium(
@@ -55,7 +54,7 @@ class MissionList extends ConsumerWidget {
               ] else
                 ...data.completedMissions.map(
                   (mission) => Padding(
-                    padding: EdgeInsets.only(top: 16.h),
+                    padding: EdgeInsets.only(top: 16),
                     child: MissionListItem(
                       type: type,
                       missionTitle: mission.missionTitle,

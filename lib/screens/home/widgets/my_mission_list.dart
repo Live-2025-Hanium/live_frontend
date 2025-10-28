@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/core/controllers/my_mission_controller.dart';
@@ -57,14 +56,14 @@ class MyMissionList extends ConsumerWidget {
           ..sort(_missionComparator);
 
         return Padding(
-          padding: EdgeInsets.only(top: 8.h, left: 16.w, right: 8.w),
+          padding: EdgeInsets.only(top: 8, left: 16, right: 8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(context),
-              Gap(8.h),
+              Gap(8),
               Padding(
-                padding: EdgeInsets.only(bottom: 8.h, right: 8.w),
+                padding: EdgeInsets.only(bottom: 8, right: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -78,7 +77,7 @@ class MyMissionList extends ConsumerWidget {
                             onTap: () => _onTap(context, ref, mission),
                             onCheckBoxTap: () => _onTap(context, ref, mission),
                           ),
-                          Gap(8.h),
+                          Gap(8),
                         ],
                       );
                     }),
@@ -103,10 +102,10 @@ class MyMissionList extends ConsumerWidget {
           style: AppTextStyles.titleMedium(context, color: Colors.black),
         ),
         SizedBox(
-          width: math.min(48.w, 56),
-          height: math.min(48.w, 56),
+          width: math.min(48, 56),
+          height: math.min(48, 56),
           child: IconButton(
-            iconSize: math.min(24.w, 28),
+            iconSize: math.min(24, 28),
             onPressed: () => context.pushNamed('my_mission_add'),
             icon: const Icon(Icons.add),
           ),
@@ -122,7 +121,7 @@ class MyMissionList extends ConsumerWidget {
         children: [
           if (mission.scheduledTime != null)
             MissionTime(scheduledTime: mission.scheduledTime!),
-          Gap(12.w),
+          Gap(12),
           if (mission.repeatType != null)
             MissionRepeat(repeatInterval: mission.repeatType!.label),
         ],
@@ -134,12 +133,12 @@ class MyMissionList extends ConsumerWidget {
   // 데이터가 없을 때 UI
   Widget _buildEmptyState(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 8.h, left: 16.w, right: 8.w),
+      padding: EdgeInsets.only(top: 8, left: 16, right: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(context),
-          Gap(8.h),
+          Gap(8),
           const Center(child: Text('No missions for today.')),
         ],
       ),

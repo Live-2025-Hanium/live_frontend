@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -47,17 +47,13 @@ class SaeipAppBar extends StatelessWidget implements PreferredSizeWidget {
     if (appBarStyle == AppBarStyle.common) {
       return AppBar(
         automaticallyImplyLeading: false,
-        title: SvgPicture.asset(
-          'assets/logo/logo.svg',
-          width: 73.h,
-          height: 20.h,
-        ),
+        title: SvgPicture.asset('assets/logo/logo.svg', width: 73, height: 20),
         centerTitle: false,
         actions: [
           ...(actions ?? []),
           IconButton(
-            iconSize: 22.h,
-            padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 14.h),
+            iconSize: 22,
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             icon: SvgPicture.asset(
               'assets/icons/notification.svg',
               colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),

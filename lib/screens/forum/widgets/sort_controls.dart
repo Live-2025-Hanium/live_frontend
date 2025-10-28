@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
 enum ForumSort { latest, views, scraps }
@@ -64,9 +63,7 @@ class _SortControlsState extends State<SortControls> {
         borderRadius: BorderRadius.circular(widget.menuRadius),
       ),
       elevation: widget.menuElevation,
-      constraints: BoxConstraints(
-        maxWidth: widget.menuWidth.w,
-      ),
+      constraints: BoxConstraints(maxWidth: widget.menuWidth),
       items: [
         for (int i = 0; i < ForumSort.values.length; i++)
           PopupMenuItem<ForumSort>(
@@ -100,14 +97,14 @@ class _SortControlsState extends State<SortControls> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(widget.value.label, style: style),
-          Gap(8.w),
+          Gap(8),
           AnimatedRotation(
             duration: const Duration(milliseconds: 150),
             turns: _open ? 0.0 : 0.5,
             child: SvgPicture.asset(
               'assets/icons/arrow_down.svg',
-              width: 12.w,
-              height: 6.w,
+              width: 12,
+              height: 6,
             ),
           ),
         ],
@@ -136,7 +133,7 @@ class _MenuItem extends StatelessWidget {
         : AppTextStyles.bodyRegular(context).copyWith(color: Colors.black);
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         border: showDivider
             ? Border(

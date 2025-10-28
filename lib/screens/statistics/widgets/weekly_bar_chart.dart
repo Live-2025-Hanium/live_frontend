@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/providers/statistics_provider.dart';
 import 'package:live_frontend/theme/app_colors.dart';
@@ -41,8 +40,8 @@ class WeeklyBarChart extends ConsumerWidget {
                 10) +
             5;
         return Container(
-          height: 190.h,
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+          height: 190,
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: BarChart(
             BarChartData(
               maxY: maxVal.toDouble(),
@@ -89,14 +88,14 @@ class WeeklyBarChart extends ConsumerWidget {
                       const days = ['월', '화', '수', '목', '금', '토', '일'];
                       if (value.toInt() < days.length) {
                         return Padding(
-                          padding: EdgeInsets.only(top: 8.h),
+                          padding: EdgeInsets.only(top: 8),
                           child: TextButton(
                             onPressed: () {
                               onBarTapped(value.toInt());
                             },
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.zero,
-                              minimumSize: Size(24.w, 24.h),
+                              minimumSize: Size(24, 24),
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               alignment: Alignment.center,
                             ),
@@ -127,8 +126,8 @@ class WeeklyBarChart extends ConsumerWidget {
                       color: selectedIndex == index
                           ? AppColors.greenNormal
                           : AppColors.greenLightActive,
-                      width: 24.w,
-                      borderRadius: BorderRadius.circular(4.r),
+                      width: 24,
+                      borderRadius: BorderRadius.circular(4),
                     ),
                   ],
                 );
@@ -148,11 +147,11 @@ class WeeklyBarChart extends ConsumerWidget {
       },
       loading: () {
         return SizedBox(
-          height: 190.h,
+          height: 190,
           child: Center(
             child: SizedBox(
-              height: 40.w,
-              width: 40.w,
+              height: 40,
+              width: 40,
               child: CircularProgressIndicator(),
             ),
           ),
@@ -160,7 +159,7 @@ class WeeklyBarChart extends ConsumerWidget {
       },
       error: (error, stackTrace) {
         return SizedBox(
-          height: 190.h,
+          height: 190,
           child: Center(
             child: Text(
               '데이터를 불러오는 중 오류가 발생했어요.',

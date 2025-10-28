@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
@@ -44,12 +43,15 @@ class PostCard extends StatelessWidget {
         '${post.createdAt.year}.${post.createdAt.month.toString().padLeft(2, '0')}.${post.createdAt.day.toString().padLeft(2, '0')}';
 
     final selector =
-        selectionBuilder?.call(context, selected) ?? _DefaultSelector(checked: selected);
+        selectionBuilder?.call(context, selected) ??
+        _DefaultSelector(checked: selected);
 
     // 디바이스 픽셀 비율 기반 다운샘플(옵션)
     final gridColumn = 2; // 기본 2열
-    final logicalTileWidth = MediaQuery.of(context).size.width / gridColumn - 16 * 2 / gridColumn;
-    final cacheWidth = (logicalTileWidth * MediaQuery.of(context).devicePixelRatio).round();
+    final logicalTileWidth =
+        MediaQuery.of(context).size.width / gridColumn - 16 * 2 / gridColumn;
+    final cacheWidth =
+        (logicalTileWidth * MediaQuery.of(context).devicePixelRatio).round();
 
     return InkWell(
       borderRadius: BorderRadius.circular(8),
@@ -70,16 +72,20 @@ class PostCard extends StatelessWidget {
                     imageUrl: _thumbUrl(),
                     fit: BoxFit.cover,
                     memCacheWidth: cacheWidth, // iOS/Android 다운샘플
-                    placeholder: (_, __) => const ColoredBox(color: Color(0xFFEDEDED)),
-                    errorWidget: (_, __, ___) => const ColoredBox(color: Color(0xFFEDEDED)),
+                    placeholder: (_, __) =>
+                        const ColoredBox(color: Color(0xFFEDEDED)),
+                    errorWidget: (_, __, ___) =>
+                        const ColoredBox(color: Color(0xFFEDEDED)),
                   ),
                   if (editing && showSelectionOverlay)
-                    Container(color: Colors.black.withOpacity(selected ? 0.12 : 0.0)),
+                    Container(
+                      color: Colors.black.withOpacity(selected ? 0.12 : 0.0),
+                    ),
                   if (editing)
                     Align(
                       alignment: selectionAlignment,
                       child: Padding(
-                        padding: EdgeInsets.all(8.r),
+                        padding: EdgeInsets.all(8),
                         child: selector,
                       ),
                     ),
@@ -88,7 +94,7 @@ class PostCard extends StatelessWidget {
             ),
           ),
 
-          Gap(8.h),
+          Gap(8),
 
           // 제목
           Text(
@@ -98,12 +104,15 @@ class PostCard extends StatelessWidget {
             style: AppTextStyles.bodyRegular(context),
           ),
 
-          Gap(4.h),
+          Gap(4),
 
           // 날짜
           Text(
             dateStr,
-            style: AppTextStyles.smallMedium(context, color: AppColors.blackBlack4),
+            style: AppTextStyles.smallMedium(
+              context,
+              color: AppColors.blackBlack4,
+            ),
           ),
         ],
       ),
@@ -118,17 +127,16 @@ class _DefaultSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 24.w,
-      height: 24.w,
+      width: 24,
+      height: 24,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: checked ? AppColors.greenNormal : Colors.white,
-        border: Border.all(
-          color: AppColors.greenNormal,
-          width: 2,
-        ),
+        border: Border.all(color: AppColors.greenNormal, width: 2),
       ),
-      child: checked ? const Icon(Icons.check, size: 16, color: Colors.white) : null,
+      child: checked
+          ? const Icon(Icons.check, size: 16, color: Colors.white)
+          : null,
     );
   }
 }

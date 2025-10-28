@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/providers/statistics_provider.dart';
@@ -38,28 +37,28 @@ class MissionCompletionGauge extends ConsumerWidget {
         final percentage = data?.completionRate ?? 0.0;
         return LayoutBuilder(
           builder: (ctx, c) {
-            final w = c.maxWidth.isFinite ? c.maxWidth : 288.w;
+            final w = c.maxWidth.isFinite ? c.maxWidth : 288;
             final h = w / 2;
 
             return SizedBox(
-              width: w,
+              width: w.toDouble(),
               height: h,
               child: CustomPaint(
                 painter: _SemiGaugePainter(
                   percent: percentage.clamp(0, 100).toDouble(),
                   trackColor: AppColors.blackBlack1,
                   progressColor: AppColors.greenNormal,
-                  thickness: 10.w,
+                  thickness: 10,
                 ),
                 child: Center(
                   child: Padding(
-                    padding: EdgeInsets.only(top: 32.h),
+                    padding: EdgeInsets.only(top: 32),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          width: 32.w,
-                          height: 32.w,
+                          width: 32,
+                          height: 32,
                           decoration: BoxDecoration(
                             color: AppColors.blackBlack1,
                             shape: BoxShape.circle,
@@ -70,7 +69,7 @@ class MissionCompletionGauge extends ConsumerWidget {
                             color: AppColors.blackBlack2,
                           ),
                         ),
-                        Gap(12.h),
+                        Gap(12),
                         Text(
                           '${percentage.toStringAsFixed(1)}%',
                           style: const TextStyle(
@@ -97,12 +96,12 @@ class MissionCompletionGauge extends ConsumerWidget {
         );
       },
       loading: () => SizedBox(
-        height: 144.w,
-        width: 144.w,
+        height: 144,
+        width: 144,
         child: Center(
           child: SizedBox(
-            height: 40.w,
-            width: 40.w,
+            height: 40,
+            width: 40,
             child: CircularProgressIndicator(),
           ),
         ),

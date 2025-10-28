@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
@@ -32,7 +31,7 @@ class ExecuteScreenTemplate extends StatelessWidget {
       appBar: SaeipAppBar(title: '미션 수행'),
       body: Container(
         width: double.infinity,
-        padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 40.h),
+        padding: EdgeInsets.only(left: 16, right: 16, bottom: 40),
         child: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -51,15 +50,15 @@ class ExecuteScreenTemplate extends StatelessWidget {
                           color: AppColors.greenNormal,
                         ),
                       ),
-                      Gap(4.h),
+                      Gap(4),
                       Text('미션을 진행 중이에요.'),
-                      Gap(16.h),
+                      Gap(16),
                       Align(
                         alignment: Alignment.center,
                         widthFactor: 1.0,
                         child: Image.asset(imagePath, fit: BoxFit.contain),
                       ),
-                      Gap(24.h),
+                      Gap(24),
                       if (child != null) child!,
                     ],
                   ),
@@ -67,7 +66,7 @@ class ExecuteScreenTemplate extends StatelessWidget {
               ),
               // 하단 버튼
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.h),
+                padding: EdgeInsets.symmetric(vertical: 8),
                 child: Row(
                   children: [
                     Expanded(
@@ -79,7 +78,7 @@ class ExecuteScreenTemplate extends StatelessWidget {
                         },
                       ),
                     ),
-                    Gap(8.w),
+                    Gap(8),
                     Expanded(
                       child: SaeipButton(
                         text: rightLabel,

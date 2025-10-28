@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CategoryChips extends StatelessWidget {
   const CategoryChips({
@@ -28,12 +27,12 @@ class CategoryChips extends StatelessWidget {
     final divider = BorderSide(color: AppColors.greenLight, width: 1);
 
     return Container(
-      height: height.h,
+      height: height,
       decoration: showBottomDivider
           ? BoxDecoration(border: Border(bottom: divider))
           : null,
       child: ListView.separated(
-        padding: padding.w,
+        padding: padding,
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
         itemBuilder: (_, i) {
@@ -43,7 +42,7 @@ class CategoryChips extends StatelessWidget {
             child: InkWell(
               onTap: () => onSelected(i),
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 12.h),
+                padding: EdgeInsets.symmetric(vertical: 12),
                 child: Center(
                   child: Text(
                     categories[i],
@@ -59,7 +58,7 @@ class CategoryChips extends StatelessWidget {
             ),
           );
         },
-        separatorBuilder: (_, __) => SizedBox(width: spacing.w),
+        separatorBuilder: (_, __) => SizedBox(width: spacing),
         itemCount: categories.length,
       ),
     );

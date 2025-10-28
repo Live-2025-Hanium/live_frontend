@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:live_frontend/models/profile_model.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
@@ -55,7 +54,7 @@ class GenderSelector extends StatelessWidget {
                     child: TextButton(
                       onPressed: () => field.didChange(gender),
                       style: TextButton.styleFrom(
-                        minimumSize: Size(160.w, 48.h),
+                        minimumSize: Size(160, 48),
                         padding: EdgeInsets.zero,
                       ),
                       child: Column(

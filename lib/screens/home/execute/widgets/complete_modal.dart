@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
 import 'package:live_frontend/providers/home_provider.dart';
@@ -40,8 +39,8 @@ class _CompleteModalState extends ConsumerState<CompleteModal> {
       },
       image: Image.asset(
         'assets/images/clover.png',
-        width: 80.w,
-        height: 80.w,
+        width: 80,
+        height: 80,
         fit: BoxFit.cover,
       ),
     );

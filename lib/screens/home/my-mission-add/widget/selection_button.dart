@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
@@ -22,7 +21,7 @@ class SelectionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(8.r);
+    final radius = BorderRadius.circular(8);
 
     return Material(
       color: Colors.transparent, // 그림자/고도 없음
@@ -32,7 +31,7 @@ class SelectionButton extends StatelessWidget {
           borderRadius: radius,
           onTap: onPressed,
           child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: 48.h),
+            constraints: BoxConstraints(minHeight: 48),
             child: Padding(
               padding: EdgeInsetsGeometry.only(left: 16, right: 24),
               child: Row(
@@ -48,7 +47,7 @@ class SelectionButton extends StatelessWidget {
                             color: Colors.black,
                           ),
                         ),
-                        Gap(16.w),
+                        Gap(16),
                         if (selected != null && include)
                           Flexible(
                             child: Text(

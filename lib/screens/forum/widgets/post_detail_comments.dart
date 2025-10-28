@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:characters/characters.dart';
@@ -47,21 +46,22 @@ class PostDetailComments extends StatelessWidget {
     );
   }
 }
-  class _CommentTile extends StatelessWidget {
-    const _CommentTile({
-      super.key,
-      required this.comment,
-      required this.onTapMore,
-      required this.onTapLike,
-      required this.onTapReply,
-      this.avatarUrl,
-    });
-  
-    final ForumPostCommentModel comment;
-    final void Function(ForumPostCommentModel) onTapMore;
-    final void Function(ForumPostCommentModel) onTapLike;
-    final void Function(ForumPostCommentModel) onTapReply;
-    final String? avatarUrl;
+
+class _CommentTile extends StatelessWidget {
+  const _CommentTile({
+    super.key,
+    required this.comment,
+    required this.onTapMore,
+    required this.onTapLike,
+    required this.onTapReply,
+    this.avatarUrl,
+  });
+
+  final ForumPostCommentModel comment;
+  final void Function(ForumPostCommentModel) onTapMore;
+  final void Function(ForumPostCommentModel) onTapLike;
+  final void Function(ForumPostCommentModel) onTapReply;
+  final String? avatarUrl;
 
   String _fmt(DateTime d) {
     final mm = d.month.toString().padLeft(2, '0');
@@ -79,9 +79,9 @@ class PostDetailComments extends StatelessWidget {
     final dateTime = _fmt(comment.createdAt);
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.h),
+      padding: EdgeInsets.symmetric(vertical: 10),
       child: Container(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border(
@@ -96,7 +96,7 @@ class PostDetailComments extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 _Avatar(
-                  radius: 18.r,
+                  radius: 18,
                   url: (avatarUrl != null && avatarUrl!.isNotEmpty)
                       ? avatarUrl
                       : _seedAvatarUrl(comment.id),
@@ -104,7 +104,7 @@ class PostDetailComments extends StatelessWidget {
                       ? '?'
                       : comment.authorNickname.characters.first,
                 ),
-                Gap(12.w),
+                Gap(12),
 
                 // 닉네임/날짜/(내 댓글이면 더보기)
                 Expanded(
@@ -117,20 +117,21 @@ class PostDetailComments extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      Gap(8.w),
+                      Gap(8),
                       Text(
                         dateTime,
-                        style: AppTextStyles.smallMedium(context)
-                            .copyWith(color: AppColors.blackBlack4),
+                        style: AppTextStyles.smallMedium(
+                          context,
+                        ).copyWith(color: AppColors.blackBlack4),
                       ),
                       if (comment.isMyComment) ...[
-                        Gap(4.w),
+                        Gap(4),
                         IconButton(
-                          iconSize: 20.sp,
+                          iconSize: 20,
                           icon: const Icon(Icons.more_vert),
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
-                          splashRadius: 18.w,
+                          splashRadius: 18,
                           onPressed: () => onTapMore(comment),
                         ),
                       ],
@@ -139,29 +140,30 @@ class PostDetailComments extends StatelessWidget {
                 ),
 
                 // 우측 좋아요(아이콘 + 카운트)
-                Gap(8.w),
+                Gap(8),
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     InkWell(
                       onTap: () => onTapLike(comment),
-                      borderRadius: BorderRadius.circular(8.r),
+                      borderRadius: BorderRadius.circular(8),
                       child: Padding(
-                        padding: EdgeInsets.all(4.w),
+                        padding: EdgeInsets.all(4),
                         child: Icon(
                           comment.isLiked
                               ? Icons.favorite
                               : Icons.favorite_border,
-                          size: 22.sp,
+                          size: 22,
                           color: AppColors.pinkNormal,
                         ),
                       ),
                     ),
-                    Gap(2.h),
+                    Gap(2),
                     Text(
                       '${comment.likeCount}',
-                      style: AppTextStyles.smallMedium(context)
-                          .copyWith(color: AppColors.blackBlack3),
+                      style: AppTextStyles.smallMedium(
+                        context,
+                      ).copyWith(color: AppColors.blackBlack3),
                     ),
                   ],
                 ),
@@ -169,17 +171,15 @@ class PostDetailComments extends StatelessWidget {
             ),
 
             // ── 본문: 컨테이너(=아바타의 왼쪽선)와 좌측 정렬 ────────────────────────
-            Gap(8.h),
-            Text(
-              comment.content,
-              style: AppTextStyles.bodyRegular(context),
-            ),
+            Gap(8),
+            Text(comment.content, style: AppTextStyles.bodyRegular(context)),
 
-            Gap(16.h),
+            Gap(16),
             Text(
               '답글 달기',
-              style: AppTextStyles.smallMedium(context)
-                  .copyWith(color: AppColors.blackBlack4),
+              style: AppTextStyles.smallMedium(
+                context,
+              ).copyWith(color: AppColors.blackBlack4),
             ),
           ],
         ),
@@ -222,16 +222,24 @@ class _EmptyComments extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        SvgPicture.asset('assets/icons/comment_empty.svg',
-            width: 88.w, height: 88.w, fit: BoxFit.contain),
-        Gap(12.h),
-        Text(
-          '첫 댓글을 남겨주세요.',
-          style: AppTextStyles.bodyRegular(context)
-              .copyWith(color: AppColors.blackBlack4),
-        ),
-      ]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            'assets/icons/comment_empty.svg',
+            width: 88,
+            height: 88,
+            fit: BoxFit.contain,
+          ),
+          Gap(12),
+          Text(
+            '첫 댓글을 남겨주세요.',
+            style: AppTextStyles.bodyRegular(
+              context,
+            ).copyWith(color: AppColors.blackBlack4),
+          ),
+        ],
+      ),
     );
   }
 }

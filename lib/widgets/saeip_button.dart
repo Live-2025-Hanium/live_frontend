@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
@@ -54,8 +53,8 @@ class SaeipButton extends StatelessWidget {
               : BorderSide.none,
         ),
         backgroundColor: backgroundColor,
-        minimumSize: Size(height.w, height.w),
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.w),
+        minimumSize: Size(height, height),
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       ),
       child: Text(
         text,

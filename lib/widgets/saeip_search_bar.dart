@@ -4,7 +4,6 @@ import './utils/debouncer.dart';
 import './utils/recent_search_repo.dart';
 import 'package:live_frontend/screens/forum/forum_search_screen.dart';
 import 'package:live_frontend/theme/app_colors.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SaeipSearchBar extends StatefulWidget {
   // 기본: 상단 검색바 (탭/검색 시 상세 화면으로 이동만)
@@ -104,11 +103,11 @@ class _SaeipSearchBarState extends State<SaeipSearchBar> {
 
   void _openDetail() {
     Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (_) => ForumSearchScreen(
-        externalController: widget.controller,
-        hintText: widget.hintText,
-      ),
+      MaterialPageRoute(
+        builder: (_) => ForumSearchScreen(
+          externalController: widget.controller,
+          hintText: widget.hintText,
+        ),
       ),
     );
   }
@@ -163,7 +162,7 @@ class _SaeipSearchBarState extends State<SaeipSearchBar> {
     final side = BorderSide(color: widget.borderColor, width: 1.4);
 
     return SizedBox(
-      height: widget.height.h,
+      height: widget.height,
       child: SearchBar(
         focusNode: _focusNode,
         controller: widget.controller,

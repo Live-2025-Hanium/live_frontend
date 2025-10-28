@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
@@ -64,7 +63,7 @@ class _MissionRecordScreenState extends State<MissionRecordScreen> {
     return Scaffold(
       appBar: SaeipAppBar(title: '미션 기록'),
       body: Container(
-        padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 40.h),
+        padding: EdgeInsets.only(left: 16, right: 16, bottom: 40),
         width: double.infinity,
         child: SafeArea(
           child: Column(
@@ -81,12 +80,12 @@ class _MissionRecordScreenState extends State<MissionRecordScreen> {
                       padding: EdgeInsets.zero,
                       backgroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                     child: SizedBox(
-                      width: 124.w,
-                      height: 124.w,
+                      width: 124,
+                      height: 124,
                       child: Image.asset(
                         'assets/images/clover_mission_complete.png',
                         fit: BoxFit.cover,
@@ -94,13 +93,13 @@ class _MissionRecordScreenState extends State<MissionRecordScreen> {
                     ),
                   ),
                   SizedBox(
-                    height: 48.w,
+                    height: 48,
                     child: TextButton(
                       onPressed: () {},
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.r),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                       child: Text(
@@ -124,7 +123,7 @@ class _MissionRecordScreenState extends State<MissionRecordScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       RatingBar(rating: data.missionDifficulty.value),
-                      Gap(8.w),
+                      Gap(8),
                       Text(
                         data.missionCategory.koreanLabel,
                         style: AppTextStyles.bodyRegular(
@@ -143,7 +142,7 @@ class _MissionRecordScreenState extends State<MissionRecordScreen> {
                       });
                     },
                   ),
-                  Gap(32.h),
+                  Gap(32),
                   TextField(
                     controller: _controller,
                     maxLines: 6,
@@ -158,8 +157,8 @@ class _MissionRecordScreenState extends State<MissionRecordScreen> {
                         color: AppColors.blackBlack4,
                       ),
                       contentPadding: EdgeInsets.symmetric(
-                        vertical: 12.h,
-                        horizontal: 16.w,
+                        vertical: 12,
+                        horizontal: 16,
                       ),
                       fillColor: AppColors.blackBlack0,
                       filled: true,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:live_frontend/models/profile_model.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
@@ -38,7 +37,7 @@ class JobSelector extends StatelessWidget {
                 color: AppColors.greenNormal,
               ),
             ),
-            Gap(18.h),
+            Gap(18),
 
             // 2열 고정 Grid
             GridView.count(
@@ -47,7 +46,7 @@ class JobSelector extends StatelessWidget {
               crossAxisCount: 2, // 2열 고정
               // GridView의 자식 요소는 TextButton의 최소 크기와 동일한 비율로 설정하는 것이 좋습니다.
               // TextButton이 ConstrainedBox의 역할을 하므로, 필요하다면 childAspectRatio를 조정하세요.
-              childAspectRatio: 160.w / 48.h,
+              childAspectRatio: 160 / 48,
               children: jobs.map((job) {
                 final isSelected = selectedJob == job;
 
@@ -66,7 +65,7 @@ class JobSelector extends StatelessWidget {
                   child: TextButton(
                     onPressed: () => field.didChange(job),
                     style: TextButton.styleFrom(
-                      minimumSize: Size(160.w, 48.h),
+                      minimumSize: Size(160, 48),
                       padding: EdgeInsets.zero,
                       foregroundColor: Colors.transparent, // 눌릴 때 물결 효과 색상
                     ),
@@ -82,7 +81,7 @@ class JobSelector extends StatelessWidget {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        Gap(6.h),
+                        Gap(6),
                         Container(height: 1, color: underlineColor),
                       ],
                     ),

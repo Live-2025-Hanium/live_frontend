@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
@@ -116,7 +115,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
           child: Column(
             children: [
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 36.w, vertical: 36.h),
+                padding: EdgeInsets.symmetric(horizontal: 36, vertical: 36),
                 child: MissionCompletionGauge(
                   yearMonth: _currentAnchor.substring(0, 7),
                   missionType: tabIndex == 0

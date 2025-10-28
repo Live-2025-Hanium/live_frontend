@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
@@ -45,7 +44,7 @@ class _CloverMissionListState extends ConsumerState<CloverMissionList> {
           (mission) => mission.missionStatus == MissionStatus.completed,
         );
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -53,7 +52,7 @@ class _CloverMissionListState extends ConsumerState<CloverMissionList> {
                 'Clover',
                 style: AppTextStyles.titleMedium(context, color: Colors.black),
               ),
-              Gap(8.h),
+              Gap(8),
               if (showNewCloverMission)
                 ElevatedButton(
                   onPressed: () => {addCloverMission(context)},
@@ -64,7 +63,7 @@ class _CloverMissionListState extends ConsumerState<CloverMissionList> {
                       side: BorderSide(color: AppColors.greenDark, width: 1),
                     ),
                     backgroundColor: Colors.white,
-                    minimumSize: Size(double.infinity, 80.w),
+                    minimumSize: Size(double.infinity, 80),
                   ),
                   child: Text(
                     '+ 새로운 클로버 미션',
@@ -74,7 +73,7 @@ class _CloverMissionListState extends ConsumerState<CloverMissionList> {
                     ),
                   ),
                 ),
-              Gap(8.h),
+              Gap(8),
               ...sortedMissions.map((mission) {
                 return Column(
                   children: [
@@ -107,11 +106,7 @@ class _CloverMissionListState extends ConsumerState<CloverMissionList> {
           title: mission.missionTitle,
           titleTextColor: AppColors.greenNormal,
           message: '클로버 미션을 수행할까요?',
-          image: Image.asset(
-            'assets/images/clover.png',
-            width: 80.w,
-            height: 80.w,
-          ),
+          image: Image.asset('assets/images/clover.png', width: 80, height: 80),
           confirmText: '시작',
           cancelText: '닫기',
           onConfirm: () {

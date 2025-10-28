@@ -8,7 +8,6 @@ import 'package:live_frontend/screens/forum/widgets/banner_carousel.dart';
 import 'package:live_frontend/screens/forum/widgets/category_chips.dart';
 import 'package:live_frontend/screens/forum/widgets/post_grid.dart';
 import 'package:live_frontend/screens/forum/widgets/sort_controls.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/models/forum_post_model.dart';
 import 'data/dummy_forum_data.dart';
@@ -94,7 +93,7 @@ class _ForumScreenState extends State<ForumScreen> {
         appBarStyle: AppBarStyle.common,
         actions: [
           IconButton(
-            icon: SvgPicture.asset('assets/icons/bookmark.svg', height: 20.h),
+            icon: SvgPicture.asset('assets/icons/bookmark.svg', height: 20),
             onPressed: () => _openScrap(),
           ),
         ],
@@ -105,7 +104,7 @@ class _ForumScreenState extends State<ForumScreen> {
           // 검색창
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: SaeipSearchBar(
                 controller: _searchCtrl,
                 hintText: '지원 사업, 생활 꿀팁',
@@ -117,12 +116,12 @@ class _ForumScreenState extends State<ForumScreen> {
             ),
           ),
 
-          SliverGap(16.h),
+          SliverGap(16),
 
           // 메인 배너
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              padding: EdgeInsets.symmetric(horizontal: 16),
               child: BannerCarousel(
                 itemCount: 10,
                 index: _bannerIndex,
@@ -145,7 +144,7 @@ class _ForumScreenState extends State<ForumScreen> {
             ),
           ),
 
-          SliverGap(24.h),
+          SliverGap(24),
 
           // 카테고리 칩
           SliverToBoxAdapter(

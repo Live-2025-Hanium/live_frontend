@@ -3,7 +3,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/models/survey_question_model.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
@@ -99,8 +98,8 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
               _buildUserInfoWidget(),
               const Gap(16),
               LinearPercentIndicator(
-                padding: EdgeInsets.only(left: 0, right: 10.w),
-                width: 300.w,
+                padding: EdgeInsets.only(left: 0, right: 10),
+                width: 300,
                 animation: true,
                 animationDuration: 1000,
                 lineHeight: 2.0,
@@ -155,7 +154,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
 
                         return ListView.builder(
                           itemCount: questionsForPage.length,
-                          padding: EdgeInsets.only(top: 8.h, bottom: 24.h),
+                          padding: EdgeInsets.only(top: 8, bottom: 24),
                           itemBuilder: (context, index) {
                             final question = questionsForPage[index];
                             return Padding(
@@ -250,7 +249,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
       (AppColors.greenNormal, AppColors.greenLightActive),
     ];
 
-    List<double> widths = [48.w, 36.w, 28.w, 36.w, 48.w];
+    List<double> widths = [48, 36, 28, 36, 48];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,20 +261,20 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
         ),
         const Gap(15),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4.w),
+          padding: EdgeInsets.symmetric(horizontal: 4),
           child: Row(
             children: List.generate(5, (i) {
               return Padding(
                 padding: EdgeInsets.only(
                   right: i == 0
-                      ? 24.w
+                      ? 24
                       : i == 1
-                      ? 16.w
+                      ? 16
                       : 0,
                   left: i == 4
-                      ? 24.w
+                      ? 24
                       : i == 3
-                      ? 16.w
+                      ? 16
                       : 0,
                 ),
                 child: _buildCustomRadioButton(
@@ -290,9 +289,9 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
             }),
           ),
         ),
-        Gap(5.h),
+        Gap(5),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          padding: EdgeInsets.symmetric(horizontal: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -327,8 +326,8 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
     required VoidCallback onChanged,
   }) {
     return SizedBox(
-      width: 48.w,
-      height: 48.w,
+      width: 48,
+      height: 48,
       child: Material(
         color: Colors.transparent,
         shape: const CircleBorder(),

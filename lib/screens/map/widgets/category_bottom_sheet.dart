@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:live_frontend/theme/app_colors.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
@@ -36,7 +35,7 @@ class CategoryBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = this.controller ?? DraggableScrollableController();
     final screenHeight = MediaQuery.of(context).size.height;
-    final initialSize = 174.h / screenHeight;
+    final initialSize = 174 / screenHeight;
 
     return DraggableScrollableSheet(
       controller: controller,
@@ -68,31 +67,30 @@ class CategoryBottomSheet extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Gap(10.h),
+                      Gap(10),
                       // 핸들
                       Container(
-                        width: 40.w,
-                        height: 4.h,
+                        width: 40,
+                        height: 4,
                         decoration: BoxDecoration(
                           color: AppColors.blackBlack2,
                           borderRadius: BorderRadius.circular(999),
                         ),
                       ),
-                      Gap(12.h),
+                      Gap(12),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        padding: EdgeInsets.symmetric(horizontal: 16),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment:
-                              CrossAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             SvgPicture.asset(
                               'assets/icons/marker.svg',
-                              width: 13.w,
-                              height: 16.h,
+                              width: 13,
+                              height: 16,
                             ),
 
-                            Gap(8.w),
+                            Gap(8),
 
                             Flexible(
                               child: Text(
@@ -109,8 +107,7 @@ class CategoryBottomSheet extends StatelessWidget {
                   ),
                 ),
 
-                SliverToBoxAdapter(child: Gap(16.h)),
-
+                SliverToBoxAdapter(child: Gap(16)),
 
                 // 카테고리 그리드
                 SliverPadding(
@@ -161,8 +158,8 @@ class _CategoryButton extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SvgPicture.asset(icon, width: 40.w, height: 40.h),
-          Gap(12.h),
+          SvgPicture.asset(icon, width: 40, height: 40),
+          Gap(12),
           Text(
             label,
             maxLines: 1,

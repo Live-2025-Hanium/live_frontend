@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 double responsiveFont(double base, {required double min, required double max}) {
-  final scaled = base.sp;
+  final scaled = base;
   return scaled.clamp(min, max);
 }
 

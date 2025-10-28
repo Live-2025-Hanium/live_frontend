@@ -16,7 +16,6 @@ import 'package:live_frontend/screens/login/profile_setup/widgets/job_selector.d
 import 'package:live_frontend/widgets/saeip_button.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:gap/gap.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProfileSetupScreen extends ConsumerStatefulWidget {
   const ProfileSetupScreen({super.key});
@@ -128,15 +127,15 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     });
                   },
                 ),
-                Gap(16.h),
+                Gap(16),
                 NicknameField(key: _nicknameKey),
-                Gap(28.h),
+                Gap(28),
                 const GenderSelector(),
-                Gap(28.h),
+                Gap(28),
                 const BirthdaySelector(),
-                Gap(28.h),
+                Gap(28),
                 const JobSelector(),
-                Gap(20.h),
+                Gap(20),
                 ValueListenableBuilder<bool>(
                   valueListenable: _isFormValidNotifier,
                   builder: (context, isFormValid, _) {

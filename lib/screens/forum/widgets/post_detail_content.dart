@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -25,12 +24,12 @@ class PostDetailContent extends StatelessWidget {
         // 이미지
         if (imageUrls.isNotEmpty) ...[
           _SingleImage(url: imageUrls.first),
-          Gap(16.h),
+          Gap(16),
         ],
 
         // 본문
         _PostBody(content: content),
-        Gap(24.h),
+        Gap(24),
       ],
     );
   }
@@ -45,7 +44,7 @@ class _SingleImage extends StatelessWidget {
     return AspectRatio(
       aspectRatio: 4 / 3,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(8.r),
+        borderRadius: BorderRadius.circular(8),
         child: Image.network(url, fit: BoxFit.cover),
       ),
     );
@@ -62,10 +61,12 @@ class _PostBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: paragraphs
-          .map((p) => Padding(
-                padding: EdgeInsets.only(bottom: 12.h),
-                child: Text(p, style: AppTextStyles.bodyRegular(context)),
-              ))
+          .map(
+            (p) => Padding(
+              padding: EdgeInsets.only(bottom: 12),
+              child: Text(p, style: AppTextStyles.bodyRegular(context)),
+            ),
+          )
           .toList(),
     );
   }

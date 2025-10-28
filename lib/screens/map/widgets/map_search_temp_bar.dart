@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
@@ -21,8 +20,8 @@ class MapSearchTempBar extends StatelessWidget {
     this.hintText = '장소, 주소 검색',
     this.autoFocus = true,
     this.showBottomDivider = true,
-  })  : mode = _MapSearchTempBarMode.input,
-        title = null;
+  }) : mode = _MapSearchTempBarMode.input,
+       title = null;
 
   const MapSearchTempBar.title({
     super.key,
@@ -30,11 +29,11 @@ class MapSearchTempBar extends StatelessWidget {
     this.onBack,
     this.onTapSearch,
     this.showBottomDivider = true,
-  })  : mode = _MapSearchTempBarMode.title,
-        controller = null,
-        onSubmitted = null,
-        hintText = null,
-        autoFocus = false;
+  }) : mode = _MapSearchTempBarMode.title,
+       controller = null,
+       onSubmitted = null,
+       hintText = null,
+       autoFocus = false;
 
   final _MapSearchTempBarMode mode;
 
@@ -60,11 +59,11 @@ class MapSearchTempBar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(4.w, 6.h, 4.w, 6.h),
+            padding: EdgeInsets.fromLTRB(4, 6, 4, 6),
             child: Row(
               children: [
                 IconButton(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  padding: EdgeInsets.symmetric(horizontal: 8),
                   icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
                   onPressed: onBack ?? () => Navigator.of(context).maybePop(),
                 ),
@@ -79,15 +78,19 @@ class MapSearchTempBar extends StatelessWidget {
                       : _TitleLabel(text: title ?? ''),
                 ),
                 IconButton(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w),
-                  icon: SvgPicture.asset('assets/icons/search.svg',
-                      width: 20.w, height: 20.h),
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  icon: SvgPicture.asset(
+                    'assets/icons/search.svg',
+                    width: 20,
+                    height: 20,
+                  ),
                   onPressed: onTapSearch,
                 ),
               ],
             ),
           ),
-          if (showBottomDivider) const Divider(height: 0.5, color: AppColors.blackBlack3,),
+          if (showBottomDivider)
+            const Divider(height: 0.5, color: AppColors.blackBlack3),
         ],
       ),
     );
@@ -113,7 +116,7 @@ class _InputField extends StatelessWidget {
   Widget build(BuildContext context) {
     // 시안처럼 얇고 심플한 텍스트 필드 (아웃라인/채움 없음)
     return SizedBox(
-      height: 36.h,
+      height: 36,
       child: TextField(
         controller: controller,
         autofocus: autoFocus,
@@ -123,9 +126,10 @@ class _InputField extends StatelessWidget {
         decoration: InputDecoration(
           isDense: true,
           hintText: hintText,
-          hintStyle: AppTextStyles.bodyRegular(context)
-              .copyWith(color: AppColors.blackBlack4),
-          contentPadding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+          hintStyle: AppTextStyles.bodyRegular(
+            context,
+          ).copyWith(color: AppColors.blackBlack4),
+          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           border: InputBorder.none,
         ),
       ),
@@ -145,8 +149,9 @@ class _TitleLabel extends StatelessWidget {
         text,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: AppTextStyles.titleMedium(context)
-            .copyWith(fontWeight: FontWeight.w700),
+        style: AppTextStyles.titleMedium(
+          context,
+        ).copyWith(fontWeight: FontWeight.w700),
       ),
     );
   }

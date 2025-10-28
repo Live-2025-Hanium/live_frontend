@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/providers/statistics_provider.dart';
@@ -25,7 +24,7 @@ class MonthlyCompareList extends ConsumerWidget {
         return Container(
           color: AppColors.blackBlack0,
           width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 32.h),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 32),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,7 +41,7 @@ class MonthlyCompareList extends ConsumerWidget {
                   final index = entry.key;
                   final item = entry.value;
                   return [
-                    if (index > 0) Gap(16.h),
+                    if (index > 0) Gap(16),
                     MonthlyComparePercentCard(
                       title: "Top ${index + 1}",
                       category: item.categoryName,
@@ -56,7 +55,7 @@ class MonthlyCompareList extends ConsumerWidget {
               else
                 Column(
                   children: [
-                    Gap(16.h),
+                    Gap(16),
                     Text(
                       '다음달에 다시 확인해주세요!',
                       style: AppTextStyles.bodyRegular(
@@ -72,11 +71,11 @@ class MonthlyCompareList extends ConsumerWidget {
       },
       loading: () {
         return SizedBox(
-          height: 190.h,
+          height: 190,
           child: Center(
             child: SizedBox(
-              height: 40.w,
-              width: 40.w,
+              height: 40,
+              width: 40,
               child: CircularProgressIndicator(),
             ),
           ),
@@ -84,7 +83,7 @@ class MonthlyCompareList extends ConsumerWidget {
       },
       error: (error, stackTrace) {
         return SizedBox(
-          height: 190.h,
+          height: 190,
           child: Center(
             child: Text(
               '데이터를 불러오는 중 오류가 발생했어요.',

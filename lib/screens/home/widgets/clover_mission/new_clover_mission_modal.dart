@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission/clover_sub_content.dart';
 import 'package:live_frontend/theme/app_colors.dart';
@@ -122,7 +121,7 @@ class _NewCloverMissionModalState extends ConsumerState<NewCloverMissionModal> {
           width: 52,
           height: 52,
         ),
-        Gap(24.h),
+        Gap(24),
         ...missionList.asMap().entries.map((entry) {
           final idx = entry.key;
           final data = entry.value;
@@ -135,7 +134,7 @@ class _NewCloverMissionModalState extends ConsumerState<NewCloverMissionModal> {
                 data.missionDifficulty,
                 data.missionCategory,
               ),
-              Gap(8.h),
+              Gap(8),
             ],
           );
         }),
@@ -151,7 +150,7 @@ class _NewCloverMissionModalState extends ConsumerState<NewCloverMissionModal> {
     CloverMissionCategory category,
   ) {
     return Container(
-      height: 80.h,
+      height: 80,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4.0),
         color: Colors.white,

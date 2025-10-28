@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:gap/gap.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:live_frontend/widgets/saeip_search_bar.dart';
 import 'widgets/map_search_temp_bar.dart';
@@ -157,14 +156,14 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
     if (_recents.isEmpty) {
       // 빈 상태 시안
       return Padding(
-        padding: EdgeInsets.only(top: 28.h, left: 20.w, right: 20.w),
+        padding: EdgeInsets.only(top: 28, left: 20, right: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _sectionTitle('최근 검색', highlight: true),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.only(top: 52.h),
+                padding: EdgeInsets.only(top: 52),
                 child: Align(
                   alignment: Alignment.topCenter,
                   child: Text(
@@ -182,7 +181,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
     }
 
     return ListView.separated(
-      padding: EdgeInsets.only(top: 28.h, left: 20.w, right: 20.w),
+      padding: EdgeInsets.only(top: 28, left: 20, right: 20),
       itemBuilder: (_, i) {
         if (i == 0) {
           return Column(
@@ -203,7 +202,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
 
   Widget _sectionTitle(String text, {bool highlight = false}) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.only(bottom: 12),
       child: Text(
         text,
         style: AppTextStyles.subtitleMedium(context).copyWith(
@@ -259,8 +258,8 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
             alignment: Alignment.bottomCenter,
             child: Container(
               width: double.infinity,
-              margin: EdgeInsets.fromLTRB(12.w, 0, 12.w, 14.h),
-              padding: EdgeInsets.symmetric(vertical: 28.h),
+              margin: EdgeInsets.fromLTRB(12, 0, 12, 14),
+              padding: EdgeInsets.symmetric(vertical: 28),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
@@ -276,7 +275,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                     size: 40,
                     color: AppColors.greenNormal,
                   ),
-                  Gap(12.h),
+                  Gap(12),
                   Text(
                     '검색 결과가 없습니다.',
                     style: AppTextStyles.titleMedium(context),
@@ -313,10 +312,10 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                     children: [
                       // 핸들
                       Padding(
-                        padding: EdgeInsets.only(top: 10.h, bottom: 8.h),
+                        padding: EdgeInsets.only(top: 10, bottom: 8),
                         child: Container(
-                          width: 44.w,
-                          height: 5.h,
+                          width: 44,
+                          height: 5,
                           decoration: BoxDecoration(
                             color: const Color(0xFFE5E7EB),
                             borderRadius: BorderRadius.circular(999),
@@ -326,7 +325,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                       Expanded(
                         child: ListView.separated(
                           controller: scrollController,
-                          padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+                          padding: EdgeInsets.fromLTRB(16, 8, 16, 24),
                           itemBuilder: (_, i) => _resultCard(_results[i]),
                           separatorBuilder: (_, __) => const Divider(
                             height: 28,
@@ -380,9 +379,9 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                   ),
                 ],
               ),
-              Gap(6.h),
+              Gap(6),
               Text(p.address, style: AppTextStyles.bodyRegular(context)),
-              Gap(8.h),
+              Gap(8),
               Row(
                 children: [
                   Text(
@@ -393,7 +392,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                   Text(p.statusNote, style: AppTextStyles.bodyRegular(context)),
                 ],
               ),
-              Gap(10.h),
+              Gap(10),
               Row(
                 children: [
                   _pillButton(
@@ -448,8 +447,8 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
         ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: SizedBox(
-            width: 76.w,
-            height: 76.h,
+            width: 76,
+            height: 76,
             child: Image.network('https://picsum.photos/84', fit: BoxFit.cover),
           ),
         ),

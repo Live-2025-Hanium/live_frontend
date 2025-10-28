@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/core/controllers/my_mission_controller.dart';
@@ -157,20 +156,20 @@ class _MyMissionAddScreenState extends ConsumerState<MyMissionAddScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Padding(
         padding: EdgeInsets.only(
-          left: 16.w,
-          right: 16.w,
-          bottom: 24.h,
+          left: 16,
+          right: 16,
+          bottom: 24,
         ), // 기본 하단 패딩이 16임
         child: SizedBox(
           width: double.infinity,
-          height: 48.h,
+          height: 48,
           child: SaeipButton(text: '저장', onPressed: _onSavePressed),
         ),
       ),
       body: SafeArea(
         child: Container(
           color: AppColors.blackBlack0,
-          padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 120.h),
+          padding: EdgeInsets.only(left: 16, right: 16, bottom: 120),
           child: ListView(
             children: [
               TextField(
@@ -183,23 +182,23 @@ class _MyMissionAddScreenState extends ConsumerState<MyMissionAddScreen> {
                     color: AppColors.blackBlack4,
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4.r),
+                    borderRadius: BorderRadius.circular(4),
                     borderSide: BorderSide(
                       color: AppColors.greenLightActive,
-                      width: 1.w,
+                      width: 1,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4.r),
+                    borderRadius: BorderRadius.circular(4),
                     borderSide: BorderSide(
                       color: AppColors.greenLightActive,
-                      width: 1.w,
+                      width: 1,
                     ),
                   ),
                 ),
                 inputFormatters: [LengthLimitingTextInputFormatter(20)],
               ),
-              Gap(16.h),
+              Gap(16),
               SelectionTile(
                 title: '시작일',
                 selected: _dateToFormat(_mission.startDate),
@@ -222,7 +221,7 @@ class _MyMissionAddScreenState extends ConsumerState<MyMissionAddScreen> {
                   },
                 ),
               ),
-              Gap(16.h),
+              Gap(16),
               SelectionTile(
                 title: '종료일',
                 selected: _dateToFormat(_mission.endDate),
@@ -245,7 +244,7 @@ class _MyMissionAddScreenState extends ConsumerState<MyMissionAddScreen> {
                   },
                 ),
               ),
-              Gap(16.h),
+              Gap(16),
               SelectionTile(
                 title: '시간   ',
                 selected: _mission.scheduledTime,
@@ -281,7 +280,7 @@ class _MyMissionAddScreenState extends ConsumerState<MyMissionAddScreen> {
                   },
                 ),
               ),
-              Gap(16.h),
+              Gap(16),
               SelectionButton(
                 title: '반복   ',
                 selected: _mission.repeatDay?.label,

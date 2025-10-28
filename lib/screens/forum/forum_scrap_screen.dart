@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
@@ -75,7 +74,7 @@ class _ForumScrapScreenState extends ConsumerState<ForumScrapScreen> {
         child: CustomScrollView(
           controller: _scroll,
           slivers: [
-            SliverToBoxAdapter(child: SizedBox(height: 8.h)),
+            SliverToBoxAdapter(child: SizedBox(height: 8)),
 
             if (s.loading)
               const SliverFillRemaining(
@@ -135,7 +134,7 @@ class _ForumScrapScreenState extends ConsumerState<ForumScrapScreen> {
 
             SliverToBoxAdapter(
               child: SizedBox(
-                height: s.editing && s.selected.isNotEmpty ? 88.h : 16.h,
+                height: s.editing && s.selected.isNotEmpty ? 88 : 16,
               ),
             ),
           ],

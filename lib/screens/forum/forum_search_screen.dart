@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:live_frontend/providers/forum_search_provider.dart';
@@ -29,8 +28,7 @@ class ForumSearchScreen extends ConsumerStatefulWidget {
       _ForumSearchDetailScreenState();
 }
 
-class _ForumSearchDetailScreenState
-    extends ConsumerState<ForumSearchScreen> {
+class _ForumSearchDetailScreenState extends ConsumerState<ForumSearchScreen> {
   static const int _maxRecent = 10;
   static const double _scrollThreshold = 320.0;
 
@@ -111,7 +109,7 @@ class _ForumSearchDetailScreenState
     return [
       // 정렬 컨트롤
       SliverPadding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         sliver: SliverToBoxAdapter(
           child: Align(
             alignment: Alignment.centerRight,
@@ -140,7 +138,7 @@ class _ForumSearchDetailScreenState
       if (search.loadingMore)
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.all(16.w),
+            padding: EdgeInsets.all(16),
             child: const Center(child: CircularProgressIndicator()),
           ),
         ),
@@ -159,7 +157,7 @@ class _ForumSearchDetailScreenState
           slivers: [
             // 검색바
             SliverPadding(
-              padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 0),
+              padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
               sliver: SliverToBoxAdapter(
                 child: SaeipSearchBar.detail(
                   controller: _controller,
@@ -179,7 +177,7 @@ class _ForumSearchDetailScreenState
                 ),
               ),
             ),
-            SliverToBoxAdapter(child: Gap(16.h)),
+            SliverToBoxAdapter(child: Gap(16)),
 
             // 콘텐츠 - 검색 실행 여부에 따라 다른 내용 표시
             if (!_hasSearched)
@@ -224,7 +222,7 @@ class _EmptyResult extends StatelessWidget {
           alignment: Alignment.center,
           child: SvgPicture.asset('assets/icons/search_no_result.svg'),
         ),
-        Gap(20.h),
+        Gap(20),
         Text(
           '검색 결과가 없습니다.',
           style: AppTextStyles.bodyRegular(context),
@@ -251,7 +249,7 @@ class _MessageCenter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(16),
         child: Text(
           text,
           style: AppTextStyles.bodyRegular(

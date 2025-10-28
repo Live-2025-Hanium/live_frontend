@@ -1,6 +1,5 @@
 // lib/widgets/rating_bar.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RatingBar extends StatelessWidget {
   /// 현재 채워진 별 개수 (0 ≤ rating ≤ maxRating)
@@ -33,10 +32,10 @@ class RatingBar extends StatelessWidget {
       children: [
         // 채워진 별
         for (var i = 0; i < filled; i++)
-          Icon(Icons.star, size: iconSize.h, color: color),
+          Icon(Icons.star, size: iconSize, color: color),
         // 빈 별
         for (var i = 0; i < empty; i++)
-          Icon(Icons.star_border, size: iconSize.h, color: color),
+          Icon(Icons.star_border, size: iconSize, color: color),
       ],
     );
   }

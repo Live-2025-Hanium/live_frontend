@@ -1,15 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileImagePicker extends ConsumerStatefulWidget {
-  const ProfileImagePicker({
-    super.key,
-    this.onImagePicked,
-  });
+  const ProfileImagePicker({super.key, this.onImagePicked});
 
   final void Function(String path, String extension)? onImagePicked;
 
@@ -50,7 +46,7 @@ class _ProfileImagePickerState extends ConsumerState<ProfileImagePicker> {
         alignment: Alignment.center,
         children: [
           CircleAvatar(
-            radius: 44.w,
+            radius: 44,
             backgroundColor: Colors.grey[200],
             backgroundImage: _pickedImagePath == ""
                 ? null
@@ -61,8 +57,8 @@ class _ProfileImagePickerState extends ConsumerState<ProfileImagePicker> {
           ),
           // 검정색 그라데이션 오버레이
           Container(
-            width: 88.w,
-            height: 88.w,
+            width: 88,
+            height: 88,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(

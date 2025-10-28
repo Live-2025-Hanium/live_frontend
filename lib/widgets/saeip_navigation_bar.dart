@@ -3,8 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 
 class SaeipNavigationBar extends StatefulWidget {
   final int initialIndex;
@@ -88,7 +88,7 @@ class _SaeipNavigationBarState extends State<SaeipNavigationBar> {
             topRight: Radius.circular(8),
           ),
           child: NavigationBar(
-            height: isIOS ? 84.h : 80.h,
+            height: isIOS ? 84 : 80,
             backgroundColor: Colors.white,
             labelPadding: const EdgeInsets.symmetric(horizontal: 2.0),
             onDestinationSelected: onTap,
@@ -108,12 +108,12 @@ class _SaeipNavigationBarState extends State<SaeipNavigationBar> {
                 selectedIcon: SvgPicture.asset(
                   'assets/icons/home.svg',
                   colorFilter: selectedIconColorFilter,
-                  height: 20.h,
+                  height: 20,
                 ),
                 icon: SvgPicture.asset(
                   'assets/icons/home.svg',
                   colorFilter: iconColorFilter,
-                  height: 20.h,
+                  height: 20,
                 ),
                 label: '홈',
               ),
@@ -121,12 +121,12 @@ class _SaeipNavigationBarState extends State<SaeipNavigationBar> {
                 selectedIcon: SvgPicture.asset(
                   'assets/icons/statistics.svg',
                   colorFilter: selectedIconColorFilter,
-                  height: 20.h,
+                  height: 20,
                 ),
                 icon: SvgPicture.asset(
                   'assets/icons/statistics.svg',
                   colorFilter: iconColorFilter,
-                  height: 20.h,
+                  height: 20,
                 ),
                 label: '분석',
               ),
@@ -134,12 +134,12 @@ class _SaeipNavigationBarState extends State<SaeipNavigationBar> {
                 selectedIcon: SvgPicture.asset(
                   'assets/icons/map.svg',
                   colorFilter: selectedIconColorFilter,
-                  height: 20.h,
+                  height: 20,
                 ),
                 icon: SvgPicture.asset(
                   'assets/icons/map.svg',
                   colorFilter: iconColorFilter,
-                  height: 20.h,
+                  height: 20,
                 ),
                 label: '지도',
               ),
@@ -147,12 +147,12 @@ class _SaeipNavigationBarState extends State<SaeipNavigationBar> {
                 selectedIcon: SvgPicture.asset(
                   'assets/icons/forum.svg',
                   colorFilter: selectedIconColorFilter,
-                  height: 20.h,
+                  height: 20,
                 ),
                 icon: SvgPicture.asset(
                   'assets/icons/forum.svg',
                   colorFilter: iconColorFilter,
-                  height: 20.h,
+                  height: 20,
                 ),
                 label: '게시판',
               ),
@@ -160,12 +160,12 @@ class _SaeipNavigationBarState extends State<SaeipNavigationBar> {
                 selectedIcon: SvgPicture.asset(
                   'assets/icons/person.svg',
                   colorFilter: selectedIconColorFilter,
-                  height: 20.h,
+                  height: 20,
                 ),
                 icon: SvgPicture.asset(
                   'assets/icons/person.svg',
                   colorFilter: iconColorFilter,
-                  height: 20.h,
+                  height: 20,
                 ),
                 label: '마이페이지',
               ),

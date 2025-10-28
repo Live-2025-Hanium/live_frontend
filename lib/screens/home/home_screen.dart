@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission/new_clover_mission_modal.dart';
@@ -103,9 +102,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   todayCloverCount: 5,
                   todayFinishedMissionCount: 2,
                 ),
-                Gap(16.h),
+                Gap(16),
                 CloverMissionList(),
-                Gap(16.h),
+                Gap(16),
                 MyMissionList(),
               ],
             ),

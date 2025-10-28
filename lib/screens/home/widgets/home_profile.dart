@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/theme/app_colors.dart';
@@ -23,16 +22,16 @@ class HomeProfile extends StatelessWidget {
     String dateString = Jiffy.now().format(pattern: 'yyyy년 M월 d일');
     return Container(
       color: Colors.white,
-      constraints: BoxConstraints(minHeight: 116.h),
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+      constraints: BoxConstraints(minHeight: 116),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           ClipOval(
             child: SizedBox(
-              width: 84.h,
-              height: 84.h,
+              width: 84,
+              height: 84,
               child: CachedNetworkImage(
                 imageUrl: profileImageSrc,
                 fit: BoxFit.cover,
@@ -46,7 +45,7 @@ class HomeProfile extends StatelessWidget {
                     color: Colors.grey.shade200,
                     child: Icon(
                       Icons.person,
-                      size: 42.h,
+                      size: 42,
                       color: Colors.grey.shade400,
                     ),
                   );
@@ -54,7 +53,7 @@ class HomeProfile extends StatelessWidget {
               ),
             ),
           ),
-          Gap(20.w),
+          Gap(20),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -66,7 +65,7 @@ class HomeProfile extends StatelessWidget {
                   color: AppColors.blackBlack5,
                 ),
               ),
-              Gap(12.h),
+              Gap(12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -78,7 +77,7 @@ class HomeProfile extends StatelessWidget {
                       color: Colors.black,
                     ).copyWith(fontWeight: FontWeight.w400),
                   ),
-                  Gap(16.w),
+                  Gap(16),
                   Text(
                     todayCloverCount.toString(),
                     style: AppTextStyles.subtitleMedium(
@@ -88,7 +87,7 @@ class HomeProfile extends StatelessWidget {
                   ),
                 ],
               ),
-              Gap(4.h),
+              Gap(4),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -100,7 +99,7 @@ class HomeProfile extends StatelessWidget {
                       color: Colors.black,
                     ).copyWith(fontWeight: FontWeight.w400),
                   ),
-                  Gap(16.w),
+                  Gap(16),
                   Text(
                     todayFinishedMissionCount.toString(),
                     style: AppTextStyles.subtitleMedium(

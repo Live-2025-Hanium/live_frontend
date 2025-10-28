@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart'; // 추가
 import 'package:gap/gap.dart';
 import 'package:live_frontend/theme/app_colors.dart';
@@ -37,10 +36,10 @@ class PostDetailHeader extends StatelessWidget {
         Row(
           children: [
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
                 color: AppColors.greenDark,
-                borderRadius: BorderRadius.circular(20.r),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 categoryName,
@@ -51,24 +50,24 @@ class PostDetailHeader extends StatelessWidget {
             ),
           ],
         ),
-        Gap(12.h),
+        Gap(12),
         // 2행: 제목
         Text(title, style: AppTextStyles.titleSemibold(context)),
-        Gap(8.h),
+        Gap(8),
 
         // 3행: 메타정보
-        Text('$authorNickname', style: AppTextStyles.bodyRegular(context)),
-        Gap(24.h),
+        Text(authorNickname, style: AppTextStyles.bodyRegular(context)),
+        Gap(24),
         Row(
           children: [
             Text(dateStr, style: AppTextStyles.smallMedium(context)),
             const Spacer(),
             _MetaItem('assets/icons/cursor.svg', viewCount.toString()),
-            Gap(16.w),
+            Gap(16),
             _MetaItem('assets/icons/comment.svg', commentCount.toString()),
           ],
         ),
-        Gap(32.h)
+        Gap(32),
       ],
     );
   }
@@ -84,8 +83,8 @@ class _MetaItem extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SvgPicture.asset(icon, width: 12.sp, height: 12.sp),
-        Gap(4.w),
+        SvgPicture.asset(icon, width: 12, height: 12),
+        Gap(4),
         Text(text, style: AppTextStyles.smallMedium(context)),
       ],
     );

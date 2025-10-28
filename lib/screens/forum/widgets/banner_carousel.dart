@@ -1,6 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:gap/gap.dart';
 
@@ -133,8 +132,8 @@ class _BannerCarouselState extends State<BannerCarousel> {
           LayoutBuilder(
             builder: (context, constraints) {
               final cardWidth = constraints.maxWidth;
-              final peek = widget.peekRight.w;
-              final gap = widget.pageSpacing.w;
+              final peek = widget.peekRight;
+              final gap = widget.pageSpacing;
               // 실제 슬라이더 폭 = 카드폭 + peek
               final sliderWidth = cardWidth + peek;
               final viewportFraction = (cardWidth + gap) / sliderWidth;
@@ -149,7 +148,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
                     carouselController: _carouselCtrl,
                     itemCount: widget.itemCount,
                     itemBuilder: (context, i, realIdx) {
-                      final rightGap = widget.pageSpacing.w;
+                      final rightGap = widget.pageSpacing;
 
                       return Padding(
                         padding: EdgeInsets.only(right: rightGap),
@@ -219,12 +218,12 @@ class _BannerCarouselState extends State<BannerCarousel> {
           ),
 
           if (widget.showAdBadge)
-            _pillBadge(left: 8.w, top: 8.h, text: widget.adBadgeText),
+            _pillBadge(left: 8, top: 8, text: widget.adBadgeText),
 
           if (widget.showIndexBadge)
             _pillBadge(
-              right: 8.w,
-              top: 8.h,
+              right: 8,
+              top: 8,
               text: '${_current + 1}/${widget.itemCount}',
             ),
         ],
@@ -243,7 +242,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
       right: right,
       top: top,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.5),
           borderRadius: BorderRadius.circular(12),
@@ -276,7 +275,7 @@ class BannerOverlay extends StatelessWidget {
     return Align(
       alignment: Alignment.bottomLeft,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 16.h),
+        padding: EdgeInsets.fromLTRB(20, 0, 20, 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -288,7 +287,7 @@ class BannerOverlay extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
 
-            Gap(6.h),
+            Gap(6),
 
             Text(
               title,

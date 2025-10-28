@@ -1,7 +1,6 @@
 // lib/screens/forum/forum_post_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 
@@ -95,7 +94,7 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
               detailState.isBookmarked
                   ? 'assets/icons/bookmark_green_filled.svg'
                   : 'assets/icons/bookmark_green_border.svg',
-              height: 20.h,
+              height: 20,
             ),
             onPressed: () async {
               final prev = detailState.isBookmarked;
@@ -134,7 +133,7 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
           slivers: [
             // 게시글 본문
             SliverPadding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   PostDetailHeader(
@@ -146,7 +145,7 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
                     title: d.title,
                     commentCount: d.commentCount,
                   ),
-                  Gap(8.h),
+                  Gap(8),
                   PostDetailContent(
                     content: d.content,
                     imageUrls: d.images.map((e) => e.s3Url).toList(),
@@ -159,7 +158,7 @@ class _ForumPostViewState extends ConsumerState<_ForumPostView> {
                         .read(forumPostDetailProvider(d.id).notifier)
                         .toggleReaction,
                   ),
-                  Gap(12.h),
+                  Gap(12),
                 ]),
               ),
             ),

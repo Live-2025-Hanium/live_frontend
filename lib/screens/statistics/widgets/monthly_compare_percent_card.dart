@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
@@ -44,7 +43,7 @@ class MonthlyComparePercentCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
       ),
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -52,7 +51,7 @@ class MonthlyComparePercentCard extends StatelessWidget {
             title,
             style: AppTextStyles.bodyMedium(context, color: Colors.black),
           ),
-          Gap(4.h),
+          Gap(4),
 
           // Metric + Delta
           Row(
@@ -63,7 +62,7 @@ class MonthlyComparePercentCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: AppTextStyles.bodyRegular(context, color: Colors.black),
               ),
-              Gap(4.w),
+              Gap(4),
               Text(
                 deltaText, // e.g. "+17%"
                 style: AppTextStyles.bodyRegular(context, color: Colors.black),
@@ -71,7 +70,7 @@ class MonthlyComparePercentCard extends StatelessWidget {
             ],
           ),
 
-          Gap(8.h),
+          Gap(8),
 
           // 이번달
           Row(
@@ -79,7 +78,7 @@ class MonthlyComparePercentCard extends StatelessWidget {
               Expanded(
                 child: _PercentBar(
                   percent: currRatio,
-                  barHeight: 4.h,
+                  barHeight: 4,
                   progressColor: AppColors.pinkNormal,
                   backgroundColor: baseTrack,
                 ),
@@ -91,7 +90,7 @@ class MonthlyComparePercentCard extends StatelessWidget {
             ],
           ),
 
-          Gap(4.h),
+          Gap(4),
 
           // 지난달
           Row(
@@ -99,7 +98,7 @@ class MonthlyComparePercentCard extends StatelessWidget {
               Expanded(
                 child: _PercentBar(
                   percent: prevRatio,
-                  barHeight: 4.h,
+                  barHeight: 4,
                   progressColor: AppColors.blackBlack2,
                   backgroundColor: baseTrack,
                 ),

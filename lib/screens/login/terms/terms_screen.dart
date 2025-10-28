@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/screens/login/terms/widgets/term.dart';
@@ -52,12 +51,7 @@ class TermsScreenState extends ConsumerState<TermsScreen> {
       appBar: SaeipAppBar(lastPage: 'home'),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.only(
-            left: 8.w,
-            right: 8.w,
-            top: 4.h,
-            bottom: 40.h,
-          ),
+          padding: EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 40),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -94,9 +88,9 @@ class TermsScreenState extends ConsumerState<TermsScreen> {
                       ),
                     ),
                   ),
-                  Gap(16.h),
+                  Gap(16),
                   Divider(color: AppColors.greenLightActive, thickness: 1.0),
-                  Gap(12.h),
+                  Gap(12),
                   Column(
                     children: terms.map((term) {
                       return Term(

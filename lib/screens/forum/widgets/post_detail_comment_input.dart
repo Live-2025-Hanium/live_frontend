@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 
@@ -25,18 +24,18 @@ class PostDetailCommentInput extends StatelessWidget {
       top: false,
       child: Container(
         color: Colors.transparent,
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: ValueListenableBuilder<TextEditingValue>(
           valueListenable: controller,
           builder: (context, value, _) {
             final hasText = value.text.trim().isNotEmpty;
 
             return Container(
-              height: 48.h,
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              height: 48,
+              padding: EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
                 color: AppColors.blackBlack0, // 아주 연한 회색 배경
-                borderRadius: BorderRadius.circular(8.r),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 children: [
@@ -54,7 +53,7 @@ class PostDetailCommentInput extends StatelessWidget {
                         hintText: '마음 속 이야기를 공유해봐요.',
                         hintStyle: TextStyle(
                           color: AppColors.blackBlack4,
-                          fontSize: 16.sp,
+                          fontSize: 16,
                         ),
                         border: InputBorder.none,
                       ),
@@ -65,10 +64,7 @@ class PostDetailCommentInput extends StatelessWidget {
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                     onPressed: hasText ? onSend : null,
-                    icon: SvgPicture.asset(
-                      'assets/icons/send.svg',
-                      width: 18.w,
-                    ),
+                    icon: SvgPicture.asset('assets/icons/send.svg', width: 18),
                   ),
                 ],
               ),

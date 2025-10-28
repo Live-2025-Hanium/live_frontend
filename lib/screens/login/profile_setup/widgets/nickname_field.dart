@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:live_frontend/core/controllers/profile_controller.dart';
 import 'package:live_frontend/models/profile_model.dart';
 import 'package:live_frontend/theme/app_colors.dart';
@@ -171,7 +170,7 @@ class NicknameFieldState extends ConsumerState<NicknameField> {
                         borderSide: BorderSide(color: errorColor),
                       ),
                       suffixIcon: Padding(
-                        padding: EdgeInsets.only(top: 16.h),
+                        padding: EdgeInsets.only(top: 16),
                         child: Text(
                           '${field.value?.length ?? 0}/10',
                           style: AppTextStyles.smallMedium(
@@ -183,10 +182,10 @@ class NicknameFieldState extends ConsumerState<NicknameField> {
                     ),
                   ),
                 ),
-                Gap(8.w),
+                Gap(8),
                 SizedBox(
-                  width: 76.w,
-                  height: 40.h,
+                  width: 76,
+                  height: 40,
                   child: SaeipButton.outlined(
                     text: '중복 확인',
                     onPressed: _handleDuplicateCheck,
