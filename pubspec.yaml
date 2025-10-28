@@ -120,6 +120,7 @@ flutter:
     - assets/icons/forum_post_detail/
     - assets/icons/map_category/
     - assets/images/mock_marker.png
+    - assets/logo/splash/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

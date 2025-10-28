@@ -15,7 +15,6 @@ class SaeipToastController {
     _removeCurrent(immediate: true);
 
     final overlay = Overlay.of(context);
-    if (overlay == null) return;
 
     late OverlayEntry entry;
 
@@ -104,9 +103,10 @@ class _ToastAnimatorState extends State<_ToastAnimator>
     SaeipToastController._animationController = _controller;
 
     _fade = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
-    _slide = Tween(begin: const Offset(0, 0.2), end: Offset.zero).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _slide = Tween(
+      begin: const Offset(0, 0.2),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _controller.forward();
   }
@@ -127,19 +127,14 @@ class _ToastAnimatorState extends State<_ToastAnimator>
       child: Stack(
         children: [
           Positioned.fill(
-            child: Container(
-              color: const Color.fromRGBO(0, 0, 0, 0.1),
-            ),
+            child: Container(color: const Color.fromRGBO(0, 0, 0, 0.1)),
           ),
           // 토스트
           Positioned(
             left: 40,
             right: 40,
             bottom: 40 + widget.bottomOffset,
-            child: SlideTransition(
-              position: _slide,
-              child: widget.child,
-            ),
+            child: SlideTransition(position: _slide, child: widget.child),
           ),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
@@ -12,8 +13,7 @@ import 'package:live_frontend/core/controllers/profile_controller.dart';
 class AuthController extends StateNotifier<AuthState> {
   final Ref ref;
 
-  AuthController(this.ref)
-      : super(const AuthState(status: AuthStatus.initial));
+  AuthController(this.ref) : super(const AuthState(status: AuthStatus.initial));
 
   Future<void> restoreSession() async {
     try {
@@ -98,6 +98,27 @@ class AuthController extends StateNotifier<AuthState> {
     } catch (e, s) {
       debugPrint('❌ Kakao 로그인 실패: $e');
       FirebaseCrashlytics.instance.recordError(e, s, reason: '카카오 로그인 실패');
+      state = state.copyWith(status: AuthStatus.error, error: e.toString());
+    }
+  }
+
+  // 테스트 로그인
+  Future<void> loginWithTestUser() async {
+    state = state.copyWith(status: AuthStatus.loading);
+    try {
+      final repo = ref.read(authRepositoryProvider);
+      final loginData = await repo.loginWithTestUserOnBackend();
+
+      debugPrint('✅ 테스트 로그인 성공');
+
+      state = AuthState(
+        status: AuthStatus.authenticated,
+        nickname: loginData.user.nickname,
+        isNewUser: loginData.newUser,
+      );
+    } catch (e, s) {
+      debugPrint('❌ 테스트 로그인 실패: $e');
+      FirebaseCrashlytics.instance.recordError(e, s, reason: '테스트 로그인 실패');
       state = state.copyWith(status: AuthStatus.error, error: e.toString());
     }
   }

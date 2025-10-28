@@ -7,6 +7,7 @@ class LoginButton extends StatelessWidget {
   final Widget icon;
   final Color? backgroundColor;
   final BorderSide borderSide;
+  final Color textColor;
 
   const LoginButton({
     super.key,
@@ -15,6 +16,7 @@ class LoginButton extends StatelessWidget {
     required this.icon,
     this.backgroundColor,
     this.borderSide = BorderSide.none,
+    this.textColor = Colors.black,
   });
 
   @override
@@ -39,7 +41,7 @@ class LoginButton extends StatelessWidget {
             Center(
               child: Text(
                 label,
-                style: AppTextStyles.bodyMedium(context, color: Colors.black),
+                style: AppTextStyles.bodyMedium(context, color: textColor),
               ),
             ),
           ],

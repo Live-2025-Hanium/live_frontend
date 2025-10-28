@@ -9,7 +9,6 @@ import 'app.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:live_frontend/env.dart';
 import 'package:jiffy/jiffy.dart';
-import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 
@@ -17,9 +16,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (kIsWeb) {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.web,
-    );
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.web);
   } else {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,

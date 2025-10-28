@@ -111,11 +111,10 @@ class AuthRepository {
     }
   }
 
-  Future<SaeipUserModel> loginWithKakaoWebOnBackend(String code) async {
+  Future<LoginData> loginWithTestUserOnBackend() async {
     try {
       final resp = await _dio.post(
-        '/api/v2/auth/kakao/callback',
-        data: {'code': code, 'redirectUri': Env.kakaoRedirectUri},
+        '/api/auth/demo/login',
         options: Options(extra: {'noAuth': true}),
       );
 
@@ -131,25 +130,20 @@ class AuthRepository {
       try {
         await _secureStorage.write(TokenKeys.access, login.accessToken);
         await _secureStorage.write(TokenKeys.refresh, login.refreshToken);
-        if (kDebugMode) {
-          // debugPrint(
-          //   'AuthRepository: stored access=${login.accessToken.isNotEmpty ? '[REDACTED]' : '<empty>'} refresh=${login.refreshToken.isNotEmpty ? '[REDACTED]' : '<empty>'}',
-          // );
-        }
       } catch (e) {
         // if (kDebugMode) debugPrint('Failed to persist tokens: $e');
       }
 
-      return login.user;
+      return login;
     } on DioException catch (e, s) {
       FirebaseCrashlytics.instance.recordError(
         e,
         s,
-        reason: 'Kakao Web Backend Login Failed',
+        reason: 'Test User Backend Login Failed',
       );
       if (kDebugMode) {
         // debugPrint(
-        //   'loginWithKakaoWebOnBackend DioException: ${e.response?.data}',
+        //   'loginWithTestUserOnBackend DioException: ${e.response?.data}',
         // );
         // debugPrintStack(stackTrace: s);
       }

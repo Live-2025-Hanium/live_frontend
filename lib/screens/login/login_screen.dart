@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -5,6 +8,8 @@ import 'package:go_router/go_router.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
+import 'package:live_frontend/widgets/saeip_toast.dart';
+import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 import 'widgets/login_button.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -59,7 +64,17 @@ class LoginScreen extends ConsumerWidget {
                     ),
                     LoginButton(
                       onPressed: () {
-                        ref.read(authProvider.notifier).loginWithKakao();
+                        if (kIsWeb) {
+                          SaeipToastController.showToast(
+                            context: context,
+                            child: SaeipToast(
+                              message:
+                                  "웹에서는 카카오 로그인을 지원하지 않습니다. 테스트 로그인을 이용하여 주세요.",
+                            ),
+                          );
+                        } else {
+                          ref.read(authProvider.notifier).loginWithKakao();
+                        }
                       },
                       label: '카카오로 시작하기',
                       icon: SvgPicture.asset(
@@ -70,22 +85,41 @@ class LoginScreen extends ConsumerWidget {
                       backgroundColor: const Color(0xFFFDDC3F),
                     ),
                     SizedBox(height: 12),
-                    LoginButton(
-                      onPressed: () {
-                        ref.read(authProvider.notifier).loginWithGoogle();
-                      },
-                      label: 'Google로 시작하기',
-                      icon: SvgPicture.asset(
-                        'assets/logo/google.svg',
-                        width: 26,
-                        height: 26,
+                    if (kIsWeb)
+                      LoginButton(
+                        onPressed: () {
+                          ref.read(authProvider.notifier).loginWithTestUser();
+                        },
+                        label: '테스트 로그인하기',
+                        icon: Image.asset(
+                          'assets/logo/splash/ios.png',
+                          width: 26,
+                          height: 26,
+                        ),
+                        backgroundColor: AppColors.greenNormal,
+                        borderSide: const BorderSide(
+                          color: AppColors.blackBlack2,
+                          width: 1,
+                        ),
+                        textColor: AppColors.blackBlack1,
+                      )
+                    else
+                      LoginButton(
+                        onPressed: () {
+                          ref.read(authProvider.notifier).loginWithGoogle();
+                        },
+                        label: 'Google로 시작하기',
+                        icon: SvgPicture.asset(
+                          'assets/logo/google.svg',
+                          width: 26,
+                          height: 26,
+                        ),
+                        backgroundColor: const Color(0xFFFFFFFF),
+                        borderSide: const BorderSide(
+                          color: AppColors.blackBlack2,
+                          width: 1,
+                        ),
                       ),
-                      backgroundColor: const Color(0xFFFFFFFF),
-                      borderSide: const BorderSide(
-                        color: AppColors.blackBlack2,
-                        width: 1,
-                      ),
-                    ),
                     SizedBox(height: 4.h),
                     TextButton(
                       onPressed: () {},
