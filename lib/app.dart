@@ -30,18 +30,23 @@ class _MyAppState extends ConsumerState<MyApp> {
       onError: Colors.white,
     );
 
-    return MaterialApp.router(
-      routerConfig: router,
-      title: 'SaeIp',
-      theme: ThemeData(
-        checkboxTheme: const CheckboxThemeData(
-          side: BorderSide(color: AppColors.greenNormal),
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 480),
+        child: MaterialApp.router(
+          routerConfig: router,
+          title: 'SaeIp',
+          theme: ThemeData(
+            checkboxTheme: const CheckboxThemeData(
+              side: BorderSide(color: AppColors.greenNormal),
+            ),
+            switchTheme: SwitchThemeData(
+              trackOutlineColor: WidgetStatePropertyAll(AppColors.blackBlack2),
+            ),
+            colorScheme: saeipColorScheme,
+            useMaterial3: true,
+          ),
         ),
-        switchTheme: SwitchThemeData(
-          trackOutlineColor: WidgetStatePropertyAll(AppColors.blackBlack2),
-        ),
-        colorScheme: saeipColorScheme,
-        useMaterial3: true,
       ),
     );
   }
