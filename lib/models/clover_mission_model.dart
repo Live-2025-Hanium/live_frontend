@@ -3,7 +3,8 @@ import 'mission_models.dart';
 
 part 'clover_mission_model.g.dart';
 
-Duration _parseDurationFromString(String time) {
+Duration _parseDurationFromString(String? time) {
+  if (time == null) return Duration.zero;
   final parts = time.split(':');
   final minutes = int.parse(parts[0]);
   final seconds = int.parse(parts[1]);
@@ -128,21 +129,26 @@ class CloverMissionModel {
 
 @JsonSerializable()
 class CloverMissionDetailModel extends CloverMissionModel {
-  // final CloverMissionType cloverType;
   @JsonKey(fromJson: _parseDurationFromString, toJson: _formatDurationToString)
   final Duration? remainingTime;
-  final String? targetAddress;
   final int? remainingDistance;
+  final String? placeName;
+  final String? address;
+  final String? latitude;
+  final String? longitude;
 
   CloverMissionDetailModel({
     required super.userMissionId,
     required super.cloverType,
     required super.missionTitle,
     required super.missionStatus,
-    required super.missionDifficulty,
     required super.missionCategory,
+    required super.missionDifficulty,
+    this.placeName,
+    this.address,
+    this.latitude,
+    this.longitude,
     this.remainingTime,
-    this.targetAddress,
     this.remainingDistance,
   });
 

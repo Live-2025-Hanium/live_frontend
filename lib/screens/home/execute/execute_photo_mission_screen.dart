@@ -34,8 +34,6 @@ class _ExecutePhotoMissionScreenState
         _imageFile = File(photo.path);
         _shown = false;
       });
-      // 이후 백엔드에 이미지 전송
-      // 예: await uploadImage(_imageFile);
     }
   }
 

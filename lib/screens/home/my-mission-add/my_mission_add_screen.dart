@@ -6,7 +6,6 @@ import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/core/controllers/my_mission_controller.dart';
 import 'package:live_frontend/core/repositories/my_mission_repository.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
-import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/screens/home/my-mission-add/widget/selection_button.dart';
 import 'package:live_frontend/screens/home/my-mission-add/widget/selection_tile.dart';
 import 'package:live_frontend/theme/app_colors.dart';

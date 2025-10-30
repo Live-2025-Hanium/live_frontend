@@ -84,6 +84,7 @@ class CloverMissionRepository {
         (json) =>
             CloverMissionDetailModel.fromJson(json as Map<String, dynamic>),
       );
+
       return apiResponse.data;
     } else {
       throw Exception('Failed to load clover mission detail');
