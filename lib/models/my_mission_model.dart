@@ -1,4 +1,3 @@
-// lib/models/my_mission_model.dart
 import 'package:json_annotation/json_annotation.dart';
 import 'package:live_frontend/models/mission_models.dart';
 

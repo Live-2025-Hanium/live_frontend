@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:live_frontend/models/common_api_response_model.dart';
 import 'package:live_frontend/models/presigned_url_model.dart';
@@ -43,12 +44,25 @@ class PresignedUrlRepository {
   ) async {
     try {
       final dio = Dio();
-      final fileBytes = await MultipartFile.fromFile(filePath);
+      dynamic data;
+
+      if (kIsWeb) {
+        final response = await dio.get(
+          filePath,
+          options: Options(responseType: ResponseType.bytes),
+        );
+        debugPrint("이미지 가져오기 완료");
+        data = response.data;
+      } else {
+        data = await MultipartFile.fromFile(filePath);
+      }
+
       await dio.put(
         presigned.uploadUrl,
-        data: fileBytes,
+        data: data,
         options: Options(headers: {'Content-Type': 'image/$fileType'}),
       );
+      debugPrint("이미지 이미지 업로드 완료");
     } catch (e) {
       rethrow;
     }

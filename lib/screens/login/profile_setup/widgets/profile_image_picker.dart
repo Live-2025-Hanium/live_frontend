@@ -1,4 +1,6 @@
 import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
@@ -50,7 +52,9 @@ class _ProfileImagePickerState extends ConsumerState<ProfileImagePicker> {
             backgroundColor: Colors.grey[200],
             backgroundImage: _pickedImagePath == ""
                 ? null
-                : FileImage(File(_pickedImagePath)) as ImageProvider,
+                : kIsWeb
+                    ? NetworkImage(_pickedImagePath)
+                    : FileImage(File(_pickedImagePath)) as ImageProvider,
             child: _pickedImagePath == "" && imageUrl == null
                 ? const Icon(Icons.person, size: 44, color: Colors.grey)
                 : null,
