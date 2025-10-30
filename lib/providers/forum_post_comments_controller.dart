@@ -3,16 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 
 import 'package:live_frontend/models/forum_post_comment_model.dart';
-import 'package:live_frontend/models/common_api_response_model.dart';
-
-final commentsApiClientProvider = Provider<Dio>((ref) {
-  return Dio(
-    BaseOptions(
-      baseUrl: '', // TODO: baseUrl
-      headers: {'Content-Type': 'application/json'},
-    ),
-  );
-});
+import 'package:live_frontend/providers/dio_provider.dart';
 
 @immutable
 class CommentsState {
@@ -60,7 +51,7 @@ final postCommentsProvider =
       ref,
       postId,
     ) {
-      final dio = ref.watch(commentsApiClientProvider);
+      final dio = ref.watch(dioProvider);
       final ctrl = PostCommentsController(dio: dio, postId: postId);
       Future.microtask(ctrl.reload);
       return ctrl;
@@ -124,7 +115,7 @@ class PostCommentsController extends StateNotifier<CommentsState> {
       }
       // 대댓글 트리 안에서도 찾아야 함
       final updatedReplies = c.replies
-          ?.map(
+          .map(
             (r) => r.id == commentId
                 ? r.copyWith(
                     isLiked: !r.isLiked,
