@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:live_frontend/models/clover_mission_model.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission/new_clover_mission_modal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:live_frontend/providers/home_provider.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission_list.dart';
 import 'package:live_frontend/screens/home/widgets/home_profile.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission_list.dart';
@@ -28,6 +27,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     _checkModalStatus();
+    _checkLocationPermission();
+  }
+
+  // 앱 시작 시 gps 허용 되어있는지 확인
+  Future<void> _checkLocationPermission() async {
+    final status = await Geolocator.checkPermission();
+    if (status == LocationPermission.denied) {
+      await Geolocator.requestPermission();
+    }
   }
 
   // 앱 시작 시 오늘 이미 모달을 봤는지 확인
@@ -41,10 +49,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
   }
 
-  // 클로버 미션 데이터 로딩 완료 후 모달 표시
-  Future<void> _showOncePerDayModal(
-    List<CloverMissionModel> missionList,
-  ) async {
+  Future<void> _showOncePerDayModal() async {
     // 이미 오늘 모달을 본 경우 리턴
     if (_hasShownModalToday) return;
 
@@ -70,45 +75,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final cloverMissions = ref.watch(cloverMissionNotifierProvider);
-
-    // 클로버 미션이 로딩 완료되고, 오늘 아직 모달을 보지 않았다면 모달 표시
-    ref.listen<AsyncValue<List<CloverMissionModel>>>(
-      cloverMissionNotifierProvider,
-      (previous, next) {
-        // 이전에 로딩 중이었고, 현재 데이터가 있는 경우 (로딩 완료)
-        if (previous?.isLoading == true && next.hasValue) {
-          // PostFrameCallback으로 빌드 완료 후 모달 표시
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _showOncePerDayModal(next.value!);
-          });
-        }
-      },
-    );
+    // 오늘 아직 모달을 보지 않았다면 모달 표시
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showOncePerDayModal();
+    });
 
     return Scaffold(
       appBar: SaeipAppBar(title: 'Home', appBarStyle: AppBarStyle.common),
       bottomNavigationBar: SaeipNavigationBar(initialIndex: 0),
-      body: cloverMissions.when(
-        loading: () => Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Error: $error')),
-        data: (cloverMissions) => Container(
-          color: AppColors.blackBlack0,
-          child: SafeArea(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                HomeProfile(
-                  profileImageSrc: 'https://picsum.photos/84',
-                  todayCloverCount: 5,
-                  todayFinishedMissionCount: 2,
-                ),
-                Gap(16.h),
-                CloverMissionList(),
-                Gap(16.h),
-                MyMissionList(),
-              ],
-            ),
+      body: Container(
+        color: AppColors.blackBlack0,
+        child: SafeArea(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              HomeProfile(
+                profileImageSrc: 'https://picsum.photos/84',
+                todayCloverCount: 0,
+                todayFinishedMissionCount: 0,
+              ),
+              Gap(16),
+              CloverMissionList(),
+              Gap(16),
+              MyMissionList(),
+            ],
           ),
         ),
       ),

@@ -2,67 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:live_frontend/providers/clover_mission_provider.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission/clover_sub_content.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
-import 'package:live_frontend/providers/home_provider.dart';
 
-class NewCloverMissionModal extends ConsumerStatefulWidget {
+class NewCloverMissionModal extends ConsumerWidget {
   final bool isAdditional;
 
   const NewCloverMissionModal({super.key, this.isAdditional = false});
 
   @override
-  ConsumerState<NewCloverMissionModal> createState() =>
-      _NewCloverMissionModalState();
-}
-
-class _NewCloverMissionModalState extends ConsumerState<NewCloverMissionModal> {
-  List<CloverMissionModel>? _missions;
-  bool _loading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.isAdditional) {
-      _loading = true;
-      // fetch additional missions via notifier
-      ref
-          .read(cloverMissionNotifierProvider.notifier)
-          .addMission()
-          .then((list) {
-            if (!mounted) return;
-            setState(() {
-              _missions = list;
-              _loading = false;
-            });
-          })
-          .catchError((_) {
-            if (!mounted) return;
-            setState(() {
-              _missions = [];
-              _loading = false;
-            });
-          });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     Widget content;
-    if (widget.isAdditional) {
-      if (_loading) {
-        content = const SizedBox(
-          height: 200,
-          child: Center(child: CircularProgressIndicator()),
-        );
-      } else {
-        final list = _missions ?? [];
-        content = _buildContent(context, list, '추가 클로버 미션');
-      }
-    } else {
-      final missionListAsync = ref.watch(cloverMissionNotifierProvider);
+    if (isAdditional) {
+      final missionListAsync = ref.watch(newCloverMissionProvider(null));
       content = missionListAsync.when(
         loading: () => const SizedBox(
           height: 200,
@@ -71,7 +26,19 @@ class _NewCloverMissionModalState extends ConsumerState<NewCloverMissionModal> {
         error: (e, s) =>
             SizedBox(height: 200, child: Center(child: Text('Error: $e'))),
         data: (missionList) =>
-            _buildContent(context, missionList, '클로버 미션 도착!'),
+            _buildContent(context, missionList ?? [], '추가 클로버 미션 도착!'),
+      );
+    } else {
+      final missionListAsync = ref.watch(cloverMissionProvider(null));
+      content = missionListAsync.when(
+        loading: () => const SizedBox(
+          height: 200,
+          child: Center(child: CircularProgressIndicator()),
+        ),
+        error: (e, s) =>
+            SizedBox(height: 200, child: Center(child: Text('Error: $e'))),
+        data: (missionList) =>
+            _buildContent(context, missionList ?? [], '클로버 미션 도착!'),
       );
     }
 
