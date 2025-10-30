@@ -170,6 +170,9 @@ class _MapScreenState extends State<MapScreen> {
               centerLat: 37.611846,
               centerLng: 126.834059,
               zoomLevel: 3,
+              onMapCreated: (controller) {
+                _mapController = controller;
+              },
               points: _markers
                   .map(
                     (marker) => LatLngPoint(
@@ -179,6 +182,7 @@ class _MapScreenState extends State<MapScreen> {
                     ),
                   )
                   .toList(),
+              circles: _circles,
             ),
           ),
 

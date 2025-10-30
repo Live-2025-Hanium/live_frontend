@@ -88,29 +88,64 @@ class _KakaoMapWebState extends State<KakaoMapWeb> {
 
   // =============== JS SDK 로더 ===============
   Future<void> _ensureKakaoMapsSdkLoaded(String appKey) async {
-    final existed = html.document.getElementById('kakao-maps-sdk');
-    if (existed != null) return;
-
-    if (appKey.isEmpty) {
-      throw StateError(
-        'KAKAO_JS_APP_KEY is empty. Pass --dart-define=KAKAO_JS_APP_KEY=...',
-      );
+    // 1. Check if already loaded
+    if (jsu.hasProperty(html.window, 'kakao')) {
+      final kakao = jsu.getProperty(html.window, 'kakao');
+      if (jsu.hasProperty(kakao, 'maps')) {
+        return; // Already loaded
+      }
     }
 
-    final script = html.ScriptElement()
-      ..id = 'kakao-maps-sdk'
-      ..type = 'text/javascript'
-      ..defer = true
-      ..src =
-          'https://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=$appKey&libraries=services,clusterer';
+    final completer = Completer<void>();
 
-    final c = Completer<void>();
-    script.onError.listen(
-      (_) => c.completeError('Failed to load Kakao Maps SDK'),
-    );
-    script.onLoad.listen((_) => c.complete());
-    html.document.head!.append(script);
-    await c.future;
+    // 3. Set a timeout
+    final timeout = Timer(const Duration(seconds: 15), () {
+      if (!completer.isCompleted) {
+        completer.completeError(
+          'Kakao Maps SDK timed out. Check your network connection and app key.',
+        );
+      }
+    });
+
+    // 2. Poll for the object
+    Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      if (jsu.hasProperty(html.window, 'kakao')) {
+        final kakao = jsu.getProperty(html.window, 'kakao');
+        if (jsu.hasProperty(kakao, 'maps')) {
+          timer.cancel();
+          timeout.cancel();
+          if (!completer.isCompleted) {
+            completer.complete();
+          }
+        }
+      }
+    });
+
+    // 4. Inject the script if it doesn't exist
+    if (html.document.getElementById('kakao-maps-sdk') == null) {
+      if (appKey.isEmpty) {
+        throw StateError(
+          'KAKAO_JS_APP_KEY is empty. Pass --dart-define=KAKAO_JS_APP_KEY=...',
+        );
+      }
+
+      final script = html.ScriptElement()
+        ..id = 'kakao-maps-sdk'
+        ..type = 'text/javascript'
+        ..src =
+            'https://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=$appKey&libraries=services,clusterer';
+
+      script.onError.listen((_) {
+        if (!completer.isCompleted) {
+          timeout.cancel();
+          completer.completeError('Failed to load Kakao Maps SDK script.');
+        }
+      });
+
+      html.document.head!.append(script);
+    }
+
+    return completer.future;
   }
 
   // =============== 지도/마커 생성 ===============
