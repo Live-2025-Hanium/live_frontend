@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/providers/clover_mission_provider.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
-import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 
 class CompleteModal extends ConsumerStatefulWidget {
   final int userMissionId;
@@ -16,19 +15,36 @@ class CompleteModal extends ConsumerStatefulWidget {
 }
 
 class _CompleteModalState extends ConsumerState<CompleteModal> {
+  // 프로바이더를 저장할 변수를 선언합니다.
+  late final updateProvider;
+
   @override
   void initState() {
     super.initState();
+    // initState에서 위젯이 생성될 때 프로바이더를 한 번만 초기화합니다.
+    updateProvider = cloverMissionStateUpdateProvider({
+      'status': MissionStatus.completed,
+      'missionId': widget.userMissionId,
+    });
+    // 초기 API 요청을 트리거합니다.
+    ref.read(updateProvider);
   }
 
   @override
   Widget build(BuildContext context) {
-    final cloverMissionStateUpdateAsync = ref.read(
-      cloverMissionStateUpdateProvider({
-        'missionStatus': MissionStatus.completed,
-        'userMissionId': widget.userMissionId,
-      }),
-    );
+    // ref.listen으로 side-effect(화면 닫기 등)를 처리합니다.
+    ref.listen(updateProvider, (previous, next) {
+      // 에러 상태가 되면 다이얼로그를 닫습니다.
+      if (next is AsyncError && mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          context.pop();
+        });
+      }
+    });
+
+    // ref.watch로 프로바이더의 상태를 구독하여 UI를 빌드합니다.
+    final cloverMissionStateUpdateAsync = ref.watch(updateProvider);
+
     return cloverMissionStateUpdateAsync.when(
       data: (_) {
         return SaeipModal.image(
@@ -51,9 +67,8 @@ class _CompleteModalState extends ConsumerState<CompleteModal> {
         );
       },
       error: (error, stack) {
-        SaeipToastController.showMessage(context, '미션 상태 업데이트 중 오류가 발생하였습니다.');
-        context.pop();
-        return const SizedBox.shrink();
+        // listen에서 화면을 닫으므로, 여기서는 간단한 UI만 보여주거나 비워둡니다.
+        return const Center(child: Text('오류 발생'));
       },
       loading: () {
         return const Center(child: CircularProgressIndicator());

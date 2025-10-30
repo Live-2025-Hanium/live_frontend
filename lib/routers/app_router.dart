@@ -8,6 +8,7 @@ import 'package:live_frontend/screens/forum/forum_screen.dart';
 import 'package:live_frontend/screens/home/clover-record/mission_record_screen.dart';
 import 'package:live_frontend/screens/home/execute/execute_photo_mission_screen.dart';
 import 'package:live_frontend/screens/home/execute/execute_timer_mission_screen.dart';
+import 'package:live_frontend/screens/home/execute/execute_visit_mission_screen.dart';
 import 'package:live_frontend/screens/home/my-mission-add/my_mission_add_screen.dart';
 import 'package:live_frontend/screens/home/my-mission-add/repeat/repeat_screen.dart';
 import 'package:live_frontend/screens/map/map_screen.dart';
@@ -128,6 +129,18 @@ final routerProvider = Provider<GoRouter>((ref) {
                   : (state.extra as int?);
               if (id == null) return const NotFoundScreen();
               return ExecutePhotoMissionScreen(id: id);
+            },
+          ),
+          GoRoute(
+            name: 'visit_mission',
+            path: 'execute/visit_mission/:id',
+            builder: (context, state) {
+              final idStr = state.pathParameters['id'];
+              final id = idStr != null
+                  ? int.tryParse(idStr)
+                  : (state.extra as int?);
+              if (id == null) return const NotFoundScreen();
+              return ExecuteVisitMissionScreen(id: id);
             },
           ),
           GoRoute(

@@ -72,16 +72,19 @@ CloverMissionDetailModel _$CloverMissionDetailModelFromJson(
   cloverType: $enumDecode(_$CloverMissionTypeEnumMap, json['cloverType']),
   missionTitle: json['missionTitle'] as String,
   missionStatus: $enumDecode(_$MissionStatusEnumMap, json['missionStatus']),
-  missionDifficulty: $enumDecode(
-    _$CloverMissionDifficultyEnumMap,
-    json['missionDifficulty'],
-  ),
   missionCategory: $enumDecode(
     _$CloverMissionCategoryEnumMap,
     json['missionCategory'],
   ),
-  remainingTime: _parseDurationFromString(json['remainingTime'] as String),
-  targetAddress: json['targetAddress'] as String?,
+  missionDifficulty: $enumDecode(
+    _$CloverMissionDifficultyEnumMap,
+    json['missionDifficulty'],
+  ),
+  placeName: json['placeName'] as String?,
+  address: json['address'] as String?,
+  latitude: json['latitude'] as String?,
+  longitude: json['longitude'] as String?,
+  remainingTime: _parseDurationFromString(json['remainingTime'] as String?),
   remainingDistance: (json['remainingDistance'] as num?)?.toInt(),
 );
 
@@ -96,8 +99,11 @@ Map<String, dynamic> _$CloverMissionDetailModelToJson(
   'missionCategory': _$CloverMissionCategoryEnumMap[instance.missionCategory]!,
   'cloverType': _$CloverMissionTypeEnumMap[instance.cloverType]!,
   'remainingTime': _formatDurationToString(instance.remainingTime),
-  'targetAddress': instance.targetAddress,
   'remainingDistance': instance.remainingDistance,
+  'placeName': instance.placeName,
+  'address': instance.address,
+  'latitude': instance.latitude,
+  'longitude': instance.longitude,
 };
 
 CloverMissionFeedbackModel _$CloverMissionFeedbackModelFromJson(

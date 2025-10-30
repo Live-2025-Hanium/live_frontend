@@ -152,7 +152,11 @@ class _CloverMissionListState extends ConsumerState<CloverMissionList> {
             'photo_mission',
             pathParameters: {'id': mission.userMissionId.toString()},
           );
-          // 다른 타입의 미션 처리 로직
+        } else if (mission.cloverType == CloverMissionType.visit) {
+          context.pushNamed(
+            'visit_mission',
+            pathParameters: {'id': mission.userMissionId.toString()},
+          );
         }
       },
       loading: () {},
