@@ -104,7 +104,9 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+	<key>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
+	<key>KAKAO_APP_KEY</key>
+	<string>$(KAKAO_JS_APP_KEY)</string>
 </dict>
 </plist>

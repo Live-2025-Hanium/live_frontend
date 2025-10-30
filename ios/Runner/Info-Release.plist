@@ -83,5 +83,7 @@
 	</array>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
+	<key>KAKAO_APP_KEY</key>
+	<string>$(KAKAO_JS_APP_KEY)</string>
 </dict>
 </plist>
