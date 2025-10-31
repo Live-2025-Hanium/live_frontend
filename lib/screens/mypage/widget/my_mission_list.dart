@@ -6,7 +6,9 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/core/controllers/my_mission_controller.dart';
 import 'package:live_frontend/core/repositories/my_mission_repository.dart';
+import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
+import 'package:live_frontend/providers/my_mission_provider.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission/mission_repeat.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission/mission_time.dart';
 import 'package:live_frontend/screens/mypage/widget/mission_tile.dart';
@@ -28,19 +30,9 @@ final myMissionsProvider = FutureProvider.autoDispose<List<MyMissionModel>>((
 class MyMissionList extends ConsumerWidget {
   const MyMissionList({super.key});
 
-  int _missionComparator(MyMissionModel a, MyMissionModel b) {
-    final aRank = a.myMissionStatus.index;
-    final bRank = b.myMissionStatus.index;
-    if (aRank != bRank) return aRank - bRank;
-
-    final at = a.missionTitle.toLowerCase();
-    final bt = b.missionTitle.toLowerCase();
-    return at.compareTo(bt);
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final myMissionsAsyncValue = ref.watch(myMissionsProvider);
+    final myMissionsAsyncValue = ref.watch(allMyMissionsProvider);
 
     return myMissionsAsyncValue.when(
       // 로딩 상태 UI
@@ -49,12 +41,9 @@ class MyMissionList extends ConsumerWidget {
       error: (err, stack) => Center(child: Text('Error: $err')),
       // 데이터가 성공적으로 로드된 상태 UI
       data: (missionList) {
-        if (missionList.isEmpty) {
+        if (missionList == null || missionList.isEmpty) {
           return _buildEmptyState(context);
         }
-
-        final sortedMissions = List<MyMissionModel>.of(missionList)
-          ..sort(_missionComparator);
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,12 +53,18 @@ class MyMissionList extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ...sortedMissions.map((mission) {
+                  ...missionList.map((mission) {
                     return Column(
                       children: [
                         MissionTile(
-                          missionStatus: mission.myMissionStatus,
-                          subContent: _buildSubContent(mission),
+                          active: mission.active,
+                          subContent: _buildSubContent(
+                            MyMissionModel(
+                              userMissionId: mission.myMissionId,
+                              missionTitle: mission.missionTitle,
+                              myMissionStatus: MissionStatus.assigned,
+                            ),
+                          ),
                           missionTitle: mission.missionTitle,
                           onTap: () => _onTap(context, ref, mission),
                           onCheckBoxTap: () => _onTap(context, ref, mission),
@@ -114,40 +109,22 @@ class MyMissionList extends ConsumerWidget {
     );
   }
 
-  // 미션 완료 로직
-  void _onTap(BuildContext context, WidgetRef ref, MyMissionModel mission) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return SaeipModal(
-          title: mission.missionTitle,
-          message: '미션을 수행했나요?',
-          confirmText: '완료하기',
-          cancelText: '닫기',
-          onConfirm: () async {
-            try {
-              // Controller를 통해 미션 완료 요청
-              await ref
-                  .read(myMissionControllerProvider)
-                  .completeMyMission(mission.userMissionId);
+  // 미션 활성화 토글 로직
+  Future<void> _onTap(
+    BuildContext context,
+    WidgetRef ref,
+    AllMyMissionsModel mission,
+  ) async {
+    try {
+      // Controller를 통해 미션 활성화 토글 요청
+      await ref
+          .read(myMissionControllerProvider)
+          .toggleMissionStatus(mission.myMissionId, !mission.active);
 
-              // 데이터 새로고침: myMissionsProvider를 무효화하여 다시 가져오게 함
-              ref.invalidate(myMissionsProvider);
-
-              if (context.mounted) Navigator.of(context).pop();
-            } catch (e) {
-              debugPrint("Failed to complete mission: $e");
-              if (context.mounted) {
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('미션 완료에 실패했습니다.')));
-              }
-            }
-          },
-          onCancel: () => Navigator.of(context).pop(),
-        );
-      },
-    );
+      // 데이터 새로고침: allMyMissionsProvider를 무효화하여 다시 가져오게 함
+      ref.invalidate(allMyMissionsProvider);
+    } catch (e) {
+      debugPrint("Failed to toggle mission status: $e");
+    }
   }
 }

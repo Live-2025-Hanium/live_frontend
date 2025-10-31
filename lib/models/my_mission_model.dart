@@ -1,11 +1,10 @@
 // lib/models/my_mission_model.dart
+import 'package:jiffy/jiffy.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:live_frontend/models/mission_models.dart';
 
 part 'my_mission_model.g.dart';
 
-/// 요일 enum (서버 값과 1:1 매핑)
-/// 한글 label 변경 메서드 만들기
 @JsonEnum(alwaysCreate: true)
 enum RepeatDay {
   @JsonValue('MONDAY')
@@ -169,4 +168,49 @@ class MyMissionAddPayloadModel {
       _$MyMissionAddPayloadModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$MyMissionAddPayloadModelToJson(this);
+}
+
+@JsonSerializable()
+class AllMyMissionsModel {
+  final int myMissionId;
+  final String missionTitle;
+  final DateTime startDate;
+  final DateTime endDate;
+  final String scheduledTime;
+  final RepeatDay repeatType;
+  final bool active;
+
+  AllMyMissionsModel({
+    required this.myMissionId,
+    required this.missionTitle,
+    required this.startDate,
+    required this.endDate,
+    required this.scheduledTime,
+    required this.repeatType,
+    required this.active,
+  });
+
+  factory AllMyMissionsModel.fromJson(Map<String, dynamic> json) =>
+      _$AllMyMissionsModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AllMyMissionsModelToJson(this);
+}
+
+class ToggleMissionStatusPayload {
+  final int missionId;
+  final bool isActive;
+
+  ToggleMissionStatusPayload({required this.missionId, required this.isActive});
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is ToggleMissionStatusPayload &&
+        other.missionId == missionId &&
+        other.isActive == isActive;
+  }
+
+  @override
+  int get hashCode => missionId.hashCode ^ isActive.hashCode;
 }

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:live_frontend/models/mission_models.dart';
-import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
-class MissionTile extends StatefulWidget {
-  final MissionStatus missionStatus;
+class MissionTile extends StatelessWidget {
+  final bool active;
   final String missionTitle;
   final Widget? subContent;
   final VoidCallback onTap;
@@ -12,37 +10,13 @@ class MissionTile extends StatefulWidget {
 
   const MissionTile({
     super.key,
-    required this.missionStatus,
+    required this.active,
     required this.missionTitle,
     this.subContent,
     required this.onTap,
     required this.onCheckBoxTap,
   });
 
-  @override
-  State<MissionTile> createState() => _MissionTileState();
-}
-
-class _MissionTileState extends State<MissionTile> {
-  bool isCompleted = false;
-
-  @override
-  void initState() {
-    super.initState();
-    isCompleted = widget.missionStatus == MissionStatus.completed;
-  }
-
-  @override
-  void didUpdateWidget(covariant MissionTile oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.missionStatus != widget.missionStatus) {
-      setState(() {
-        isCompleted = widget.missionStatus == MissionStatus.completed;
-      });
-    }
-  }
-
-  @override
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -51,9 +25,7 @@ class _MissionTileState extends State<MissionTile> {
         color: Colors.transparent,
         child: InkWell(
           // 클릭 기능
-          onTap: isCompleted
-              ? null // disabled 처리
-              : () => widget.onTap(),
+          onTap: onTap,
           child: IntrinsicHeight(
             child: Row(
               children: [
@@ -73,30 +45,24 @@ class _MissionTileState extends State<MissionTile> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                widget.missionTitle,
+                                missionTitle,
                                 style: AppTextStyles.bodyRegular(context),
                               ),
                               SizedBox(height: 4),
-                              if (widget.subContent != null) widget.subContent!,
+                              if (subContent != null) subContent!,
                             ],
                           ),
                         ),
                         GestureDetector(
-                          onTap: isCompleted
-                              ? null
-                              : () {
-                                  widget.onCheckBoxTap();
-                                },
+                          onTap: onCheckBoxTap,
                           child: SizedBox(
                             height: 48,
                             width: 48,
                             child: Switch(
-                              value: isCompleted,
-                              onChanged: isCompleted
-                                  ? null
-                                  : (value) {
-                                      widget.onCheckBoxTap();
-                                    },
+                              value: active,
+                              onChanged: (value) {
+                                onCheckBoxTap();
+                              },
                             ),
                           ),
                         ),
