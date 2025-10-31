@@ -1,35 +1,27 @@
 import 'package:live_frontend/models/forum_post_model.dart';
 
 final dummyForumPosts = List.generate(
-  10,
+  6,
   (i) => ForumPostModel(
-    id: i, // int로 변경
+    id: i + 1, // int로 변경
     title: _dummyTitles[i % _dummyTitles.length],
-    category: Category(id: i % 5, name: 'Category ${i % 5}'),
+    category: Category(id: 1, name: '지원 사업'),
     relatedOrganization: _dummyOrganizations[i % _dummyOrganizations.length],
     createdAt: DateTime.now().subtract(Duration(days: i)),
-    thumbnailImageUrl: 'https://picsum.photos/seed/post$i/600/400',
-    authorNickname: '작성자$i',
+    thumbnailImageUrl: 'https://picsum.photos/seed/post${i + 1}/600/400',
+    authorNickname: '작성자${i + 1}',
     viewCount: 100 + i,
     totalReactionCount: 10 + i,
   ),
 );
 
 const _dummyTitles = [
-  '2024 경기도 「청년 마인드케어」, 참여자 모집',
-  '서울시 청년 주거지원 사업 안내',
-  '직장인 스트레스 관리 꿀팁',
-  '취업 준비생을 위한 멘토링 프로그램',
-  '청년 창업 지원 사업 설명회',
-  '건강한 식습관 만들기 프로젝트',
-  '우울증 극복 성공 사례',
-  '청년 커뮤니티 활동가 모집',
+  '청년재단 청년 체인지업 프로젝트 참여자 모집',
+  '실내에서 키우기 좋은 식물 10가지 추천',
+  '서울식물원 청년 할인 프로그램 모집',
+  '마음 챙김 명상은 어떻게 해야하나요? 6가지 효과를 알아보아요',
+  '라이블리 Pick! 서울 근교 초록한 카페 추천',
+  '고립은둔 청년을 위한 \'작은 시작\' 프로젝트',
 ];
 
-const _dummyOrganizations = [
-  '서울시청',
-  '경기도청',
-  '한국청년협회',
-  '청년지원센터',
-  '건강보험공단',
-];
+const _dummyOrganizations = ['서울시청', '경기도청', '한국청년협회', '청년지원센터', '건강보험공단'];

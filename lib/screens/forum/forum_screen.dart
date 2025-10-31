@@ -44,11 +44,17 @@ class _ForumScreenState extends State<ForumScreen> {
     required ForumSort sort,
   }) {
     // 1. 카테고리 필터링
-    var filtered = categoryId == 0
-        ? dummyForumPosts
-        : dummyForumPosts
-              .where((post) => post.category.id == categoryId - 1)
-              .toList();
+    List<ForumPostModel> filtered;
+
+    if (categoryId == 0) {
+      filtered = dummyForumPosts;
+    } else if (categoryId == 1) {
+      filtered = dummyForumPosts
+          .where((post) => post.category.id == 0 || post.category.id == 1)
+          .toList();
+    } else {
+      filtered = [];
+    }
 
     // 2. 정렬
     filtered.sort((a, b) {
@@ -158,7 +164,10 @@ class _ForumScreenState extends State<ForumScreen> {
         PostGridSliver(
           posts: _posts,
           onTapPost: (post) {
-            context.pushNamed('forum_post', pathParameters: {'id': '1'});
+            context.pushNamed(
+              'forum_post',
+              pathParameters: {'id': '${post.id}'},
+            );
           },
         ),
       ],

@@ -12,10 +12,12 @@ class PostDetailContent extends StatelessWidget {
     super.key,
     required this.content,
     this.imageUrls = const <String>[],
+    required this.id,
   });
 
   final String content;
   final List<String> imageUrls;
+  final int id;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class PostDetailContent extends StatelessWidget {
       children: [
         // 이미지
         if (imageUrls.isNotEmpty) ...[
-          _SingleImage(url: imageUrls.first),
+          _SingleImage(url: imageUrls.first, id: id),
           Gap(16.h),
         ],
 
@@ -37,8 +39,9 @@ class PostDetailContent extends StatelessWidget {
 }
 
 class _SingleImage extends StatelessWidget {
-  const _SingleImage({required this.url});
+  const _SingleImage({required this.url, required this.id});
   final String url;
+  final int id;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +49,10 @@ class _SingleImage extends StatelessWidget {
       aspectRatio: 4 / 3,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.r),
-        child: Image.network(url, fit: BoxFit.cover),
+        child: Image.network(
+          url == "string" ? "https://picsum.photos/seed/post$id/600/400" : url,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -62,10 +68,12 @@ class _PostBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: paragraphs
-          .map((p) => Padding(
-                padding: EdgeInsets.only(bottom: 12.h),
-                child: Text(p, style: AppTextStyles.bodyRegular(context)),
-              ))
+          .map(
+            (p) => Padding(
+              padding: EdgeInsets.only(bottom: 12.h),
+              child: Text(p, style: AppTextStyles.bodyRegular(context)),
+            ),
+          )
           .toList(),
     );
   }
