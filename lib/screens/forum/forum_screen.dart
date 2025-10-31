@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:live_frontend/widgets/saeip_app_bar.dart';
-import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
 import 'package:live_frontend/widgets/saeip_search_bar.dart';
 import 'package:live_frontend/screens/forum/widgets/banner_carousel.dart';
 import 'package:live_frontend/screens/forum/widgets/category_chips.dart';
@@ -48,8 +46,8 @@ class _ForumScreenState extends State<ForumScreen> {
     var filtered = categoryId == 0
         ? dummyForumPosts
         : dummyForumPosts
-              .where((post) => post.category.id == categoryId - 1)
-              .toList();
+            .where((post) => post.category.id == categoryId - 1)
+            .toList();
 
     // 2. 정렬
     filtered.sort((a, b) {
@@ -88,16 +86,6 @@ class _ForumScreenState extends State<ForumScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: SaeipAppBar(
-        title: 'Forum',
-        appBarStyle: AppBarStyle.common,
-        actions: [
-          IconButton(
-            icon: SvgPicture.asset('assets/icons/bookmark.svg', height: 20),
-            onPressed: () => _openScrap(),
-          ),
-        ],
-      ),
       body: CustomScrollView(
         clipBehavior: Clip.none,
         slivers: [
@@ -178,7 +166,7 @@ class _ForumScreenState extends State<ForumScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: const SaeipNavigationBar(initialIndex: 3),
     );
   }
 }
+

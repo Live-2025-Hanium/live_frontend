@@ -9,8 +9,6 @@ import 'package:live_frontend/screens/statistics/widgets/week_navigator.dart';
 import 'package:live_frontend/screens/statistics/widgets/weekly_bar_chart.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
-import 'package:live_frontend/widgets/saeip_app_bar.dart';
-import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
 
 class StatisticsScreen extends ConsumerStatefulWidget {
   const StatisticsScreen({super.key});
@@ -40,11 +38,9 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.blackBlack0,
-      appBar: SaeipAppBar(appBarStyle: AppBarStyle.common),
-      bottomNavigationBar: const SaeipNavigationBar(initialIndex: 1),
-      body: SafeArea(
+    return Container(
+      color: AppColors.blackBlack0,
+      child: SafeArea(
         child: Column(
           children: [
             // 탭바 추가
@@ -84,9 +80,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     );
   }
 
-  Widget _buildStatisticsContent({
-    required int tabIndex, // 0: 클로버 미션, 1: 마이 미션
-  }) {
+  Widget _buildStatisticsContent({required int tabIndex}) {
     void onBarTapped(int index) {
       debugPrint('Bar $index tapped');
       final refDate = Jiffy.parse(
@@ -100,9 +94,8 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
         'weekly_report',
         queryParameters: {
           'referenceDate': refDate.format(pattern: 'yyyy-MM-dd'),
-          'missionType': tabIndex == 0
-              ? MissionType.clover.name
-              : MissionType.my.name,
+          'missionType':
+              tabIndex == 0 ? MissionType.clover.name : MissionType.my.name,
           'selectedIndex': index.toString(),
         },
       );
@@ -118,16 +111,14 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                 padding: EdgeInsets.symmetric(horizontal: 36, vertical: 36),
                 child: MissionCompletionGauge(
                   yearMonth: _currentAnchor.substring(0, 7),
-                  missionType: tabIndex == 0
-                      ? MissionType.clover
-                      : MissionType.my,
+                  missionType:
+                      tabIndex == 0 ? MissionType.clover : MissionType.my,
                   month: Jiffy.parse(_currentAnchor).month,
                 ),
               ),
               WeeklyBarChart(
-                missionType: tabIndex == 0
-                    ? MissionType.clover
-                    : MissionType.my,
+                missionType:
+                    tabIndex == 0 ? MissionType.clover : MissionType.my,
                 currentAnchor: _currentAnchor,
                 onBarTapped: onBarTapped,
               ),
