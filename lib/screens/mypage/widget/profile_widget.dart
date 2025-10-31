@@ -50,7 +50,10 @@ class ProfileWidget extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text('닉네임', style: AppTextStyles.subtitleMedium(context)),
+              Text(
+                ref.watch(authProvider).nickname ?? '',
+                style: AppTextStyles.subtitleMedium(context),
+              ),
               Text(
                 '추가 정보',
                 style: AppTextStyles.smallMedium(

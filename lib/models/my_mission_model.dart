@@ -174,10 +174,10 @@ class MyMissionAddPayloadModel {
 class AllMyMissionsModel {
   final int myMissionId;
   final String missionTitle;
-  final DateTime startDate;
-  final DateTime endDate;
-  final String scheduledTime;
-  final RepeatDay repeatType;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final String? scheduledTime;
+  final RepeatDay? repeatType;
   final bool active;
 
   AllMyMissionsModel({

@@ -12,20 +12,7 @@ import 'package:live_frontend/providers/my_mission_provider.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission/mission_repeat.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission/mission_time.dart';
 import 'package:live_frontend/screens/mypage/widget/mission_tile.dart';
-import 'package:live_frontend/theme/app_text_styles.dart';
-import 'package:live_frontend/widgets/saeip_modal.dart';
-
-final myMissionControllerProvider = Provider<MyMissionController>((ref) {
-  final repository = ref.watch(myMissionRepositoryProvider);
-  return MyMissionController(repository);
-});
-
-final myMissionsProvider = FutureProvider.autoDispose<List<MyMissionModel>>((
-  ref,
-) {
-  final controller = ref.watch(myMissionControllerProvider);
-  return controller.fetchMyMissions();
-});
+import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 
 class MyMissionList extends ConsumerWidget {
   const MyMissionList({super.key});
@@ -41,6 +28,7 @@ class MyMissionList extends ConsumerWidget {
       error: (err, stack) => Center(child: Text('Error: $err')),
       // 데이터가 성공적으로 로드된 상태 UI
       data: (missionList) {
+        debugPrint('Fetched all my missions: $missionList');
         if (missionList == null || missionList.isEmpty) {
           return _buildEmptyState(context);
         }
@@ -58,16 +46,10 @@ class MyMissionList extends ConsumerWidget {
                       children: [
                         MissionTile(
                           active: mission.active,
-                          subContent: _buildSubContent(
-                            MyMissionModel(
-                              userMissionId: mission.myMissionId,
-                              missionTitle: mission.missionTitle,
-                              myMissionStatus: MissionStatus.assigned,
-                            ),
-                          ),
                           missionTitle: mission.missionTitle,
                           onTap: () => _onTap(context, ref, mission),
                           onCheckBoxTap: () => _onTap(context, ref, mission),
+                          child: _buildSubContent(mission),
                         ),
                         Gap(8.h),
                       ],
@@ -83,8 +65,8 @@ class MyMissionList extends ConsumerWidget {
   }
 
   // 미션 타일 하단 컨텐츠 빌더
-  Widget? _buildSubContent(MyMissionModel mission) {
-    if (mission.repeatType != null && mission.scheduledTime != null) {
+  Widget? _buildSubContent(AllMyMissionsModel mission) {
+    if (mission.repeatType != null || mission.scheduledTime != null) {
       return Row(
         children: [
           if (mission.scheduledTime != null)
@@ -104,7 +86,7 @@ class MyMissionList extends ConsumerWidget {
       padding: EdgeInsets.only(top: 8.h, left: 16.w, right: 8.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [const Center(child: Text('오늘은 미션이 없습니다. 새로 추가해보세요!'))],
+        children: [const Center(child: Text('마이 미션이 없습니다. 새로 추가해보세요!'))],
       ),
     );
   }
@@ -121,8 +103,14 @@ class MyMissionList extends ConsumerWidget {
           .read(myMissionControllerProvider)
           .toggleMissionStatus(mission.myMissionId, !mission.active);
 
+      SaeipToastController.showMessage(
+        context,
+        mission.active ? '미션이 비활성화되었습니다.' : '미션이 활성화되었습니다.',
+      );
+
       // 데이터 새로고침: allMyMissionsProvider를 무효화하여 다시 가져오게 함
       ref.invalidate(allMyMissionsProvider);
+      ref.invalidate(myMissionsProvider);
     } catch (e) {
       debugPrint("Failed to toggle mission status: $e");
     }
