@@ -94,8 +94,7 @@ class _ExecuteTimerMissionScreenState
     return missionDetailAsync.when(
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (error, stack) =>
-          Scaffold(body: Center(child: Text('Error: $error'))),
+      error: (error, stack) => Scaffold(body: Center(child: Text('Error'))),
       data: (detail) {
         if (detail == null || detail.remainingTime == null) {
           return Scaffold(body: Center(child: Text('미션 정보를 불러올 수 없습니다.')));

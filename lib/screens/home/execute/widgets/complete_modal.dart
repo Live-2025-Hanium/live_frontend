@@ -52,7 +52,8 @@ class _CompleteModalState extends ConsumerState<CompleteModal> {
           title: '미션 완료',
           message: '오늘의 클로버를 획득했어요.',
           confirmText: '확인',
-          onConfirm: () async {
+          onConfirm: () {
+            context.pop();
             context.pushNamed(
               'mission_record',
               pathParameters: {'id': widget.userMissionId.toString()},

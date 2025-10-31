@@ -38,7 +38,7 @@ class _CloverMissionListState extends ConsumerState<CloverMissionList> {
     final missionListAsync = ref.watch(cloverMissionProvider(null));
     return missionListAsync.when(
       loading: () => Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
+      error: (error, stack) => Center(child: Text('에러가 발생했습니다.')),
       data: (missionList) {
         bool showNewCloverMission = false;
         if (missionList == null || missionList.isEmpty) {

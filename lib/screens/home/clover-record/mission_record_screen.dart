@@ -206,7 +206,7 @@ class _MissionRecordScreenState extends ConsumerState<MissionRecordScreen> {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stackTrace) => Center(child: Text('에러 발생: $error')),
+        error: (error, stackTrace) => Center(child: Text('에러 발생')),
       ),
     );
   }

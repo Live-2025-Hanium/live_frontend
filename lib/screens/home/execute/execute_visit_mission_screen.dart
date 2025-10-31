@@ -45,8 +45,7 @@ class ExecuteVisitMissionScreen extends ConsumerWidget {
           ),
         );
       },
-      error: (error, stack) =>
-          Scaffold(body: Center(child: Text('Error: $error'))),
+      error: (error, stack) => Scaffold(body: Center(child: Text('Error'))),
       loading: () => Scaffold(body: Center(child: CircularProgressIndicator())),
     );
   }

@@ -24,7 +24,7 @@ class NewCloverMissionModal extends ConsumerWidget {
           child: Center(child: CircularProgressIndicator()),
         ),
         error: (e, s) =>
-            SizedBox(height: 200, child: Center(child: Text('Error: $e'))),
+            SizedBox(height: 200, child: Center(child: Text('에러 발생'))),
         data: (missionList) =>
             _buildContent(context, missionList ?? [], '추가 클로버 미션 도착!'),
       );
@@ -36,7 +36,7 @@ class NewCloverMissionModal extends ConsumerWidget {
           child: Center(child: CircularProgressIndicator()),
         ),
         error: (e, s) =>
-            SizedBox(height: 200, child: Center(child: Text('Error: $e'))),
+            SizedBox(height: 200, child: Center(child: Text('에러 발생'))),
         data: (missionList) =>
             _buildContent(context, missionList ?? [], '클로버 미션 도착!'),
       );
