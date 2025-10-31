@@ -145,7 +145,7 @@ class _CloverMissionListState extends ConsumerState<CloverMissionList> {
 
       if (!mounted) return;
 
-      debugPrint('클로버 미션 시작 성공: ${mission.missionTitle}');
+      //  debugPrint('클로버 미션 시작 성공: ${mission.missionTitle}');
       if (mission.cloverType == CloverMissionType.timer) {
         context.pushNamed(
           'timer_mission',
@@ -157,7 +157,7 @@ class _CloverMissionListState extends ConsumerState<CloverMissionList> {
           pathParameters: {'id': mission.userMissionId.toString()},
         );
       } else if (mission.cloverType == CloverMissionType.visit) {
-        debugPrint('Visiting mission navigation');
+        //  debugPrint('Visiting mission navigation');
         context.pushNamed(
           'visit_mission',
           pathParameters: {'id': mission.userMissionId.toString()},

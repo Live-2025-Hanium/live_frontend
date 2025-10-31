@@ -154,7 +154,7 @@ class MyMissionList extends ConsumerWidget {
 
               if (context.mounted) Navigator.of(context).pop();
             } catch (e) {
-              debugPrint("Failed to complete mission: $e");
+              //  debugPrint("Failed to complete mission: $e");
               if (context.mounted) {
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(

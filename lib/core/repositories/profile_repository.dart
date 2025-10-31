@@ -48,7 +48,7 @@ class ProfileRepository {
 
       return apiResp.data;
     } catch (e) {
-      debugPrint('❌ 닉네임 중복 확인 실패: $e');
+      //  debugPrint('❌ 닉네임 중복 확인 실패: $e');
       return null;
     }
   }
@@ -58,7 +58,7 @@ class ProfileRepository {
       await _dio.post('/api/members/profile', data: payload.toJson());
       return true;
     } catch (e) {
-      debugPrint('❌ 프로필 업데이트 실패: $e');
+      //  debugPrint('❌ 프로필 업데이트 실패: $e');
       return false;
     }
   }

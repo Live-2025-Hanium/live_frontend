@@ -69,7 +69,7 @@ class MissionListItem extends StatelessWidget {
         fit: BoxFit.contain,
         errorBuilder: (context, error, stackTrace) {
           // Log the error to make debugging easier (asset path, error message)
-          debugPrint('Failed to load asset: $imagePath -> $error');
+          //  debugPrint('Failed to load asset: $imagePath -> $error');
           if (stackTrace != null) debugPrint(stackTrace.toString());
           return SizedBox(
             width: 16,

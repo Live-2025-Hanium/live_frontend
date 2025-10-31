@@ -21,7 +21,7 @@ class PresignedUrlRepository {
         'contentType': contentType,
         'uploadType': uploadType,
       };
-      debugPrint('PresignedUrlRepository - createPresignedUrl - body: $body');
+      //  debugPrint('PresignedUrlRepository - createPresignedUrl - body: $body');
       final response = await _dio.post(
         '/api/storage/presigned-url',
         data: body,
@@ -51,7 +51,7 @@ class PresignedUrlRepository {
           filePath,
           options: Options(responseType: ResponseType.bytes),
         );
-        debugPrint("이미지 가져오기 완료");
+        //  debugPrint("이미지 가져오기 완료");
         data = response.data;
       } else {
         data = await MultipartFile.fromFile(filePath);
@@ -62,7 +62,7 @@ class PresignedUrlRepository {
         data: data,
         options: Options(headers: {'Content-Type': 'image/$fileType'}),
       );
-      debugPrint("이미지 이미지 업로드 완료");
+      //  debugPrint("이미지 이미지 업로드 완료");
     } catch (e) {
       rethrow;
     }

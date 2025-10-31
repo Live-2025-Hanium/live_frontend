@@ -23,7 +23,7 @@ class MyMissionList extends ConsumerWidget {
       error: (err, stack) => Center(child: Text('Error: $err')),
       // 데이터가 성공적으로 로드된 상태 UI
       data: (missionList) {
-        debugPrint('Fetched all my missions: $missionList');
+        //  debugPrint('Fetched all my missions: $missionList');
         if (missionList == null || missionList.isEmpty) {
           return _buildEmptyState(context);
         }
@@ -107,7 +107,7 @@ class MyMissionList extends ConsumerWidget {
       ref.invalidate(allMyMissionsProvider);
       ref.invalidate(myMissionsProvider);
     } catch (e) {
-      debugPrint("Failed to toggle mission status: $e");
+      //  debugPrint("Failed to toggle mission status: $e");
     }
   }
 }

@@ -56,7 +56,7 @@ class AuthController extends StateNotifier<AuthState> {
       final googleAuth = await googleUser.authentication;
       final user = SocialUser.fromGoogle(googleUser);
 
-      debugPrint('✅ Google 로그인 성공');
+      // debugPrint('✅ Google 로그인 성공');
       // debugPrint('accessToken: ${googleAuth.accessToken}');
       // debugPrint('idToken: ${googleAuth.idToken}');
 
@@ -69,7 +69,7 @@ class AuthController extends StateNotifier<AuthState> {
   Future<void> loginWithKakao() async {
     state = state.copyWith(status: AuthStatus.loading);
     try {
-      debugPrint('✅ Current Key Hash: ${await KakaoSdk.origin}');
+      // debugPrint('✅ Current Key Hash: ${await KakaoSdk.origin}');
 
       OAuthToken token;
       if (await isKakaoTalkInstalled()) {
@@ -81,7 +81,7 @@ class AuthController extends StateNotifier<AuthState> {
       final kakaoUser = await UserApi.instance.me();
       final user = SocialUser.fromKakao(kakaoUser);
 
-      debugPrint('✅ Kakao 로그인 성공');
+      //  debugPrint('✅ Kakao 로그인 성공');
 
       final repo = ref.read(authRepositoryProvider);
       final loginData = await repo.loginWithKakaoOnBackend(
@@ -89,7 +89,7 @@ class AuthController extends StateNotifier<AuthState> {
         token.accessToken,
       );
 
-      debugPrint('✅ 백엔드 로그인 성공');
+      //  debugPrint('✅ 백엔드 로그인 성공');
 
       state = AuthState(
         status: AuthStatus.authenticated,
@@ -98,7 +98,7 @@ class AuthController extends StateNotifier<AuthState> {
         pickedImagePath: loginData.user.profileImageUrl,
       );
     } catch (e, s) {
-      debugPrint('❌ Kakao 로그인 실패: $e');
+      //  debugPrint('❌ Kakao 로그인 실패: $e');
       FirebaseCrashlytics.instance.recordError(e, s, reason: '카카오 로그인 실패');
       state = state.copyWith(status: AuthStatus.error, error: e.toString());
     }
@@ -111,7 +111,7 @@ class AuthController extends StateNotifier<AuthState> {
       final repo = ref.read(authRepositoryProvider);
       final loginData = await repo.loginWithTestUserOnBackend();
 
-      debugPrint('✅ 테스트 로그인 성공');
+      //  debugPrint('✅ 테스트 로그인 성공');
 
       state = AuthState(
         status: AuthStatus.authenticated,
@@ -119,7 +119,7 @@ class AuthController extends StateNotifier<AuthState> {
         isNewUser: loginData.newUser,
       );
     } catch (e, s) {
-      debugPrint('❌ 테스트 로그인 실패: $e');
+      //  debugPrint('❌ 테스트 로그인 실패: $e');
       FirebaseCrashlytics.instance.recordError(e, s, reason: '테스트 로그인 실패');
       state = state.copyWith(status: AuthStatus.error, error: e.toString());
     }

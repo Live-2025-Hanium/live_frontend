@@ -23,9 +23,9 @@ class Term extends StatelessWidget {
   Widget build(BuildContext context) {
     void onTap() async {
       // 파일 경로가 null이 아닐 때만 동작
-      debugPrint("Term onTap called with filePath: $filePath");
+      //  debugPrint("Term onTap called with filePath: $filePath");
       if (filePath == null) return;
-      debugPrint("Navigating to terms detail: $filePath");
+      //  debugPrint("Navigating to terms detail: $filePath");
       bool? checked = await context.pushNamed(
         'terms_detail',
         pathParameters: {'file_path': filePath!},

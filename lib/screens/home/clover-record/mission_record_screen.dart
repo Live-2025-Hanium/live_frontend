@@ -79,7 +79,7 @@ class _MissionRecordScreenState extends ConsumerState<MissionRecordScreen> {
       }
     } catch (e) {
       // 에러 처리
-      debugPrint(e.toString());
+      //  debugPrint(e.toString());
     } finally {
       if (mounted) {
         setState(() {

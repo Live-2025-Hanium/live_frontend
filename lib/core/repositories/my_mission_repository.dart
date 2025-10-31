@@ -28,7 +28,7 @@ class MyMissionRepository {
       );
       return apiResponse.data ?? [];
     } catch (e) {
-      debugPrint('Failed to fetch my missions: $e');
+      //  debugPrint('Failed to fetch my missions: $e');
       return [];
     }
   }
@@ -37,7 +37,7 @@ class MyMissionRepository {
     try {
       await _dio.post('/api/v1/missions/my', data: mission.toJson());
     } catch (e) {
-      debugPrint('Failed to add my mission via API: $e');
+      //  debugPrint('Failed to add my mission via API: $e');
       rethrow;
     }
   }
@@ -46,7 +46,7 @@ class MyMissionRepository {
     try {
       await _dio.patch('/api/v1/missions/my/$userMissionId/complete');
     } catch (e) {
-      debugPrint('Failed to complete my mission via API: $e');
+      //  debugPrint('Failed to complete my mission via API: $e');
       rethrow;
     }
   }
@@ -63,10 +63,10 @@ class MyMissionRepository {
             )
             .toList(),
       );
-      debugPrint('API Response Data: ${apiResponse.data}');
+      //  debugPrint('API Response Data: ${apiResponse.data}');
       return apiResponse.data;
     } catch (e) {
-      debugPrint('Failed to fetch all my missions: $e');
+      //  debugPrint('Failed to fetch all my missions: $e');
       return null;
     }
   }
@@ -78,7 +78,7 @@ class MyMissionRepository {
         queryParameters: {'active': isActive.toString()},
       );
     } catch (e) {
-      debugPrint('Failed to toggle mission status via API: $e');
+      //  debugPrint('Failed to toggle mission status via API: $e');
       rethrow;
     }
   }

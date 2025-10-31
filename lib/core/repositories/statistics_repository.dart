@@ -37,7 +37,7 @@ class StatisticsRepository {
 
       return apiResponse.data;
     } catch (e) {
-      debugPrint('Failed to fetch monthly completion rate: $e');
+      //  debugPrint('Failed to fetch monthly completion rate: $e');
       return null;
     }
   }
@@ -62,7 +62,7 @@ class StatisticsRepository {
 
       return apiResponse.data;
     } catch (e) {
-      debugPrint('Failed to fetch weekly mission summary: $e');
+      //  debugPrint('Failed to fetch weekly mission summary: $e');
       return null;
     }
   }
@@ -80,7 +80,7 @@ class StatisticsRepository {
 
       return apiResponse.data;
     } catch (e) {
-      debugPrint('Failed to fetch monthly growth: $e');
+      //  debugPrint('Failed to fetch monthly growth: $e');
       return null;
     }
   }
@@ -107,7 +107,7 @@ class StatisticsRepository {
 
       return apiResponse.data;
     } catch (e) {
-      debugPrint('Failed to fetch daily completed missions: $e');
+      //  debugPrint('Failed to fetch daily completed missions: $e');
       return null;
     }
   }

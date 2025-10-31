@@ -60,7 +60,7 @@ class ProfileController {
 
   Future<bool> updateProfile(ProfileUpdatePayloadModel payload) async {
     try {
-      debugPrint('✅ 프로필 업데이트 페이로드: ${payload.toJson()}');
+      //  debugPrint('✅ 프로필 업데이트 페이로드: ${payload.toJson()}');
       await _repository.updateProfile(payload);
       return true;
     } catch (e) {

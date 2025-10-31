@@ -42,11 +42,13 @@ Future<String?> uploadImageToS3({
     }
 
     // 3. Upload image bytes using a new Dio instance with timeouts
-    final dio = Dio(BaseOptions(
-      connectTimeout: const Duration(seconds: 60),
-      receiveTimeout: const Duration(seconds: 60),
-      sendTimeout: const Duration(seconds: 60),
-    ));
+    final dio = Dio(
+      BaseOptions(
+        connectTimeout: const Duration(seconds: 60),
+        receiveTimeout: const Duration(seconds: 60),
+        sendTimeout: const Duration(seconds: 60),
+      ),
+    );
     await dio.put(
       presigned.uploadUrl,
       data: imageBytes,
@@ -61,7 +63,7 @@ Future<String?> uploadImageToS3({
     // 4. Return the access URL
     return presigned.accessUrl;
   } catch (e) {
-    debugPrint('S3 Upload Error: $e');
+    //  debugPrint('S3 Upload Error: $e');
     return null; // Return null on failure
   }
 }

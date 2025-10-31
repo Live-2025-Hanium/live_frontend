@@ -56,7 +56,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     final formData = _formKey.currentState!.value;
     String? profileImageUrl;
 
-    debugPrint('✅ 프로필 설정 폼 데이터: $formData');
+    //  debugPrint('✅ 프로필 설정 폼 데이터: $formData');
 
     try {
       if (_pickedImageBytes != null && _pickedImageExtension != null) {
@@ -84,7 +84,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       // final formData = _formKey.currentState!.value;
       // final saeipUser = SaeipUserModel.fromFormData(formData);
     } catch (e) {
-      debugPrint('❌ 네트워크 오류: $e');
+      //  debugPrint('❌ 네트워크 오류: $e');
     }
     return false;
     // context.pushNamed('survey');
@@ -127,12 +127,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                       text: '확인',
                       onPressed: () async {
                         final success = await profileSetupSubmit();
-                        debugPrint('✅ 프로필 설정 완료: $success');
+                        //  debugPrint('✅ 프로필 설정 완료: $success');
                         if (success == true) {
                           if (!mounted) return;
                           context.pushNamed('survey');
                         } else {
-                          debugPrint('❌ 프로필 설정 실패');
+                          //  debugPrint('❌ 프로필 설정 실패');
                         }
                       },
                       disabled: !isFormValid,

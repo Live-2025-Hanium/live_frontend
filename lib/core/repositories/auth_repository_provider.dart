@@ -90,9 +90,9 @@ class AuthRepository {
         await _secureStorage.write(TokenKeys.access, login.accessToken);
         await _secureStorage.write(TokenKeys.refresh, login.refreshToken);
         if (kDebugMode) {
-          debugPrint(
-            'AuthRepository: stored access=${login.accessToken.isNotEmpty ? '[REDACTED]' : '<empty>'} refresh=${login.refreshToken.isNotEmpty ? '[REDACTED]' : '<empty>'}',
-          );
+          //  debugPrint(
+          //   'AuthRepository: stored access=${login.accessToken.isNotEmpty ? '[REDACTED]' : '<empty>'} refresh=${login.refreshToken.isNotEmpty ? '[REDACTED]' : '<empty>'}',
+          // );
         }
       } catch (e) {
         // if (kDebugMode) debugPrint('Failed to persist tokens: $e');

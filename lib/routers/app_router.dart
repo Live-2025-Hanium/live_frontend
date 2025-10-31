@@ -37,9 +37,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isLoading = authStatus.status == AuthStatus.loading;
       final isOnLoginPage = state.uri.toString() == '/login';
 
-      debugPrint(
-        'isLoading: $isLoading, isLoggedIn: $isLoggedIn, isOnLoginPage: $isOnLoginPage',
-      );
+      //  debugPrint(
+      //   'isLoading: $isLoading, isLoggedIn: $isLoggedIn, isOnLoginPage: $isOnLoginPage',
+      // );
 
       // 1. 로딩 중엔 아무것도 리디렉션하지 않음
       if (isLoading) return null;
@@ -49,8 +49,8 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // 3. 로그인 돼있는데 로그인 페이지 가려고 하면 → 홈으로
       if (isLoggedIn && isOnLoginPage) {
-        debugPrint('✅ 로그인 상태에서 /login 접근 시도, 홈으로 리디렉트');
-        debugPrint('isNewUser: ${authStatus.isNewUser}');
+        //  debugPrint('✅ 로그인 상태에서 /login 접근 시도, 홈으로 리디렉트');
+        //  debugPrint('isNewUser: ${authStatus.isNewUser}');
         if (authStatus.isNewUser == true) {
           return '/login/terms';
         } else {

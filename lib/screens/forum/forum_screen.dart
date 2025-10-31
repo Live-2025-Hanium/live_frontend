@@ -102,7 +102,7 @@ class _ForumScreenState extends State<ForumScreen> {
               hintText: '지원 사업, 생활 꿀팁',
               onSubmit: (q) {
                 // TODO: 검색 실행
-                debugPrint('search: $q');
+                //  debugPrint('search: $q');
               },
             ),
           ),

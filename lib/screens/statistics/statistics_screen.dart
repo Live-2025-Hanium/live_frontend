@@ -82,20 +82,21 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
 
   Widget _buildStatisticsContent({required int tabIndex}) {
     void onBarTapped(int index) {
-      debugPrint('Bar $index tapped');
+      //  debugPrint('Bar $index tapped');
       final refDate = Jiffy.parse(
         _currentAnchor,
       ).startOf(Unit.week).add(days: index);
 
-      debugPrint(
-        'Navigating to date: ${refDate.format(pattern: 'yyyy-MM-dd')}',
-      );
+      //  debugPrint(
+      //   'Navigating to date: ${refDate.format(pattern: 'yyyy-MM-dd')}',
+      // );
       context.pushNamed(
         'weekly_report',
         queryParameters: {
           'referenceDate': refDate.format(pattern: 'yyyy-MM-dd'),
-          'missionType':
-              tabIndex == 0 ? MissionType.clover.name : MissionType.my.name,
+          'missionType': tabIndex == 0
+              ? MissionType.clover.name
+              : MissionType.my.name,
           'selectedIndex': index.toString(),
         },
       );
@@ -111,14 +112,16 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                 padding: EdgeInsets.symmetric(horizontal: 36, vertical: 36),
                 child: MissionCompletionGauge(
                   yearMonth: _currentAnchor.substring(0, 7),
-                  missionType:
-                      tabIndex == 0 ? MissionType.clover : MissionType.my,
+                  missionType: tabIndex == 0
+                      ? MissionType.clover
+                      : MissionType.my,
                   month: Jiffy.parse(_currentAnchor).month,
                 ),
               ),
               WeeklyBarChart(
-                missionType:
-                    tabIndex == 0 ? MissionType.clover : MissionType.my,
+                missionType: tabIndex == 0
+                    ? MissionType.clover
+                    : MissionType.my,
                 currentAnchor: _currentAnchor,
                 onBarTapped: onBarTapped,
               ),

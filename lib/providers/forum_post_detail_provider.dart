@@ -26,7 +26,7 @@ final postDetailProvider = FutureProvider.family<ForumPostDetailModel, int>((
     if (data == null) throw StateError('Empty data for boardId=$boardId');
     return data;
   } on DioException catch (e, st) {
-    debugPrint('postDetailProvider DioException: ${e.message}');
+    //  debugPrint('postDetailProvider DioException: ${e.message}');
     Error.throwWithStackTrace(e, st);
   }
 });
