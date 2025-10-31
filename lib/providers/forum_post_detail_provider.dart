@@ -8,8 +8,10 @@ import 'package:live_frontend/models/common_api_response_model.dart';
 import 'package:live_frontend/providers/dio_provider.dart';
 
 /// 상세 조회: /api/v1/boards/{boardId}
-final postDetailProvider =
-    FutureProvider.family<ForumPostDetailModel, int>((ref, boardId) async {
+final postDetailProvider = FutureProvider.family<ForumPostDetailModel, int>((
+  ref,
+  boardId,
+) async {
   final dio = ref.read(dioProvider);
 
   try {
@@ -44,11 +46,11 @@ class ForumPostDetailState {
   final Set<ReactionType> selectedReactions;
 
   factory ForumPostDetailState.initial() => const ForumPostDetailState(
-        detail: null,
-        isBookmarked: false,
-        reactions: <ReactionType, int>{},
-        selectedReactions: <ReactionType>{},
-      );
+    detail: null,
+    isBookmarked: false,
+    reactions: <ReactionType, int>{},
+    selectedReactions: <ReactionType>{},
+  );
 
   ForumPostDetailState copyWith({
     ForumPostDetailModel? detail,
@@ -67,7 +69,7 @@ class ForumPostDetailState {
 
 class ForumPostDetailNotifier extends StateNotifier<ForumPostDetailState> {
   ForumPostDetailNotifier(this._dio, this._boardId)
-      : super(ForumPostDetailState.initial());
+    : super(ForumPostDetailState.initial());
 
   final Dio _dio;
   final int _boardId;
@@ -116,7 +118,10 @@ class ForumPostDetailNotifier extends StateNotifier<ForumPostDetailState> {
       newSelected.add(reaction);
       newCounts[reaction] = (newCounts[reaction] ?? 0) + 1;
     }
-    state = state.copyWith(reactions: newCounts, selectedReactions: newSelected);
+    state = state.copyWith(
+      reactions: newCounts,
+      selectedReactions: newSelected,
+    );
 
     try {
       await _dio.post(
@@ -125,24 +130,28 @@ class ForumPostDetailNotifier extends StateNotifier<ForumPostDetailState> {
       );
     } catch (e) {
       state = prev; // 롤백
-      rethrow;
+      // rethrow;
     }
   }
 }
 
-final forumPostDetailProvider = StateNotifierProvider.family<
-    ForumPostDetailNotifier, ForumPostDetailState, int>((ref, boardId) {
-  final dio = ref.watch(dioProvider);
-  final notifier = ForumPostDetailNotifier(dio, boardId);
+final forumPostDetailProvider =
+    StateNotifierProvider.family<
+      ForumPostDetailNotifier,
+      ForumPostDetailState,
+      int
+    >((ref, boardId) {
+      final dio = ref.watch(dioProvider);
+      final notifier = ForumPostDetailNotifier(dio, boardId);
 
-  // 최초 시드
-  final cur = ref.read(postDetailProvider(boardId));
-  if (cur.hasValue) notifier.seed(cur.value!);
+      // 최초 시드
+      final cur = ref.read(postDetailProvider(boardId));
+      if (cur.hasValue) notifier.seed(cur.value!);
 
-  // 새로고침/리로드에 대응
-  ref.listen(postDetailProvider(boardId), (_, next) {
-    next.whenData(notifier.seed);
-  });
+      // 새로고침/리로드에 대응
+      ref.listen(postDetailProvider(boardId), (_, next) {
+        next.whenData(notifier.seed);
+      });
 
-  return notifier;
-});
+      return notifier;
+    });

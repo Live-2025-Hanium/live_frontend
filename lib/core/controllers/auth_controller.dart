@@ -29,6 +29,7 @@ class AuthController extends StateNotifier<AuthState> {
             status: AuthStatus.authenticated,
             nickname: profile.nickname,
             isNewUser: false,
+            pickedImagePath: profile.profileImageUrl,
           );
         } else {
           // 프로필 못가져오면 인증 안된 상태
@@ -94,6 +95,7 @@ class AuthController extends StateNotifier<AuthState> {
         status: AuthStatus.authenticated,
         nickname: loginData.user.nickname,
         isNewUser: loginData.newUser,
+        pickedImagePath: loginData.user.profileImageUrl,
       );
     } catch (e, s) {
       debugPrint('❌ Kakao 로그인 실패: $e');

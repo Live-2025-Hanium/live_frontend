@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:live_frontend/screens/home/execute/widgets/complete_modal.dart';
 import 'package:live_frontend/screens/home/execute/widgets/execute_screen_template.dart';
 import 'package:live_frontend/screens/home/execute/widgets/pause_modal.dart';
+import 'package:live_frontend/widgets/saeip_app_bar.dart';
 
 class ExecutePhotoMissionScreen extends ConsumerStatefulWidget {
   const ExecutePhotoMissionScreen({super.key, required this.id});
@@ -50,19 +51,22 @@ class _ExecutePhotoMissionScreenState
         );
       });
     }
-    return ExecuteScreenTemplate(
-      imagePath: 'assets/images/clover_mission/photo.png',
-      onLeftPressed: () {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return PauseModal(userMissionId: widget.id);
-          },
-        );
-      },
-      rightLabel: '인증샷 촬영',
-      onRightPressed: _takePhoto,
-      missionTitle: '사진 미션',
+    return Scaffold(
+      appBar: SaeipAppBar(title: '미션 수행'),
+      body: ExecuteScreenTemplate(
+        imagePath: 'assets/images/clover_mission/photo.png',
+        onLeftPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return PauseModal(userMissionId: widget.id);
+            },
+          );
+        },
+        rightLabel: '인증샷 촬영',
+        onRightPressed: _takePhoto,
+        missionTitle: '사진 미션',
+      ),
     );
   }
 }

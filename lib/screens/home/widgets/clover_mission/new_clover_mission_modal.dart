@@ -23,9 +23,15 @@ class NewCloverMissionModal extends ConsumerWidget {
           child: Center(child: CircularProgressIndicator()),
         ),
         error: (e, s) =>
-            SizedBox(height: 200, child: Center(child: Text('Error: $e'))),
-        data: (missionList) =>
-            _buildContent(context, missionList ?? [], '추가 클로버 미션 도착!'),
+            SizedBox(height: 200, child: Center(child: Text('에러 발생'))),
+        data: (missionList) {
+          return _buildContent(
+            context,
+            ref,
+            missionList ?? [],
+            '추가 클로버 미션 도착!',
+          );
+        },
       );
     } else {
       final missionListAsync = ref.watch(cloverMissionProvider(null));
@@ -35,9 +41,9 @@ class NewCloverMissionModal extends ConsumerWidget {
           child: Center(child: CircularProgressIndicator()),
         ),
         error: (e, s) =>
-            SizedBox(height: 200, child: Center(child: Text('Error: $e'))),
+            SizedBox(height: 200, child: Center(child: Text('에러 발생'))),
         data: (missionList) =>
-            _buildContent(context, missionList ?? [], '클로버 미션 도착!'),
+            _buildContent(context, ref, missionList ?? [], '클로버 미션 도착!'),
       );
     }
 
@@ -69,9 +75,12 @@ class NewCloverMissionModal extends ConsumerWidget {
 
   Widget _buildContent(
     BuildContext context,
+    WidgetRef ref,
     List<CloverMissionModel> missionList,
     String titleText,
   ) {
+    ref.invalidate(cloverMissionProvider);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -80,6 +89,7 @@ class NewCloverMissionModal extends ConsumerWidget {
           titleText,
           style: AppTextStyles.titleMedium(context, color: Colors.black),
           textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
         ),
         Gap(12),
         Image.asset(
@@ -137,20 +147,23 @@ class NewCloverMissionModal extends ConsumerWidget {
               ),
             ),
             Gap(24),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyles.bodyRegular(
-                    context,
-                    color: Colors.black,
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: AppTextStyles.bodyRegular(
+                      context,
+                      color: Colors.black,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                Gap(4),
-                CloverSubContent(difficulty: difficulty, category: category),
-              ],
+                  Gap(4),
+                  CloverSubContent(difficulty: difficulty, category: category),
+                ],
+              ),
             ),
           ],
         ),

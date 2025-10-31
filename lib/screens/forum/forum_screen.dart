@@ -43,11 +43,17 @@ class _ForumScreenState extends State<ForumScreen> {
     required ForumSort sort,
   }) {
     // 1. 카테고리 필터링
-    var filtered = categoryId == 0
-        ? dummyForumPosts
-        : dummyForumPosts
-            .where((post) => post.category.id == categoryId - 1)
-            .toList();
+    List<ForumPostModel> filtered;
+
+    if (categoryId == 0) {
+      filtered = dummyForumPosts;
+    } else if (categoryId == 1) {
+      filtered = dummyForumPosts
+          .where((post) => post.category.id == 0 || post.category.id == 1)
+          .toList();
+    } else {
+      filtered = [];
+    }
 
     // 2. 정렬
     filtered.sort((a, b) {
@@ -84,89 +90,86 @@ class _ForumScreenState extends State<ForumScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: CustomScrollView(
-        clipBehavior: Clip.none,
-        slivers: [
-          // 검색창
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: SaeipSearchBar(
-                controller: _searchCtrl,
-                hintText: '지원 사업, 생활 꿀팁',
-                onSubmit: (q) {
-                  // TODO: 검색 실행
-                  debugPrint('search: $q');
-                },
+    return CustomScrollView(
+      clipBehavior: Clip.none,
+      slivers: [
+        // 검색창
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: SaeipSearchBar(
+              controller: _searchCtrl,
+              hintText: '지원 사업, 생활 꿀팁',
+              onSubmit: (q) {
+                // TODO: 검색 실행
+                debugPrint('search: $q');
+              },
+            ),
+          ),
+        ),
+
+        SliverGap(16),
+
+        // 메인 배너
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: BannerCarousel(
+              itemCount: 10,
+              index: _bannerIndex,
+              onPageChanged: (i) => setState(() => _bannerIndex = i),
+              onTap: (index) =>
+                  context.pushNamed('forum_post', pathParameters: {'id': '1'}),
+              itemBuilder: (_, i) => Image.network(
+                // TODO : 추후 API 연동 예정
+                'https://picsum.photos/id/${30 + i}/1200/675',
+                fit: BoxFit.cover,
+              ),
+              overlayBuilder: (_, i) => BannerOverlay(
+                // TODO : 추후 API 연동 예정
+                title: '“네가 있어 행복해” 반려동물이 주는 정서적 효과',
+                subtitle: '서울 유기 동물 입양 센터',
               ),
             ),
           ),
+        ),
 
-          SliverGap(16),
+        SliverGap(24),
 
-          // 메인 배너
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: BannerCarousel(
-                itemCount: 10,
-                index: _bannerIndex,
-                onPageChanged: (i) => setState(() => _bannerIndex = i),
-                onTap: (index) => context.pushNamed(
-                  'forum_post',
-                  pathParameters: {'id': '1'},
-                ),
-                itemBuilder: (_, i) => Image.network(
-                  // TODO : 추후 API 연동 예정
-                  'https://picsum.photos/id/${30 + i}/1200/675',
-                  fit: BoxFit.cover,
-                ),
-                overlayBuilder: (_, i) => BannerOverlay(
-                  // TODO : 추후 API 연동 예정
-                  title: '“네가 있어 행복해” 반려동물이 주는 정서적 효과',
-                  subtitle: '서울 유기 동물 입양 센터',
-                ),
+        // 카테고리 칩
+        SliverToBoxAdapter(
+          child: CategoryChips(
+            categories: _categories,
+            selectedIndex: _selectedCategory,
+            onSelected: (i) => setState(() => _selectedCategory = i),
+          ),
+        ),
+
+        // 정렬 옵션
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: SortControls(
+                value: _sort,
+                onChanged: (v) => setState(() => _sort = v),
               ),
             ),
           ),
+        ),
 
-          SliverGap(24),
-
-          // 카테고리 칩
-          SliverToBoxAdapter(
-            child: CategoryChips(
-              categories: _categories,
-              selectedIndex: _selectedCategory,
-              onSelected: (i) => setState(() => _selectedCategory = i),
-            ),
-          ),
-
-          // 정렬 옵션
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: SortControls(
-                  value: _sort,
-                  onChanged: (v) => setState(() => _sort = v),
-                ),
-              ),
-            ),
-          ),
-
-          // 2열 카드 그리드
-          PostGridSliver(
-            posts: _posts,
-            onTapPost: (post) {
-              context.pushNamed('forum_post', pathParameters: {'id': '1'});
-            },
-          ),
-        ],
-      ),
+        // 2열 카드 그리드
+        PostGridSliver(
+          posts: _posts,
+          onTapPost: (post) {
+            context.pushNamed(
+              'forum_post',
+              pathParameters: {'id': '${post.id}'},
+            );
+          },
+        ),
+      ],
     );
   }
 }
-

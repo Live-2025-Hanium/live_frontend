@@ -100,4 +100,21 @@ class CloverMissionRepository {
       throw Exception('Failed to load clover mission detail');
     }
   }
+
+  Future<void> postCloverMissionFeedback(
+    CloverMissionFeedbackModel feedback,
+  ) async {
+    try {
+      final response = await _dio.post(
+        '/api/v1/missions/records',
+        data: feedback.toJson(),
+      );
+    } on DioException catch (e) {
+      // Dio 관련 오류(네트워크 문제, 2xx 이외의 응답 등)를 처리합니다.
+      throw Exception('미션 피드백 제출 실패: ${e.message}');
+    } catch (e) {
+      // 그 외 예상치 못한 오류를 처리합니다.
+      throw Exception('예상치 못한 오류가 발생했습니다: ${e.toString()}');
+    }
+  }
 }

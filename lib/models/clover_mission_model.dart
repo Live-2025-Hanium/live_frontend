@@ -42,31 +42,27 @@ enum CloverMissionDifficulty {
 }
 
 enum CloverMissionCategory {
+  @JsonValue('COMMUNICATION')
+  communication,
   @JsonValue('RELATIONSHIP')
   relationship,
+  @JsonValue('ENVIRONMENT')
+  environment,
   @JsonValue('HEALTH')
   health,
-  @JsonValue('WORK')
-  work,
-  @JsonValue('HOBBY')
-  hobby,
-  @JsonValue('STUDY')
-  study,
 }
 
 extension CloverMissionCategoryExtension on CloverMissionCategory {
   String get koreanLabel {
     switch (this) {
+      case CloverMissionCategory.communication:
+        return '소통하기';
       case CloverMissionCategory.relationship:
-        return '관계';
+        return '관계 유지하기';
+      case CloverMissionCategory.environment:
+        return '환경 정돈하기';
       case CloverMissionCategory.health:
         return '건강 챙기기';
-      case CloverMissionCategory.work:
-        return '업무';
-      case CloverMissionCategory.hobby:
-        return '취미';
-      case CloverMissionCategory.study:
-        return '공부';
     }
   }
 }

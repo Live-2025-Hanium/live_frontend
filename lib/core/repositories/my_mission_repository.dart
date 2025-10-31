@@ -50,4 +50,35 @@ class MyMissionRepository {
       rethrow;
     }
   }
+
+  Future<List<AllMyMissionsModel>?> fetchAllMyMissions() async {
+    try {
+      final response = await _dio.get('/api/v1/missions/my');
+      final apiResponse = ApiResponseModel<List<AllMyMissionsModel>>.fromJson(
+        response.data,
+        (json) => (json as List)
+            .map(
+              (item) =>
+                  AllMyMissionsModel.fromJson(item as Map<String, dynamic>),
+            )
+            .toList(),
+      );
+      return apiResponse.data;
+    } catch (e) {
+      debugPrint('Failed to fetch all my missions: $e');
+      return null;
+    }
+  }
+
+  Future<void> toggleMissionStatus(int missionId, bool isActive) async {
+    try {
+      await _dio.patch(
+        '/api/v1/missions/my/$missionId/active',
+        queryParameters: {'active': isActive.toString()},
+      );
+    } catch (e) {
+      debugPrint('Failed to toggle mission status via API: $e');
+      rethrow;
+    }
+  }
 }

@@ -9,20 +9,9 @@ import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/screens/home/widgets/mission_tile.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission/mission_repeat.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission/mission_time.dart';
+import 'package:live_frontend/screens/mypage/widget/my_mission_list.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
-
-final myMissionControllerProvider = Provider<MyMissionController>((ref) {
-  final repository = ref.watch(myMissionRepositoryProvider);
-  return MyMissionController(repository);
-});
-
-final myMissionsProvider = FutureProvider.autoDispose<List<MyMissionModel>>((
-  ref,
-) {
-  final controller = ref.watch(myMissionControllerProvider);
-  return controller.fetchMyMissions();
-});
 
 class MyMissionList extends ConsumerWidget {
   const MyMissionList({super.key});
@@ -139,7 +128,7 @@ class MyMissionList extends ConsumerWidget {
         children: [
           _buildHeader(context),
           Gap(8),
-          const Center(child: Text('No missions for today.')),
+          const Center(child: Text('오늘은 미션이 없습니다. 새로 추가해보세요!')),
         ],
       ),
     );

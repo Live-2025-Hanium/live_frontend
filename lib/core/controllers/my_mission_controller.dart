@@ -17,4 +17,12 @@ class MyMissionController {
   Future<void> completeMyMission(int userMissionId) {
     return _repository.completeMyMission(userMissionId);
   }
+
+  Future<List<AllMyMissionsModel>?> fetchAllMyMissions() {
+    return _repository.fetchAllMyMissions();
+  }
+
+  Future<void> toggleMissionStatus(int missionId, bool isActive) {
+    return _repository.toggleMissionStatus(missionId, isActive);
+  }
 }

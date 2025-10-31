@@ -118,8 +118,15 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 name: 'mission_record',
-                path: 'mission_record',
-                builder: (context, state) => const MissionRecordScreen(),
+                path: 'mission_record/:id',
+                builder: (context, state) {
+                  final idStr = state.pathParameters['id'];
+                  final id = idStr != null
+                      ? int.tryParse(idStr)
+                      : (state.extra as int?);
+                  if (id == null) return const NotFoundScreen();
+                  return MissionRecordScreen(id: id);
+                },
               ),
               GoRoute(
                 name: 'timer_mission',
