@@ -25,8 +25,14 @@ class NewCloverMissionModal extends ConsumerWidget {
         ),
         error: (e, s) =>
             SizedBox(height: 200, child: Center(child: Text('에러 발생'))),
-        data: (missionList) =>
-            _buildContent(context, missionList ?? [], '추가 클로버 미션 도착!'),
+        data: (missionList) {
+          return _buildContent(
+            context,
+            ref,
+            missionList ?? [],
+            '추가 클로버 미션 도착!',
+          );
+        },
       );
     } else {
       final missionListAsync = ref.watch(cloverMissionProvider(null));
@@ -38,7 +44,7 @@ class NewCloverMissionModal extends ConsumerWidget {
         error: (e, s) =>
             SizedBox(height: 200, child: Center(child: Text('에러 발생'))),
         data: (missionList) =>
-            _buildContent(context, missionList ?? [], '클로버 미션 도착!'),
+            _buildContent(context, ref, missionList ?? [], '클로버 미션 도착!'),
       );
     }
 
@@ -70,9 +76,12 @@ class NewCloverMissionModal extends ConsumerWidget {
 
   Widget _buildContent(
     BuildContext context,
+    WidgetRef ref,
     List<CloverMissionModel> missionList,
     String titleText,
   ) {
+    ref.invalidate(cloverMissionProvider);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
