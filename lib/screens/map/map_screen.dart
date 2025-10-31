@@ -5,6 +5,7 @@ import 'package:live_frontend/screens/map/map_search_screen.dart';
 import 'package:live_frontend/widgets/saeip_search_bar.dart';
 import 'widgets/category_bottom_sheet.dart';
 import 'package:live_frontend/widgets/platform_kakao_map.dart';
+import 'package:live_frontend/widgets/saeip_modal.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -52,6 +53,20 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        builder: (context) => SaeipModal(
+          title: '새잎 지도 이용 안내',
+          message: '아직 개발중인 기능입니다. 불안정할 수 있습니다.',
+          confirmText: '확인',
+          onConfirm: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      );
+    });
 
     // 초기 마커
     _markers = [
