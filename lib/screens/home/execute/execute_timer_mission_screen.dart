@@ -6,6 +6,7 @@ import 'package:live_frontend/screens/home/execute/widgets/countdown_timer.dart'
 import 'package:live_frontend/screens/home/execute/widgets/pause_modal.dart';
 import 'package:live_frontend/screens/home/execute/widgets/sub_content.dart';
 import 'package:live_frontend/screens/home/execute/widgets/execute_screen_template.dart';
+import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'dart:async';
 
 import 'package:live_frontend/widgets/saeip_modal.dart';
@@ -101,25 +102,28 @@ class _ExecuteTimerMissionScreenState
         }
         _remaining = detail.remainingTime!;
         _startTimer();
-        return ExecuteScreenTemplate(
-          missionTitle: detail.missionTitle,
-          imagePath: 'assets/images/clover_mission/timer.png',
-          onLeftPressed: () {
-            _togglePause();
-            _showPauseModal();
-          },
-          rightLabel: '완료',
-          onRightPressed: onRightPressed,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SubContent(
-                subtitle: '앞으로 남은 시간',
-                child: CountdownTimer(
-                  formattedTime: _formatDuration(_remaining),
+        return Scaffold(
+          appBar: SaeipAppBar(title: '미션 수행'),
+          body: ExecuteScreenTemplate(
+            missionTitle: detail.missionTitle,
+            imagePath: 'assets/images/clover_mission/timer.png',
+            onLeftPressed: () {
+              _togglePause();
+              _showPauseModal();
+            },
+            rightLabel: '완료',
+            onRightPressed: onRightPressed,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SubContent(
+                  subtitle: '앞으로 남은 시간',
+                  child: CountdownTimer(
+                    formattedTime: _formatDuration(_remaining),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

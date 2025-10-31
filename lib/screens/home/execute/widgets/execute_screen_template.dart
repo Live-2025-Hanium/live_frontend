@@ -28,70 +28,67 @@ class ExecuteScreenTemplate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: SaeipAppBar(title: '미션 수행'),
-      body: Container(
-        width: double.infinity,
-        padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 40.h),
-        child: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // 상단 컨텐츠 (스크롤 가능)
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        missionTitle,
-                        style: AppTextStyles.titleMedium(
-                          context,
-                          color: AppColors.greenNormal,
-                        ),
-                      ),
-                      Gap(4.h),
-                      Text('미션을 진행 중이에요.'),
-                      Gap(16.h),
-                      Align(
-                        alignment: Alignment.center,
-                        widthFactor: 1.0,
-                        child: Image.asset(imagePath, fit: BoxFit.contain),
-                      ),
-                      Gap(24.h),
-                      if (child != null) child!,
-                    ],
-                  ),
-                ),
-              ),
-              // 하단 버튼
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.h),
-                child: Row(
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 40.h),
+      child: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 상단 컨텐츠 (스크롤 가능)
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(
-                      child: SaeipButton.outlined(
-                        text: leftLabel,
-                        outlineColor: AppColors.blackBlack2,
-                        onPressed: () {
-                          onLeftPressed();
-                        },
+                    Text(
+                      missionTitle,
+                      style: AppTextStyles.titleMedium(
+                        context,
+                        color: AppColors.greenNormal,
                       ),
                     ),
-                    Gap(8.w),
-                    Expanded(
-                      child: SaeipButton(
-                        text: rightLabel,
-                        disabled: onRightPressed == null,
-                        onPressed: onRightPressed ?? () {},
-                      ),
+                    Gap(4.h),
+                    Text('미션을 진행 중이에요.'),
+                    Gap(16.h),
+                    Align(
+                      alignment: Alignment.center,
+                      widthFactor: 1.0,
+                      child: Image.asset(imagePath, fit: BoxFit.contain),
                     ),
+                    Gap(24.h),
+                    if (child != null) child!,
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+            // 하단 버튼
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.h),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SaeipButton.outlined(
+                      text: leftLabel,
+                      outlineColor: AppColors.blackBlack2,
+                      onPressed: () {
+                        onLeftPressed();
+                      },
+                    ),
+                  ),
+                  Gap(8.w),
+                  Expanded(
+                    child: SaeipButton(
+                      text: rightLabel,
+                      disabled: onRightPressed == null,
+                      onPressed: onRightPressed ?? () {},
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

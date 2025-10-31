@@ -34,7 +34,7 @@ class RootScreen extends StatelessWidget {
   bool _shouldShowAppBar(BuildContext context) {
     final String location = GoRouterState.of(context).uri.toString();
     // 예: 지도 화면에서는 AppBar를 숨깁니다.
-    if (location.startsWith('/map')) {
+    if (location.startsWith('/map') || location.startsWith('/home/execute')) {
       return false;
     }
     return true;
