@@ -1,11 +1,13 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:live_frontend/providers/photo_mission_provider.dart';
 import 'package:live_frontend/screens/home/execute/widgets/complete_modal.dart';
 import 'package:live_frontend/screens/home/execute/widgets/execute_screen_template.dart';
 import 'package:live_frontend/screens/home/execute/widgets/pause_modal.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
+import 'package:path/path.dart' as p;
 
 class ExecutePhotoMissionScreen extends ConsumerStatefulWidget {
   const ExecutePhotoMissionScreen({super.key, required this.id});
@@ -19,7 +21,7 @@ class ExecutePhotoMissionScreen extends ConsumerStatefulWidget {
 class _ExecutePhotoMissionScreenState
     extends ConsumerState<ExecutePhotoMissionScreen> {
   final ImagePicker _picker = ImagePicker();
-  File? _imageFile;
+  Uint8List? _imageBytes;
   bool _shown = false;
 
   Future<void> _takePhoto() async {
@@ -31,8 +33,14 @@ class _ExecutePhotoMissionScreenState
     );
 
     if (photo != null) {
+      final imageBytes = await photo.readAsBytes();
+      final imageExtension = p.extension(photo.name).replaceAll('.', '');
+      ref.read(photoMissionImageProvider.notifier).state = (
+        imageBytes,
+        imageExtension
+      );
       setState(() {
-        _imageFile = File(photo.path);
+        _imageBytes = imageBytes;
         _shown = false;
       });
     }
@@ -40,7 +48,7 @@ class _ExecutePhotoMissionScreenState
 
   @override
   Widget build(BuildContext context) {
-    if (_imageFile != null && !_shown) {
+    if (_imageBytes != null && !_shown) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _shown = true;
         showDialog(

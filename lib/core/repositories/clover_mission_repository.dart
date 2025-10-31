@@ -19,6 +19,16 @@ class CloverMissionRepository {
   CloverMissionRepository(this._dio);
 
   Future<List<CloverMissionModel>?> getCloverMissions() async {
+    // 위치 권한 확인 및 요청
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        throw Exception('위치 정보 접근이 거부되었습니다.');
+      }
+    }
+
     final position = await Geolocator.getCurrentPosition(
       timeLimit: const Duration(seconds: 15),
     );
@@ -60,6 +70,16 @@ class CloverMissionRepository {
   }
 
   Future<List<CloverMissionModel>?> fetchNewMissions() async {
+    // 위치 권한 확인 및 요청
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        throw Exception('위치 정보 접근이 거부되었습니다.');
+      }
+    }
+
     final position = await Geolocator.getCurrentPosition(
       timeLimit: const Duration(seconds: 15),
     );

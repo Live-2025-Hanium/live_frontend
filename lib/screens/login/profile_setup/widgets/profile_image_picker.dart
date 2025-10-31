@@ -1,15 +1,15 @@
-import 'dart:io';
+import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as p;
 
 class ProfileImagePicker extends ConsumerStatefulWidget {
   const ProfileImagePicker({super.key, this.onImagePicked});
 
-  final void Function(String path, String extension)? onImagePicked;
+  final void Function(Uint8List bytes, String extension)? onImagePicked;
 
   @override
   ConsumerState<ProfileImagePicker> createState() => _ProfileImagePickerState();
@@ -17,7 +17,7 @@ class ProfileImagePicker extends ConsumerStatefulWidget {
 
 class _ProfileImagePickerState extends ConsumerState<ProfileImagePicker> {
   late ImagePicker _imagePicker;
-  String _pickedImagePath = "";
+  Uint8List? _pickedImageBytes;
 
   @override
   void initState() {
@@ -29,6 +29,13 @@ class _ProfileImagePickerState extends ConsumerState<ProfileImagePicker> {
   Widget build(BuildContext context) {
     final imageUrl = ref.watch(authProvider).socialUser?.profileImageUrl;
 
+    ImageProvider? backgroundImage;
+    if (_pickedImageBytes != null) {
+      backgroundImage = MemoryImage(_pickedImageBytes!);
+    } else if (imageUrl != null && imageUrl.isNotEmpty) {
+      backgroundImage = NetworkImage(imageUrl);
+    }
+
     return GestureDetector(
       onTap: () async {
         final pickedFile = await _imagePicker.pickImage(
@@ -36,12 +43,12 @@ class _ProfileImagePickerState extends ConsumerState<ProfileImagePicker> {
         );
 
         if (pickedFile != null) {
-          final path = pickedFile.path;
-          final extension = path.split('.').last;
+          final bytes = await pickedFile.readAsBytes();
+          final extension = p.extension(pickedFile.name).replaceAll('.', '');
           setState(() {
-            _pickedImagePath = path;
+            _pickedImageBytes = bytes;
           });
-          widget.onImagePicked?.call(path, extension);
+          widget.onImagePicked?.call(bytes, extension);
         }
       },
       child: Stack(
@@ -50,12 +57,8 @@ class _ProfileImagePickerState extends ConsumerState<ProfileImagePicker> {
           CircleAvatar(
             radius: 44,
             backgroundColor: Colors.grey[200],
-            backgroundImage: _pickedImagePath == ""
-                ? null
-                : kIsWeb
-                    ? NetworkImage(_pickedImagePath)
-                    : FileImage(File(_pickedImagePath)) as ImageProvider,
-            child: _pickedImagePath == "" && imageUrl == null
+            backgroundImage: backgroundImage,
+            child: backgroundImage == null
                 ? const Icon(Icons.person, size: 44, color: Colors.grey)
                 : null,
           ),

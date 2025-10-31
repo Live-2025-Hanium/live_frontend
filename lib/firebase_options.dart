@@ -2,7 +2,7 @@
 // ignore_for_file: type=lint
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, TargetPlatform;
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:live_frontend/env.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
@@ -38,6 +38,9 @@ class DefaultFirebaseOptions {
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       default:
+        if (kIsWeb) {
+          return web;
+        }
         throw UnsupportedError(
           'DefaultFirebaseOptions are not supported for this platform.',
         );
