@@ -7,9 +7,9 @@ import 'package:go_router/go_router.dart';
 import 'package:live_frontend/core/controllers/my_mission_controller.dart';
 import 'package:live_frontend/core/repositories/my_mission_repository.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
-import 'package:live_frontend/screens/home/widgets/mission_tile.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission/mission_repeat.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission/mission_time.dart';
+import 'package:live_frontend/screens/mypage/widget/mission_tile.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
 
@@ -56,62 +56,34 @@ class MyMissionList extends ConsumerWidget {
         final sortedMissions = List<MyMissionModel>.of(missionList)
           ..sort(_missionComparator);
 
-        return Padding(
-          padding: EdgeInsets.only(top: 8.h, left: 16.w, right: 8.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(context),
-              Gap(8.h),
-              Padding(
-                padding: EdgeInsets.only(bottom: 8.h, right: 8.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ...sortedMissions.map((mission) {
-                      return Column(
-                        children: [
-                          MissionTile(
-                            missionStatus: mission.myMissionStatus,
-                            subContent: _buildSubContent(mission),
-                            missionTitle: mission.missionTitle,
-                            onTap: () => _onTap(context, ref, mission),
-                            onCheckBoxTap: () => _onTap(context, ref, mission),
-                          ),
-                          Gap(8.h),
-                        ],
-                      );
-                    }),
-                  ],
-                ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(bottom: 8.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ...sortedMissions.map((mission) {
+                    return Column(
+                      children: [
+                        MissionTile(
+                          missionStatus: mission.myMissionStatus,
+                          subContent: _buildSubContent(mission),
+                          missionTitle: mission.missionTitle,
+                          onTap: () => _onTap(context, ref, mission),
+                          onCheckBoxTap: () => _onTap(context, ref, mission),
+                        ),
+                        Gap(8.h),
+                      ],
+                    );
+                  }),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
-    );
-  }
-
-  // 헤더 UI 빌더
-  Widget _buildHeader(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          'MY',
-          style: AppTextStyles.titleMedium(context, color: Colors.black),
-        ),
-        SizedBox(
-          width: math.min(48.w, 56),
-          height: math.min(48.w, 56),
-          child: IconButton(
-            iconSize: math.min(24.w, 28),
-            onPressed: () => context.pushNamed('my_mission_add'),
-            icon: const Icon(Icons.add),
-          ),
-        ),
-      ],
     );
   }
 
@@ -137,11 +109,7 @@ class MyMissionList extends ConsumerWidget {
       padding: EdgeInsets.only(top: 8.h, left: 16.w, right: 8.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(context),
-          Gap(8.h),
-          const Center(child: Text('오늘은 미션이 없습니다. 새로 추가해보세요!')),
-        ],
+        children: [const Center(child: Text('오늘은 미션이 없습니다. 새로 추가해보세요!'))],
       ),
     );
   }

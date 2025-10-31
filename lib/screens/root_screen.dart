@@ -30,16 +30,17 @@ class RootScreen extends StatelessWidget {
     return ''; // 기본값
   }
 
-  // 특정 경로에서는 AppBar를 표시하지 않도록 결정합니다.
+  // 특정 경로에서만 AppBar를 보여줍니다.
   bool _shouldShowAppBar(BuildContext context) {
     final String location = GoRouterState.of(context).uri.toString();
-    // 예: 지도 화면에서는 AppBar를 숨깁니다.
-    if (location.startsWith('/map') ||
-        location.startsWith('/home/execute') ||
-        location.startsWith('/home/mission_record')) {
-      return false;
+    if (location == '/' ||
+        location == '/home' ||
+        location == '/statistics' ||
+        location == '/forum' ||
+        location == '/mypage') {
+      return true;
     }
-    return true;
+    return false;
   }
 
   // 특정 경로에서만 bottomNavigationBar를 보여줍니다.
