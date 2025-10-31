@@ -18,25 +18,16 @@ final dioProvider = Provider<Dio>((ref) {
 
   final dio = Dio(baseOptions);
 
-  // 🛠️ Android HandshakeException 진단 코드 추가 🛠️
-  if (Platform.isAndroid) {
-    try {
-      // Dio 5.x 이상 버전이라면:
-      (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-        final client = HttpClient();
-        client.badCertificateCallback =
-            (X509Certificate cert, String host, int port) => true;
-        return client;
-      };
-    } catch (e) {
-      // Dio 버전 호환성 문제 등으로 오류가 날 경우를 대비
-      print("Error configuring badCertificateCallback for Android: $e");
-    }
-  }
-  // ----------------------------------------------
+  // 🛠️ 개선된 인증서 검증 우회 방식
+  (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+    final client = HttpClient();
+    client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+    return client;
+  };
+  // ----------------------------------------------------
 
   dio.interceptors.addAll([
-    // pass the same BaseOptions to TokenInterceptor for refresh requests
     TokenInterceptor(
       storage,
       refreshOptions: baseOptions,

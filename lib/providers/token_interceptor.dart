@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:live_frontend/models/common_api_response_model.dart';
 import 'package:live_frontend/models/token_model.dart';
@@ -17,7 +19,18 @@ class TokenInterceptor extends Interceptor {
 
   /// Accept a [refreshOptions] to construct the internal refresh Dio.
   TokenInterceptor(this.storage, {BaseOptions? refreshOptions, this.onLogout})
-    : _refreshDio = Dio(refreshOptions ?? BaseOptions(baseUrl: ''));
+    : _refreshDio = Dio(refreshOptions ?? BaseOptions(baseUrl: '')) {
+    // 🛠️ _refreshDio에도 인증서 검증 우회 적용
+    if (Platform.isAndroid || Platform.isIOS) {
+      (_refreshDio.httpClientAdapter as IOHttpClientAdapter).createHttpClient =
+          () {
+            final client = HttpClient();
+            client.badCertificateCallback =
+                (X509Certificate cert, String host, int port) => true;
+            return client;
+          };
+    }
+  }
 
   Future<String?> _readAccess() => storage.readAccess();
   Future<String?> _readRefresh() => storage.readRefresh();
