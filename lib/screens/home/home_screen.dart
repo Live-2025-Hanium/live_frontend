@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:live_frontend/providers/clover_mission_provider.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission/new_clover_mission_modal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,21 +18,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _showOncePerDayModal();
-    _checkLocationPermission();
-  }
-
-  // 앱 시작 시 gps 허용 되어있는지 확인
-  Future<void> _checkLocationPermission() async {
-    final status = await Geolocator.checkPermission();
-    if (status == LocationPermission.denied) {
-      await Geolocator.requestPermission();
-    }
-  }
-
   Future<void> _showOncePerDayModal() async {
     final prefs = await SharedPreferences.getInstance();
     final lastShown = prefs.getString('lastModalDate');
@@ -41,24 +25,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     if (lastShown == today) return;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!mounted) return;
+    // Ensure the widget is still mounted before showing the dialog
+    if (!mounted) return;
 
-      await showDialog(
-        context: context,
-        builder: (context) => NewCloverMissionModal(),
-      );
+    await showDialog(
+      context: context,
+      builder: (context) => NewCloverMissionModal(),
+    );
 
-      if (!mounted) return;
+    if (!mounted) return;
 
-      ref.invalidate(cloverMissionProvider);
+    ref.invalidate(cloverMissionProvider);
 
-      await prefs.setString('lastModalDate', today);
-    });
+    await prefs.setString('lastModalDate', today);
   }
 
   @override
   Widget build(BuildContext context) {
+    // Listen to the cloverMissionProvider to show the modal once data is loaded.
+    ref.listen(cloverMissionProvider(null), (previous, next) {
+      if (next is AsyncData) {
+        _showOncePerDayModal();
+      }
+    });
+
     return Container(
       color: AppColors.blackBlack0,
       child: SafeArea(
@@ -70,9 +60,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               todayCloverCount: 0,
               todayFinishedMissionCount: 0,
             ),
-            Gap(16),
+            const Gap(16),
             CloverMissionList(),
-            Gap(16),
+            const Gap(16),
             MyMissionList(),
           ],
         ),

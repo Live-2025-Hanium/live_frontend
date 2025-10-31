@@ -1,13 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:live_frontend/core/controllers/presigned_url_controller.dart';
 import 'package:live_frontend/core/controllers/profile_controller.dart';
-import 'package:live_frontend/core/repositories/presigned_url_repository.dart';
-import 'package:live_frontend/models/presigned_url_model.dart';
+import 'package:live_frontend/core/utils/s3_upload_util.dart';
 import 'package:live_frontend/models/profile_model.dart';
-import 'package:live_frontend/providers/dio_provider.dart';
 import 'package:live_frontend/screens/login/profile_setup/widgets/nickname_field.dart';
 import 'package:live_frontend/screens/login/profile_setup/widgets/profile_image_picker.dart';
 import 'package:live_frontend/screens/login/profile_setup/widgets/gender_selector.dart';
@@ -29,7 +28,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   final _nicknameKey = GlobalKey<NicknameFieldState>();
   final ValueNotifier<bool> _isFormValidNotifier = ValueNotifier(false);
-  String? _pickedImagePath;
+  Uint8List? _pickedImageBytes;
   String? _pickedImageExtension;
 
   @override
@@ -56,32 +55,17 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     }
 
     final formData = _formKey.currentState!.value;
-
-    PresignedUrlModel? presigned;
+    String? profileImageUrl;
 
     debugPrint('✅ 프로필 설정 폼 데이터: $formData');
 
     try {
-      if (_pickedImagePath != null && _pickedImageExtension != null) {
-        final presignedUrlRepository = PresignedUrlRepository(
-          ref.read(dioProvider),
-        );
-
-        final presignedUrlController = PresignedUrlController(
-          presignedUrlRepository,
-        );
-        // presigned URL 생성
-        presigned = await presignedUrlController.createPresignedUrl(
-          '$_pickedImagePath.$_pickedImageExtension',
-          'image/$_pickedImageExtension',
-          'PROFILE',
-        );
-
-        // 프로필 이미지 업로드
-        await presignedUrlController.uploadImage(
-          _pickedImagePath!,
-          _pickedImageExtension!,
-          presigned!,
+      if (_pickedImageBytes != null && _pickedImageExtension != null) {
+        profileImageUrl = await uploadImageToS3(
+          ref: ref,
+          imageBytes: _pickedImageBytes!,
+          imageExtension: _pickedImageExtension!,
+          domain: 'PROFILE',
         );
       }
 
@@ -90,7 +74,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         nickname: formData['nickname'] as String,
         gender: (formData['gender'] as Gender).value,
         occupation: (formData['job'] as Occupation).value,
-        profileImageUrl: presigned == null ? '' : presigned.accessUrl,
+        profileImageUrl: profileImageUrl ?? '',
         birthYear: formData['year'],
         birthMonth: formData['month'],
         birthDay: formData['day'],
@@ -121,9 +105,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ProfileImagePicker(
-                  onImagePicked: (path, extension) {
+                  onImagePicked: (bytes, extension) {
                     setState(() {
-                      _pickedImagePath = path;
+                      _pickedImageBytes = bytes;
                       _pickedImageExtension = extension;
                     });
                   },

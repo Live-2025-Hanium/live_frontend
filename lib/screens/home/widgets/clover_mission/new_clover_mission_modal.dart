@@ -80,11 +80,8 @@ class NewCloverMissionModal extends ConsumerWidget {
     List<CloverMissionModel> missionList,
     String titleText,
   ) {
-    ref.invalidate(cloverMissionProvider);
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
+    return ListView(
+      shrinkWrap: true,
       children: [
         Text(
           titleText,
@@ -92,14 +89,14 @@ class NewCloverMissionModal extends ConsumerWidget {
           textAlign: TextAlign.center,
           overflow: TextOverflow.ellipsis,
         ),
-        Gap(12),
+        const Gap(12),
         Image.asset(
           // 이유는 모르겠는데 svg가 안됨.
           'assets/images/clover.png',
           width: 52,
           height: 52,
         ),
-        Gap(24.h),
+        const Gap(24),
         ...missionList.asMap().entries.map((entry) {
           final idx = entry.key;
           final data = entry.value;
@@ -112,7 +109,7 @@ class NewCloverMissionModal extends ConsumerWidget {
                 data.missionDifficulty,
                 data.missionCategory,
               ),
-              Gap(8.h),
+              const Gap(8),
             ],
           );
         }),
