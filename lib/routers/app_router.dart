@@ -13,6 +13,7 @@ import 'package:live_frontend/screens/home/my-mission-add/my_mission_add_screen.
 import 'package:live_frontend/screens/home/my-mission-add/repeat/repeat_screen.dart';
 import 'package:live_frontend/screens/map/map_screen.dart';
 import 'package:live_frontend/screens/mypage/mypage_screen.dart';
+import 'package:live_frontend/screens/root_screen.dart';
 import 'package:live_frontend/screens/statistics/statistics_screen.dart';
 import 'package:live_frontend/screens/statistics/weekly-report/weekly_report_screen.dart';
 import 'package:live_frontend/screens/survey/survey_screen.dart';
@@ -23,6 +24,8 @@ import '../screens/login/profile_setup/profile_setup_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../providers/auth_provider.dart';
 import 'package:live_frontend/screens/forum/forum_post_screen.dart';
+
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -97,164 +100,171 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
-      GoRoute(
-        name: 'home',
-        path: '/home',
-        builder: (context, state) => const HomeScreen(),
+      ShellRoute(
+        navigatorKey: _rootNavigatorKey,
+        builder: (context, state, child) {
+          return RootScreen(child: child);
+        },
         routes: [
           GoRoute(
-            name: 'mission_record',
-            path: 'mission_record',
-            builder: (context, state) => const MissionRecordScreen(),
-          ),
-          GoRoute(
-            name: 'timer_mission',
-            path: 'execute/timer_mission/:id',
-            builder: (context, state) {
-              final idStr = state.pathParameters['id'];
-              final id = idStr != null
-                  ? int.tryParse(idStr)
-                  : (state.extra as int?);
-              if (id == null) return const NotFoundScreen();
-              return ExecuteTimerMissionScreen(id: id);
-            },
-          ),
-          GoRoute(
-            name: 'photo_mission',
-            path: 'execute/photo_mission/:id',
-            builder: (context, state) {
-              final idStr = state.pathParameters['id'];
-              final id = idStr != null
-                  ? int.tryParse(idStr)
-                  : (state.extra as int?);
-              if (id == null) return const NotFoundScreen();
-              return ExecutePhotoMissionScreen(id: id);
-            },
-          ),
-          GoRoute(
-            name: 'visit_mission',
-            path: 'execute/visit_mission/:id',
-            builder: (context, state) {
-              final idStr = state.pathParameters['id'];
-              final id = idStr != null
-                  ? int.tryParse(idStr)
-                  : (state.extra as int?);
-              if (id == null) return const NotFoundScreen();
-              return ExecuteVisitMissionScreen(id: id);
-            },
-          ),
-          GoRoute(
-            name: 'my_mission_add',
-            path: 'my_mission_add',
-            builder: (context, state) {
-              return MyMissionAddScreen();
-            },
+            name: 'home',
+            path: '/home',
+            builder: (context, state) => const HomeScreen(),
             routes: [
               GoRoute(
-                path: 'repeat',
-                name: 'repeat',
+                name: 'mission_record',
+                path: 'mission_record',
+                builder: (context, state) => const MissionRecordScreen(),
+              ),
+              GoRoute(
+                name: 'timer_mission',
+                path: 'execute/timer_mission/:id',
                 builder: (context, state) {
+                  final idStr = state.pathParameters['id'];
+                  final id = idStr != null
+                      ? int.tryParse(idStr)
+                      : (state.extra as int?);
+                  if (id == null) return const NotFoundScreen();
+                  return ExecuteTimerMissionScreen(id: id);
+                },
+              ),
+              GoRoute(
+                name: 'photo_mission',
+                path: 'execute/photo_mission/:id',
+                builder: (context, state) {
+                  final idStr = state.pathParameters['id'];
+                  final id = idStr != null
+                      ? int.tryParse(idStr)
+                      : (state.extra as int?);
+                  if (id == null) return const NotFoundScreen();
+                  return ExecutePhotoMissionScreen(id: id);
+                },
+              ),
+              GoRoute(
+                name: 'visit_mission',
+                path: 'execute/visit_mission/:id',
+                builder: (context, state) {
+                  final idStr = state.pathParameters['id'];
+                  final id = idStr != null
+                      ? int.tryParse(idStr)
+                      : (state.extra as int?);
+                  if (id == null) return const NotFoundScreen();
+                  return ExecuteVisitMissionScreen(id: id);
+                },
+              ),
+              GoRoute(
+                name: 'my_mission_add',
+                path: 'my_mission_add',
+                builder: (context, state) {
+                  return MyMissionAddScreen();
+                },
+                routes: [
+                  GoRoute(
+                    path: 'repeat',
+                    name: 'repeat',
+                    builder: (context, state) {
+                      final qp = state.uri.queryParameters;
+                      RepeatDay? initial;
+                      if (qp.containsKey('initial')) {
+                        final val = qp['initial']!;
+                        try {
+                          initial = RepeatDay.values.firstWhere(
+                            (e) => e.toString().split('.').last == val,
+                          );
+                        } catch (_) {
+                          initial = null;
+                        }
+                      }
+                      if (initial == null && state.extra is RepeatDay) {
+                        initial = state.extra as RepeatDay;
+                      }
+                      return RepeatScreen(initial: initial);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+          GoRoute(
+            name: 'statistics',
+            path: '/statistics',
+            builder: (context, state) => const StatisticsScreen(),
+            routes: [
+              GoRoute(
+                path: 'weekly_report',
+                name: 'weekly_report',
+                builder: (context, state) {
+                  Jiffy? referenceDate;
+                  MissionType? missionType;
+
                   final qp = state.uri.queryParameters;
-                  RepeatDay? initial;
-                  if (qp.containsKey('initial')) {
-                    final val = qp['initial']!;
+                  if (qp.containsKey('referenceDate')) {
+                    referenceDate = Jiffy.parse(qp['referenceDate']!);
+                  }
+                  if (qp.containsKey('missionType')) {
+                    final mtStr = qp['missionType']!;
                     try {
-                      initial = RepeatDay.values.firstWhere(
-                        (e) => e.toString().split('.').last == val,
+                      missionType = MissionType.values.firstWhere(
+                        (e) => e.toString().split('.').last == mtStr,
                       );
                     } catch (_) {
-                      initial = null;
+                      missionType = null;
                     }
                   }
-                  if (initial == null && state.extra is RepeatDay) {
-                    initial = state.extra as RepeatDay;
+
+                  // Fallback to extra (existing navigation behavior)
+                  if (referenceDate == null || missionType == null) {
+                    if (state.extra is Map<String, dynamic>) {
+                      final args = state.extra as Map<String, dynamic>;
+                      referenceDate = args['referenceDate'] as Jiffy?;
+                      missionType = args['missionType'] as MissionType?;
+                    }
                   }
-                  return RepeatScreen(initial: initial);
+
+                  if (referenceDate == null || missionType == null) {
+                    return const NotFoundScreen();
+                  }
+
+                  return WeeklyReportScreen(
+                    referenceDate: referenceDate,
+                    missionType: missionType,
+                    selectedIndex: int.tryParse(qp['selectedIndex'] ?? '') ?? 0,
+                  );
                 },
               ),
             ],
           ),
-        ],
-      ),
-      GoRoute(
-        name: 'statistics',
-        path: '/statistics',
-        builder: (context, state) => const StatisticsScreen(),
-        routes: [
           GoRoute(
-            path: 'weekly_report',
-            name: 'weekly_report',
-            builder: (context, state) {
-              Jiffy? referenceDate;
-              MissionType? missionType;
-
-              final qp = state.uri.queryParameters;
-              if (qp.containsKey('referenceDate')) {
-                referenceDate = Jiffy.parse(qp['referenceDate']!);
-              }
-              if (qp.containsKey('missionType')) {
-                final mtStr = qp['missionType']!;
-                try {
-                  missionType = MissionType.values.firstWhere(
-                    (e) => e.toString().split('.').last == mtStr,
-                  );
-                } catch (_) {
-                  missionType = null;
-                }
-              }
-
-              // Fallback to extra (existing navigation behavior)
-              if (referenceDate == null || missionType == null) {
-                if (state.extra is Map<String, dynamic>) {
-                  final args = state.extra as Map<String, dynamic>;
-                  referenceDate = args['referenceDate'] as Jiffy?;
-                  missionType = args['missionType'] as MissionType?;
-                }
-              }
-
-              if (referenceDate == null || missionType == null) {
-                return const NotFoundScreen();
-              }
-
-              return WeeklyReportScreen(
-                referenceDate: referenceDate,
-                missionType: missionType,
-                selectedIndex: int.tryParse(qp['selectedIndex'] ?? '') ?? 0,
-              );
-            },
+            name: 'map',
+            path: '/map',
+            builder: (context, state) => const MapScreen(),
+          ),
+          GoRoute(
+            name: 'forum',
+            path: '/forum',
+            builder: (context, state) => const ForumScreen(),
+            routes: [
+              GoRoute(
+                name: 'forum_post',
+                path: 'post/:id',
+                builder: (context, state) {
+                  final idStr = state.pathParameters['id'];
+                  final id = int.tryParse(idStr ?? '');
+                  if (id == null) {
+                    return const NotFoundScreen();
+                  }
+                  return ForumPostScreen(postId: id);
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            name: 'mypage',
+            path: '/mypage',
+            builder: (context, state) => const MyPageScreen(),
           ),
         ],
       ),
-      GoRoute(
-        name: 'map',
-        path: '/map',
-        builder: (context, state) => const MapScreen(),
-      ),
-      GoRoute(
-        name: 'forum',
-        path: '/forum',
-        builder: (context, state) => const ForumScreen(),
-        routes: [
-          GoRoute(
-            name: 'forum_post',
-            path: 'post/:id',
-            builder: (context, state) {
-              final idStr = state.pathParameters['id'];
-              final id = int.tryParse(idStr ?? '');
-              if (id == null) {
-                return const NotFoundScreen();
-              }
-              return ForumPostScreen(postId: id);
-            },
-          ),
-        ],
-      ),
-      GoRoute(
-        name: 'mypage',
-        path: '/mypage',
-        builder: (context, state) => const MyPageScreen(),
-      ),
-
       GoRoute(
         name: 'survey',
         path: '/survey',
