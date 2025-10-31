@@ -44,7 +44,17 @@ class CloverMissionRepository {
     MissionStatus status,
     int missionId,
   ) async {
-    await _dio.patch('/api/v1/missions/clover/$missionId/${status.label}');
+    try {
+      final response = await _dio.patch(
+        '/api/v1/missions/clover/$missionId/${status.label}',
+      );
+    } on DioException catch (e) {
+      // Dio 관련 오류(네트워크 문제, 2xx 이외의 응답 등)를 처리합니다.
+      throw Exception('미션 상태 업데이트 실패: ${e.message}');
+    } catch (e) {
+      // 그 외 예상치 못한 오류를 처리합니다.
+      throw Exception('예상치 못한 오류가 발생했습니다: ${e.toString()}');
+    }
   }
 
   Future<List<CloverMissionModel>?> fetchNewMissions() async {

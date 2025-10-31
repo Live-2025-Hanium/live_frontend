@@ -14,7 +14,7 @@ class ExecuteVisitMissionScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final missionDetailAsync = ref.watch(cloverMissionDetailProvider(id));
 
-    void onRightPressed() {
+    Future<void> onRightPressed() async {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog(
           context: context,
