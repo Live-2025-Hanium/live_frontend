@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/core/controllers/my_mission_controller.dart';
@@ -49,7 +48,7 @@ class MyMissionList extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.only(bottom: 8.h),
+              padding: EdgeInsets.only(bottom: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -69,7 +68,7 @@ class MyMissionList extends ConsumerWidget {
                           onTap: () => _onTap(context, ref, mission),
                           onCheckBoxTap: () => _onTap(context, ref, mission),
                         ),
-                        Gap(8.h),
+                        Gap(8),
                       ],
                     );
                   }),
@@ -89,7 +88,7 @@ class MyMissionList extends ConsumerWidget {
         children: [
           if (mission.scheduledTime != null)
             MissionTime(scheduledTime: mission.scheduledTime!),
-          Gap(12.w),
+          Gap(12),
           if (mission.repeatType != null)
             MissionRepeat(repeatInterval: mission.repeatType!.label),
         ],
@@ -101,7 +100,7 @@ class MyMissionList extends ConsumerWidget {
   // 데이터가 없을 때 UI
   Widget _buildEmptyState(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 8.h, left: 16.w, right: 8.w),
+      padding: EdgeInsets.only(top: 8, left: 16, right: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [const Center(child: Text('오늘은 미션이 없습니다. 새로 추가해보세요!'))],

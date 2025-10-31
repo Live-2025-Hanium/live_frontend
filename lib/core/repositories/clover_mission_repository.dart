@@ -19,7 +19,9 @@ class CloverMissionRepository {
   CloverMissionRepository(this._dio);
 
   Future<List<CloverMissionModel>?> getCloverMissions() async {
-    final position = await Geolocator.getCurrentPosition();
+    final position = await Geolocator.getCurrentPosition(
+      timeLimit: const Duration(seconds: 15),
+    );
 
     final response = await _dio.get(
       "/api/v1/missions/clover",
@@ -58,7 +60,9 @@ class CloverMissionRepository {
   }
 
   Future<List<CloverMissionModel>?> fetchNewMissions() async {
-    final position = await Geolocator.getCurrentPosition();
+    final position = await Geolocator.getCurrentPosition(
+      timeLimit: const Duration(seconds: 15),
+    );
 
     final response = await _dio.get(
       "/api/v1/missions/clover/refill",

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:live_frontend/providers/clover_mission_provider.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission/new_clover_mission_modal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jiffy/jiffy.dart';
@@ -31,7 +32,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       await Geolocator.requestPermission();
     }
     _showOncePerDayModal();
-    _checkLocationPermission();
   }
 
   Future<void> _showOncePerDayModal() async {

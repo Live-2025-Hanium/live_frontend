@@ -4,8 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:live_frontend/env.dart';
 import 'package:live_frontend/providers/secure_storage_provider.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
-import 'dart:io';
-import 'package:dio/io.dart';
+import 'dio_adapter_mobile.dart' if (dart.library.html) 'dio_adapter_web.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   final storage = ref.watch(secureStorageProvider);
@@ -18,14 +17,8 @@ final dioProvider = Provider<Dio>((ref) {
 
   final dio = Dio(baseOptions);
 
-  // 🛠️ 개선된 인증서 검증 우회 방식
-  (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-    final client = HttpClient();
-    client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => true;
-    return client;
-  };
-  // ----------------------------------------------------
+  // 플랫폼에 맞는 어댑터 설정
+  configureAdapter(dio);
 
   dio.interceptors.addAll([
     TokenInterceptor(

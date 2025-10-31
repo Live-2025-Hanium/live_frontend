@@ -61,11 +61,11 @@ class SaeipButton extends StatelessWidget {
       ),
       child: isLoading
           ? SizedBox(
-              width: 24.w,
-              height: 24.w,
+              width: 24,
+              height: 24,
               child: CircularProgressIndicator(
                 color: textColor,
-                strokeWidth: 2.w,
+                strokeWidth: 2,
               ),
             )
           : Text(

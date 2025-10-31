@@ -21,15 +21,22 @@ class CloverMissionList extends ConsumerStatefulWidget {
 
 class _CloverMissionListState extends ConsumerState<CloverMissionList> {
   int _missionComparator(CloverMissionModel a, CloverMissionModel b) {
-    // null 안전: status가 null이면 가장 뒤로 밀기
-    final aRank = a.missionStatus.index;
-    final bRank = b.missionStatus.index;
-    if (aRank != bRank) return aRank - bRank;
+    // Compare by missionStatus, handling nulls (nulls go last)
+    final aStatus = a.missionStatus;
+    final bStatus = b.missionStatus;
 
-    // null/대소문자 안전한 제목 비교
-    final at = a.missionTitle.toLowerCase();
-    final bt = b.missionTitle.toLowerCase();
-    return at.compareTo(bt);
+    if (aStatus != bStatus) {
+      if (aStatus == null) return 1; // a is null, comes after b
+      if (bStatus == null) return -1; // b is null, comes after a
+      final aRank = aStatus.index;
+      final bRank = bStatus.index;
+      if (aRank != bRank) return aRank - bRank;
+    }
+
+    // If statuses are the same (or both null), compare by title
+    return (a.missionTitle ?? '').toLowerCase().compareTo(
+      (b.missionTitle ?? '').toLowerCase(),
+    );
   }
 
   @override

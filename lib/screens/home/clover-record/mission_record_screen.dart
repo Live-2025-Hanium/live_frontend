@@ -112,7 +112,7 @@ class _MissionRecordScreenState extends ConsumerState<MissionRecordScreen> {
                         ),
                       ),
                       SizedBox(
-                        height: 48.w,
+                        height: 48,
                         child: TextButton(
                           onPressed: () {},
                           style: TextButton.styleFrom(
@@ -142,7 +142,7 @@ class _MissionRecordScreenState extends ConsumerState<MissionRecordScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           RatingBar(rating: data.missionDifficulty.value),
-                          Gap(8.w),
+                          Gap(8),
                           Text(
                             data.missionCategory.koreanLabel,
                             style: AppTextStyles.bodyRegular(

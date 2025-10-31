@@ -65,7 +65,10 @@ class NewCloverMissionModal extends ConsumerWidget {
             right: 4,
             child: IconButton(
               icon: Icon(Icons.close, color: AppColors.blackBlack4),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                ref.invalidate(cloverMissionProvider);
+                Navigator.of(context).pop();
+              },
             ),
           ),
         ],
@@ -79,8 +82,6 @@ class NewCloverMissionModal extends ConsumerWidget {
     List<CloverMissionModel> missionList,
     String titleText,
   ) {
-    ref.invalidate(cloverMissionProvider);
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
