@@ -9,7 +9,6 @@ import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/providers/my_mission_provider.dart';
 import 'package:live_frontend/screens/home/my-mission-add/widget/selection_button.dart';
 import 'package:live_frontend/screens/home/my-mission-add/widget/selection_tile.dart';
-import 'package:live_frontend/screens/mypage/widget/my_mission_list.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';

@@ -63,6 +63,7 @@ class MyMissionRepository {
             )
             .toList(),
       );
+      debugPrint('API Response Data: ${apiResponse.data}');
       return apiResponse.data;
     } catch (e) {
       debugPrint('Failed to fetch all my missions: $e');

@@ -3,14 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:live_frontend/core/controllers/my_mission_controller.dart';
-import 'package:live_frontend/core/repositories/my_mission_repository.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/providers/my_mission_provider.dart';
 import 'package:live_frontend/screens/home/widgets/mission_tile.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission/mission_repeat.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission/mission_time.dart';
-import 'package:live_frontend/screens/mypage/widget/my_mission_list.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
 
@@ -106,7 +103,7 @@ class MyMissionList extends ConsumerWidget {
 
   // 미션 타일 하단 컨텐츠 빌더
   Widget? _buildSubContent(MyMissionModel mission) {
-    if (mission.repeatType != null && mission.scheduledTime != null) {
+    if (mission.repeatType != null || mission.scheduledTime != null) {
       return Row(
         children: [
           if (mission.scheduledTime != null)

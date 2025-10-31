@@ -10,7 +10,7 @@ class MyPageScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      color: AppColors.greenDark,
+      color: AppColors.blackBlack0,
       child: Column(
         children: [
           Padding(padding: const EdgeInsets.all(16.0), child: ProfileWidget()),
