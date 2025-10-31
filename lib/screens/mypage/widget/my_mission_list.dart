@@ -1,30 +1,12 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
-import 'package:live_frontend/core/controllers/my_mission_controller.dart';
-import 'package:live_frontend/core/repositories/my_mission_repository.dart';
 import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/providers/my_mission_provider.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission/mission_repeat.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission/mission_time.dart';
 import 'package:live_frontend/screens/mypage/widget/mission_tile.dart';
-import 'package:live_frontend/theme/app_text_styles.dart';
-import 'package:live_frontend/widgets/saeip_modal.dart';
-
-final myMissionControllerProvider = Provider<MyMissionController>((ref) {
-  final repository = ref.watch(myMissionRepositoryProvider);
-  return MyMissionController(repository);
-});
-
-final myMissionsProvider = FutureProvider.autoDispose<List<MyMissionModel>>((
-  ref,
-) {
-  final controller = ref.watch(myMissionControllerProvider);
-  return controller.fetchMyMissions();
-});
 
 class MyMissionList extends ConsumerWidget {
   const MyMissionList({super.key});

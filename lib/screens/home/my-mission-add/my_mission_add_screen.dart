@@ -6,8 +6,10 @@ import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/core/controllers/my_mission_controller.dart';
 import 'package:live_frontend/core/repositories/my_mission_repository.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
+import 'package:live_frontend/providers/my_mission_provider.dart';
 import 'package:live_frontend/screens/home/my-mission-add/widget/selection_button.dart';
 import 'package:live_frontend/screens/home/my-mission-add/widget/selection_tile.dart';
+import 'package:live_frontend/screens/mypage/widget/my_mission_list.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
@@ -141,6 +143,8 @@ class _MyMissionAddScreenState extends ConsumerState<MyMissionAddScreen> {
       );
       if (!mounted) return;
       SaeipToastController.showMessage(context, '마이 미션이 추가되었습니다.');
+      ref.invalidate(allMyMissionsProvider);
+      ref.invalidate(myMissionsProvider);
       Navigator.of(context).pop();
     } catch (e) {
       if (!mounted) return;
