@@ -81,6 +81,7 @@ class NewCloverMissionModal extends ConsumerWidget {
           titleText,
           style: AppTextStyles.titleMedium(context, color: Colors.black),
           textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
         ),
         Gap(12),
         Image.asset(
@@ -138,20 +139,23 @@ class NewCloverMissionModal extends ConsumerWidget {
               ),
             ),
             Gap(24),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyles.bodyRegular(
-                    context,
-                    color: Colors.black,
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: AppTextStyles.bodyRegular(
+                      context,
+                      color: Colors.black,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                Gap(4),
-                CloverSubContent(difficulty: difficulty, category: category),
-              ],
+                  Gap(4),
+                  CloverSubContent(difficulty: difficulty, category: category),
+                ],
+              ),
             ),
           ],
         ),

@@ -32,4 +32,10 @@ class CloverMissionController {
   ) async {
     return await _repository.getCloverMissionDetail(missionId);
   }
+
+  Future<void> submitCloverMissionFeedback(
+    CloverMissionFeedbackModel feedback,
+  ) async {
+    await _repository.postCloverMissionFeedback(feedback);
+  }
 }

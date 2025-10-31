@@ -28,3 +28,9 @@ final cloverMissionDetailProvider =
       final controller = ref.read(cloverMissionControllerProvider);
       return controller.fetchCloverMissionDetail(missionId);
     });
+
+final cloverMissionFeedbackProvider =
+    FutureProvider.family<void, CloverMissionFeedbackModel>((ref, feedback) {
+      final controller = ref.read(cloverMissionControllerProvider);
+      return controller.submitCloverMissionFeedback(feedback);
+    });

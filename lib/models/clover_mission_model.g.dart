@@ -51,11 +51,10 @@ const _$CloverMissionDifficultyEnumMap = {
 };
 
 const _$CloverMissionCategoryEnumMap = {
+  CloverMissionCategory.communication: 'COMMUNICATION',
   CloverMissionCategory.relationship: 'RELATIONSHIP',
+  CloverMissionCategory.environment: 'ENVIRONMENT',
   CloverMissionCategory.health: 'HEALTH',
-  CloverMissionCategory.work: 'WORK',
-  CloverMissionCategory.hobby: 'HOBBY',
-  CloverMissionCategory.study: 'STUDY',
 };
 
 const _$CloverMissionTypeEnumMap = {
