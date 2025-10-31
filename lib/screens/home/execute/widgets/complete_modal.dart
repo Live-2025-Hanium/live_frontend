@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:live_frontend/models/mission_models.dart';
 import 'package:live_frontend/providers/clover_mission_provider.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
+import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 
 class CompleteModal extends ConsumerStatefulWidget {
   final int userMissionId;
@@ -14,35 +15,35 @@ class CompleteModal extends ConsumerStatefulWidget {
 }
 
 class _CompleteModalState extends ConsumerState<CompleteModal> {
-  // 프로바이더를 저장할 변수를 선언합니다.
-  late final updateProvider;
+  late final Map<String, dynamic> _providerParam;
 
   @override
   void initState() {
     super.initState();
-    // initState에서 위젯이 생성될 때 프로바이더를 한 번만 초기화합니다.
-    updateProvider = cloverMissionStateUpdateProvider({
+    // 위젯이 생성될 때 프로바이더에 전달할 파라미터를 한 번만 생성합니다.
+    _providerParam = {
       'status': MissionStatus.completed,
       'missionId': widget.userMissionId,
-    });
-    // 초기 API 요청을 트리거합니다.
-    ref.read(updateProvider);
+    };
   }
 
   @override
   Widget build(BuildContext context) {
-    // ref.listen으로 side-effect(화면 닫기 등)를 처리합니다.
-    ref.listen(updateProvider, (previous, next) {
-      // 에러 상태가 되면 다이얼로그를 닫습니다.
+    // provider를 한 번만 조회하여 watch와 listen에 동일한 인스턴스를 사용합니다.
+    final provider = cloverMissionStateUpdateProvider(_providerParam);
+
+    ref.listen(provider, (previous, next) {
+      // 에러 상태가 되면 스낵바를 표시하고 모달을 닫습니다.
       if (next is AsyncError && mounted) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          context.pop();
-        });
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(content: Text('미션 완료에 실패했습니다. 다시 시도해주세요.')),
+        // );
+        SaeipToastController.showMessage(context, '미션 완료에 실패했습니다. 다시 시도해주세요.');
+        context.pop();
       }
     });
 
-    // ref.watch로 프로바이더의 상태를 구독하여 UI를 빌드합니다.
-    final cloverMissionStateUpdateAsync = ref.watch(updateProvider);
+    final cloverMissionStateUpdateAsync = ref.watch(provider);
 
     return cloverMissionStateUpdateAsync.when(
       data: (_) {
@@ -66,8 +67,7 @@ class _CompleteModalState extends ConsumerState<CompleteModal> {
         );
       },
       error: (error, stack) {
-        // listen에서 화면을 닫으므로, 여기서는 간단한 UI만 보여주거나 비워둡니다.
-        return const Center(child: Text('오류 발생'));
+        return const Center(child: CircularProgressIndicator());
       },
       loading: () {
         return const Center(child: CircularProgressIndicator());
