@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
+import 'package:live_frontend/providers/my_mission_provider.dart';
 import 'package:live_frontend/screens/home/widgets/mission_tile.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission/mission_repeat.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission/mission_time.dart';
