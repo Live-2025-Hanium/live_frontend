@@ -21,12 +21,16 @@ class PlatformKakaoMap extends StatelessWidget {
     required this.centerLng,
     this.zoomLevel = 3,
     this.points = const <LatLngPoint>[],
+    this.onMapCreated,
+    this.circles = const [],
   });
 
   final double centerLat;
   final double centerLng;
   final int zoomLevel;
   final List<LatLngPoint> points;
+  final void Function(mobile.KakaoMapController controller)? onMapCreated;
+  final List<mobile.Circle> circles;
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +54,11 @@ class PlatformKakaoMap extends StatelessWidget {
     }).toList();
 
     return mobile.KakaoMap(
-      onMapCreated: (_) {},
+      onMapCreated: onMapCreated,
       markers: markers,
-      // 카메라 초기 위치는 마커가 있으면 첫 마커로 세팅되므로
-      // 강제 중앙값을 쓰고 싶다면 아래처럼 setCenter를 onMapCreated에서 호출 가능
-      // onMapCreated: (c) => c.setCenter(mobile.LatLng(centerLat, centerLng)),
+      circles: circles,
+      center: mobile.LatLng(centerLat, centerLng),
+      currentLevel: zoomLevel,
     );
   }
 }

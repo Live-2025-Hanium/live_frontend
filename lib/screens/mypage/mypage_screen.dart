@@ -1,27 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:live_frontend/core/controllers/auth_controller.dart';
-import 'package:live_frontend/providers/auth_provider.dart';
-import 'package:live_frontend/widgets/saeip_app_bar.dart';
-import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
+import 'package:live_frontend/screens/mypage/widget/my_mission_list.dart';
+import 'package:live_frontend/screens/mypage/widget/profile_widget.dart';
+import 'package:live_frontend/theme/app_colors.dart';
 
 class MyPageScreen extends ConsumerWidget {
   const MyPageScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: SaeipAppBar(title: 'My Page'),
-      body: Center(
-        child: TextButton(
-          onPressed: () {
-            final authController = ref.read(authProvider.notifier);
-            authController.logout();
-          },
-          child: const Text('Log Out'),
-        ),
+    return Container(
+      color: AppColors.blackBlack0,
+      child: Column(
+        children: [
+          Padding(padding: const EdgeInsets.all(16.0), child: ProfileWidget()),
+          MyMissionList(),
+        ],
       ),
-      bottomNavigationBar: const SaeipNavigationBar(initialIndex: 4),
     );
   }
 }

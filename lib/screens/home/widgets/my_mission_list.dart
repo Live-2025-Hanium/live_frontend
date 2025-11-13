@@ -4,26 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:live_frontend/core/controllers/my_mission_controller.dart';
-import 'package:live_frontend/core/repositories/my_mission_repository.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
+import 'package:live_frontend/providers/my_mission_provider.dart';
 import 'package:live_frontend/screens/home/widgets/mission_tile.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission/mission_repeat.dart';
 import 'package:live_frontend/screens/home/widgets/my_mission/mission_time.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
-
-final myMissionControllerProvider = Provider<MyMissionController>((ref) {
-  final repository = ref.watch(myMissionRepositoryProvider);
-  return MyMissionController(repository);
-});
-
-final myMissionsProvider = FutureProvider.autoDispose<List<MyMissionModel>>((
-  ref,
-) {
-  final controller = ref.watch(myMissionControllerProvider);
-  return controller.fetchMyMissions();
-});
 
 class MyMissionList extends ConsumerWidget {
   const MyMissionList({super.key});
@@ -117,7 +104,7 @@ class MyMissionList extends ConsumerWidget {
 
   // 미션 타일 하단 컨텐츠 빌더
   Widget? _buildSubContent(MyMissionModel mission) {
-    if (mission.repeatType != null && mission.scheduledTime != null) {
+    if (mission.repeatType != null || mission.scheduledTime != null) {
       return Row(
         children: [
           if (mission.scheduledTime != null)
@@ -140,7 +127,7 @@ class MyMissionList extends ConsumerWidget {
         children: [
           _buildHeader(context),
           Gap(8.h),
-          const Center(child: Text('No missions for today.')),
+          const Center(child: Text('오늘은 미션이 없습니다. 새로 추가해보세요!')),
         ],
       ),
     );

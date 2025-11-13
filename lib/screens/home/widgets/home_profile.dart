@@ -41,7 +41,7 @@ class HomeProfile extends StatelessWidget {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
                 errorWidget: (context, url, error) {
-                  debugPrint('Avatar load error: $error');
+                  debugPrint('Avatar load error');
                   return Container(
                     color: Colors.grey.shade200,
                     child: Icon(

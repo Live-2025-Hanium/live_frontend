@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:live_frontend/screens/map/map_search_screen.dart';
-import 'package:live_frontend/widgets/saeip_navigation_bar.dart';
 import 'package:live_frontend/widgets/saeip_search_bar.dart';
 import 'widgets/category_bottom_sheet.dart';
 import 'package:live_frontend/widgets/platform_kakao_map.dart';
@@ -162,101 +161,102 @@ class _MapScreenState extends State<MapScreen> {
     // 하단 네비와 겹치지 않도록 여백
     const bottomNavGap = kBottomNavigationBarHeight + 12.0;
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: PlatformKakaoMap(
-              centerLat: 37.611846,
-              centerLng: 126.834059,
-              zoomLevel: 3,
-              points: _markers
-                  .map(
-                    (marker) => LatLngPoint(
-                      marker.latLng.latitude,
-                      marker.latLng.longitude,
-                      label: marker.infoWindowContent,
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
-
-          // 검색바(탭 시 검색 화면으로 이동)
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const MapSearchScreen(),
-                    ),
-                  );
-                },
-                child: AbsorbPointer(
-                  child: SaeipSearchBar(
-                    controller: _searchController,
-                    hintText: '장소, 주소 검색',
-                    onSubmit: (value) {},
-                    logoSvgAsset: 'assets/icons/clover.svg',
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: PlatformKakaoMap(
+            centerLat: 37.611846,
+            centerLng: 126.834059,
+            zoomLevel: 3,
+            onMapCreated: (controller) {
+              _mapController = controller;
+            },
+            points: _markers
+                .map(
+                  (marker) => LatLngPoint(
+                    marker.latLng.latitude,
+                    marker.latLng.longitude,
+                    label: marker.infoWindowContent,
                   ),
-                ),
-              ),
-            ),
+                )
+                .toList(),
+            circles: _circles,
           ),
+        ),
 
-          // 현재 위치로 이동 버튼
-          Positioned(
-            right: 16,
-            bottom: bottomNavGap + 95,
+        // 검색바(탭 시 검색 화면으로 이동)
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
             child: GestureDetector(
               onTap: () {
-                if (_mapController != null) {
-                  _mapController!.setCenter(myLocation);
-                }
-              },
-              child: Container(
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [BoxShadow(blurRadius: 8, color: Colors.black26)],
-                ),
-                child: SvgPicture.asset('assets/icons/reset_location.svg'),
-              ),
-            ),
-          ),
-
-          // 카테고리 선택 바텀시트
-          CategoryBottomSheet(
-            items: categoryItems,
-            controller: _sheetController,
-            onCategoryTap: _mockSearchByCategory,
-          ),
-
-          // (선택) 하단 정보 영역 자리(애니메이션 컨테이너)
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 0, 12, bottomNavGap),
-              child: IgnorePointer(
-                ignoring: true,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  height: 0, // 검색 결과 있을 때 200 등으로 변경
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: const [
-                      BoxShadow(blurRadius: 12, color: Colors.black26),
-                    ],
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const MapSearchScreen(),
                   ),
+                );
+              },
+              child: AbsorbPointer(
+                child: SaeipSearchBar(
+                  controller: _searchController,
+                  hintText: '장소, 주소 검색',
+                  onSubmit: (value) {},
+                  logoSvgAsset: 'assets/icons/clover.svg',
                 ),
               ),
             ),
           ),
-        ],
-      ),
-      bottomNavigationBar: const SaeipNavigationBar(initialIndex: 2),
+        ),
+
+        // 현재 위치로 이동 버튼
+        Positioned(
+          right: 16,
+          bottom: bottomNavGap + 95,
+          child: GestureDetector(
+            onTap: () {
+              if (_mapController != null) {
+                _mapController!.setCenter(myLocation);
+              }
+            },
+            child: Container(
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [BoxShadow(blurRadius: 8, color: Colors.black26)],
+              ),
+              child: SvgPicture.asset('assets/icons/reset_location.svg'),
+            ),
+          ),
+        ),
+
+        // 카테고리 선택 바텀시트
+        CategoryBottomSheet(
+          items: categoryItems,
+          controller: _sheetController,
+          onCategoryTap: _mockSearchByCategory,
+        ),
+
+        // (선택) 하단 정보 영역 자리(애니메이션 컨테이너)
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, bottomNavGap),
+            child: IgnorePointer(
+              ignoring: true,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                height: 0, // 검색 결과 있을 때 200 등으로 변경
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: const [
+                    BoxShadow(blurRadius: 12, color: Colors.black26),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,9 +1,11 @@
+import 'package:live_frontend/providers/token_interceptor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:live_frontend/env.dart';
 import 'package:live_frontend/providers/secure_storage_provider.dart';
-import 'package:live_frontend/providers/token_interceptor.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
+import 'dart:io';
+import 'package:dio/io.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   final storage = ref.watch(secureStorageProvider);
@@ -16,8 +18,16 @@ final dioProvider = Provider<Dio>((ref) {
 
   final dio = Dio(baseOptions);
 
+  // 🛠️ 개선된 인증서 검증 우회 방식
+  (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+    final client = HttpClient();
+    client.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+    return client;
+  };
+  // ----------------------------------------------------
+
   dio.interceptors.addAll([
-    // pass the same BaseOptions to TokenInterceptor for refresh requests
     TokenInterceptor(
       storage,
       refreshOptions: baseOptions,
@@ -25,10 +35,6 @@ final dioProvider = Provider<Dio>((ref) {
     ),
     LogInterceptor(responseBody: true),
   ]);
-
-  // Example: to call an endpoint without attaching Authorization header,
-  // pass Options with extra['noAuth'] == true:
-  // await dio.get('/public', options: Options(extra: {'noAuth': true}));
 
   return dio;
 });

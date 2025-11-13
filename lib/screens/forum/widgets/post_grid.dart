@@ -43,26 +43,39 @@ class PostGridSliver extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (posts.isEmpty) {
+      return SliverToBoxAdapter(
+        child: Padding(
+          padding: padding,
+          child: Center(
+            child: Text(
+              '게시글이 없습니다.',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+        ),
+      );
+    }
+
     return SliverPadding(
       padding: padding,
       sliver: SliverGrid(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final post = posts[index];
-            final isSelected = selectedIds.contains(post.id);
-            return PostCard(
-              post: post,
-              onTap: () => onTapPost?.call(post),
-              onLongPress: onLongPressPost == null ? null : () => onLongPressPost!.call(post),
-              editing: editing,
-              selected: isSelected,
-              selectionBuilder: selectionBuilder,
-              selectionAlignment: selectionAlignment,
-              showSelectionOverlay: showSelectionOverlay,
-            );
-          },
-          childCount: posts.length,
-        ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final post = posts[index];
+          final isSelected = selectedIds.contains(post.id);
+          return PostCard(
+            post: post,
+            onTap: () => onTapPost?.call(post),
+            onLongPress: onLongPressPost == null
+                ? null
+                : () => onLongPressPost!.call(post),
+            editing: editing,
+            selected: isSelected,
+            selectionBuilder: selectionBuilder,
+            selectionAlignment: selectionAlignment,
+            showSelectionOverlay: showSelectionOverlay,
+          );
+        }, childCount: posts.length),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: crossAxisCount,
           mainAxisSpacing: mainAxisSpacing,

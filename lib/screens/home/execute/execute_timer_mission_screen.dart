@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:live_frontend/models/clover_mission_model.dart';
+import 'package:live_frontend/providers/clover_mission_provider.dart';
 import 'package:live_frontend/screens/home/execute/widgets/complete_modal.dart';
 import 'package:live_frontend/screens/home/execute/widgets/countdown_timer.dart';
 import 'package:live_frontend/screens/home/execute/widgets/pause_modal.dart';
 import 'package:live_frontend/screens/home/execute/widgets/sub_content.dart';
 import 'package:live_frontend/screens/home/execute/widgets/execute_screen_template.dart';
+import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'dart:async';
 
 import 'package:live_frontend/widgets/saeip_modal.dart';
-import 'package:live_frontend/providers/home_provider.dart';
 
 class ExecuteTimerMissionScreen extends ConsumerStatefulWidget {
   final int id;
@@ -25,24 +25,10 @@ class _ExecuteTimerMissionScreenState
   late Duration _remaining;
   Timer? _timer;
   bool _isPaused = false;
-  CloverMissionDetailModel? _detail;
-  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    // 상세 미션 정보를 불러옵니다.
-    ref
-        .read(cloverMissionNotifierProvider.notifier)
-        .fetchMissionDetail(widget.id)
-        .then((d) {
-          setState(() {
-            _detail = d;
-            _remaining = d?.remainingTime ?? Duration.zero;
-            _loading = false;
-          });
-          _startTimer();
-        });
   }
 
   void _startTimer() {
@@ -84,10 +70,9 @@ class _ExecuteTimerMissionScreenState
 
   @override
   Widget build(BuildContext context) {
-    if (_loading || _detail == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    final mission = _detail!;
+    final missionDetailAsync = ref.watch(
+      cloverMissionDetailProvider(widget.id),
+    );
     final onRightPressed = _remaining.inSeconds > 0
         ? () {
             _togglePause();
@@ -106,24 +91,41 @@ class _ExecuteTimerMissionScreenState
               },
             );
           };
-    return ExecuteScreenTemplate(
-      missionTitle: mission.missionTitle,
-      imagePath: 'assets/images/clover_mission/timer.png',
-      onLeftPressed: () {
-        _togglePause();
-        _showPauseModal();
-      },
-      rightLabel: '완료',
-      onRightPressed: onRightPressed,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SubContent(
-            subtitle: '앞으로 남은 시간',
-            child: CountdownTimer(formattedTime: _formatDuration(_remaining)),
+    return missionDetailAsync.when(
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (error, stack) => Scaffold(body: Center(child: Text('Error'))),
+      data: (detail) {
+        if (detail == null || detail.remainingTime == null) {
+          return Scaffold(body: Center(child: Text('미션 정보를 불러올 수 없습니다.')));
+        }
+        _remaining = detail.remainingTime!;
+        _startTimer();
+        return Scaffold(
+          appBar: SaeipAppBar(title: '미션 수행'),
+          body: ExecuteScreenTemplate(
+            missionTitle: detail.missionTitle,
+            imagePath: 'assets/images/clover_mission/timer.png',
+            onLeftPressed: () {
+              _togglePause();
+              _showPauseModal();
+            },
+            rightLabel: '완료',
+            onRightPressed: onRightPressed,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SubContent(
+                  subtitle: '앞으로 남은 시간',
+                  child: CountdownTimer(
+                    formattedTime: _formatDuration(_remaining),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

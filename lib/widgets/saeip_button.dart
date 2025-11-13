@@ -15,6 +15,7 @@ class SaeipButton extends StatelessWidget {
   final SaeipButtonType type;
   final bool disabled;
   final Color? outlineColor;
+  final bool isLoading;
 
   const SaeipButton({
     super.key,
@@ -27,6 +28,7 @@ class SaeipButton extends StatelessWidget {
     this.type = SaeipButtonType.filled,
     this.disabled = false,
     this.outlineColor,
+    this.isLoading = false,
   });
 
   const SaeipButton.outlined({
@@ -39,6 +41,7 @@ class SaeipButton extends StatelessWidget {
     this.textStyle,
     this.disabled = false,
     this.outlineColor = AppColors.greenDark,
+    this.isLoading = false,
   }) : type = SaeipButtonType.outlined;
 
   @override
@@ -57,12 +60,22 @@ class SaeipButton extends StatelessWidget {
         minimumSize: Size(height.w, height.w),
         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.w),
       ),
-      child: Text(
-        text,
-        maxLines: 1,
-        style:
-            textStyle ?? AppTextStyles.bodySemibold(context, color: textColor),
-      ),
+      child: isLoading
+          ? SizedBox(
+              width: 24.w,
+              height: 24.w,
+              child: CircularProgressIndicator(
+                color: textColor,
+                strokeWidth: 2.w,
+              ),
+            )
+          : Text(
+              text,
+              maxLines: 1,
+              style:
+                  textStyle ??
+                  AppTextStyles.bodySemibold(context, color: textColor),
+            ),
     );
   }
 }

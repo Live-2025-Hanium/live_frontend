@@ -2,76 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:live_frontend/providers/clover_mission_provider.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission/clover_sub_content.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
-import 'package:live_frontend/providers/home_provider.dart';
 
-class NewCloverMissionModal extends ConsumerStatefulWidget {
+class NewCloverMissionModal extends ConsumerWidget {
   final bool isAdditional;
 
   const NewCloverMissionModal({super.key, this.isAdditional = false});
 
   @override
-  ConsumerState<NewCloverMissionModal> createState() =>
-      _NewCloverMissionModalState();
-}
-
-class _NewCloverMissionModalState extends ConsumerState<NewCloverMissionModal> {
-  List<CloverMissionModel>? _missions;
-  bool _loading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.isAdditional) {
-      _loading = true;
-      // fetch additional missions via notifier
-      ref
-          .read(cloverMissionNotifierProvider.notifier)
-          .addMission()
-          .then((list) {
-            if (!mounted) return;
-            setState(() {
-              _missions = list;
-              _loading = false;
-            });
-          })
-          .catchError((_) {
-            if (!mounted) return;
-            setState(() {
-              _missions = [];
-              _loading = false;
-            });
-          });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     Widget content;
-    if (widget.isAdditional) {
-      if (_loading) {
-        content = const SizedBox(
-          height: 200,
-          child: Center(child: CircularProgressIndicator()),
-        );
-      } else {
-        final list = _missions ?? [];
-        content = _buildContent(context, list, '추가 클로버 미션');
-      }
-    } else {
-      final missionListAsync = ref.watch(cloverMissionNotifierProvider);
+    if (isAdditional) {
+      final missionListAsync = ref.watch(newCloverMissionProvider(null));
       content = missionListAsync.when(
         loading: () => const SizedBox(
           height: 200,
           child: Center(child: CircularProgressIndicator()),
         ),
         error: (e, s) =>
-            SizedBox(height: 200, child: Center(child: Text('Error: $e'))),
+            SizedBox(height: 200, child: Center(child: Text('에러 발생'))),
+        data: (missionList) {
+          return _buildContent(
+            context,
+            ref,
+            missionList ?? [],
+            '추가 클로버 미션 도착!',
+          );
+        },
+      );
+    } else {
+      final missionListAsync = ref.watch(cloverMissionProvider(null));
+      content = missionListAsync.when(
+        loading: () => const SizedBox(
+          height: 200,
+          child: Center(child: CircularProgressIndicator()),
+        ),
+        error: (e, s) =>
+            SizedBox(height: 200, child: Center(child: Text('에러 발생'))),
         data: (missionList) =>
-            _buildContent(context, missionList, '클로버 미션 도착!'),
+            _buildContent(context, ref, missionList ?? [], '클로버 미션 도착!'),
       );
     }
 
@@ -103,26 +76,27 @@ class _NewCloverMissionModalState extends ConsumerState<NewCloverMissionModal> {
 
   Widget _buildContent(
     BuildContext context,
+    WidgetRef ref,
     List<CloverMissionModel> missionList,
     String titleText,
   ) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
+    return ListView(
+      shrinkWrap: true,
       children: [
         Text(
           titleText,
           style: AppTextStyles.titleMedium(context, color: Colors.black),
           textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
         ),
-        Gap(12),
+        const Gap(12),
         Image.asset(
           // 이유는 모르겠는데 svg가 안됨.
           'assets/images/clover.png',
           width: 52,
           height: 52,
         ),
-        Gap(24.h),
+        const Gap(24),
         ...missionList.asMap().entries.map((entry) {
           final idx = entry.key;
           final data = entry.value;
@@ -135,7 +109,7 @@ class _NewCloverMissionModalState extends ConsumerState<NewCloverMissionModal> {
                 data.missionDifficulty,
                 data.missionCategory,
               ),
-              Gap(8.h),
+              const Gap(8),
             ],
           );
         }),
@@ -171,20 +145,23 @@ class _NewCloverMissionModalState extends ConsumerState<NewCloverMissionModal> {
               ),
             ),
             Gap(24),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyles.bodyRegular(
-                    context,
-                    color: Colors.black,
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: AppTextStyles.bodyRegular(
+                      context,
+                      color: Colors.black,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                Gap(4),
-                CloverSubContent(difficulty: difficulty, category: category),
-              ],
+                  Gap(4),
+                  CloverSubContent(difficulty: difficulty, category: category),
+                ],
+              ),
             ),
           ],
         ),

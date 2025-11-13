@@ -13,3 +13,20 @@ enum MissionStatus {
   @JsonValue('SKIPPED')
   skipped,
 }
+
+extension MissionStatusExtension on MissionStatus {
+  String get label {
+    switch (this) {
+      case MissionStatus.assigned:
+        return 'assign';
+      case MissionStatus.started:
+        return 'start';
+      case MissionStatus.paused:
+        return 'pause';
+      case MissionStatus.completed:
+        return 'complete';
+      case MissionStatus.skipped:
+        return 'skip';
+    }
+  }
+}

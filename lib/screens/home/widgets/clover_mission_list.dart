@@ -5,13 +5,14 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/models/clover_mission_model.dart';
 import 'package:live_frontend/models/mission_models.dart';
-import 'package:live_frontend/providers/home_provider.dart';
+import 'package:live_frontend/providers/clover_mission_provider.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission/clover_sub_content.dart';
 import 'package:live_frontend/screens/home/widgets/clover_mission/new_clover_mission_modal.dart';
 import 'package:live_frontend/screens/home/widgets/mission_tile.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
+import 'package:live_frontend/widgets/utils/show_saeip_toast.dart';
 
 class CloverMissionList extends ConsumerStatefulWidget {
   const CloverMissionList({super.key});
@@ -34,16 +35,21 @@ class _CloverMissionListState extends ConsumerState<CloverMissionList> {
 
   @override
   Widget build(BuildContext context) {
-    final missionListAsync = ref.watch(cloverMissionNotifierProvider);
+    final missionListAsync = ref.watch(cloverMissionProvider(null));
     return missionListAsync.when(
       loading: () => Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
+      error: (error, stack) => Center(child: Text('에러가 발생했습니다.')),
       data: (missionList) {
-        final sortedMissions = List<CloverMissionModel>.of(missionList)
+        bool showNewCloverMission = false;
+        if (missionList == null || missionList.isEmpty) {
+          showNewCloverMission = true;
+        } else {
+          showNewCloverMission = missionList.every(
+            (mission) => mission.missionStatus == MissionStatus.completed,
+          );
+        }
+        final sortedMissions = List<CloverMissionModel>.of(missionList ?? [])
           ..sort(_missionComparator);
-        final showNewCloverMission = missionList.every(
-          (mission) => mission.missionStatus == MissionStatus.completed,
-        );
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
           child: Column(
@@ -114,9 +120,9 @@ class _CloverMissionListState extends ConsumerState<CloverMissionList> {
           ),
           confirmText: '시작',
           cancelText: '닫기',
-          onConfirm: () {
+          onConfirm: () async {
             Navigator.of(context).pop();
-            startMission(mission);
+            await startMission(mission);
           },
           onCancel: () {
             Navigator.of(context).pop();
@@ -126,21 +132,38 @@ class _CloverMissionListState extends ConsumerState<CloverMissionList> {
     );
   }
 
-  void startMission(CloverMissionModel mission) {
-    ref
-        .read(cloverMissionNotifierProvider.notifier)
-        .startMission(mission.userMissionId);
-    if (mission.cloverType == CloverMissionType.timer) {
-      context.pushNamed(
-        'timer_mission',
-        pathParameters: {'id': mission.userMissionId.toString()},
+  Future<void> startMission(CloverMissionModel mission) async {
+    try {
+      await ref.read(
+        cloverMissionStateUpdateProvider({
+          'status': MissionStatus.started,
+          'missionId': mission.userMissionId,
+        }).future,
       );
-    } else if (mission.cloverType == CloverMissionType.photo) {
-      context.pushNamed(
-        'photo_mission',
-        pathParameters: {'id': mission.userMissionId.toString()},
-      );
-      // 다른 타입의 미션 처리 로직
+
+      if (!mounted) return;
+
+      debugPrint('클로버 미션 시작 성공: ${mission.missionTitle}');
+      if (mission.cloverType == CloverMissionType.timer) {
+        context.pushNamed(
+          'timer_mission',
+          pathParameters: {'id': mission.userMissionId.toString()},
+        );
+      } else if (mission.cloverType == CloverMissionType.photo) {
+        context.pushNamed(
+          'photo_mission',
+          pathParameters: {'id': mission.userMissionId.toString()},
+        );
+      } else if (mission.cloverType == CloverMissionType.visit) {
+        debugPrint('Visiting mission navigation');
+        context.pushNamed(
+          'visit_mission',
+          pathParameters: {'id': mission.userMissionId.toString()},
+        );
+      }
+    } catch (error, stack) {
+      if (!mounted) return;
+      SaeipToastController.showMessage(context, '미션 시작에 실패했습니다. 다시 시도해주세요.');
     }
   }
 
