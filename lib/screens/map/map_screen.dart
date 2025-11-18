@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 
 class MapScreen extends StatelessWidget {
   const MapScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Map Screen'),
-      ),
-    );
+    return Container(child: KakaoMap());
   }
 }
