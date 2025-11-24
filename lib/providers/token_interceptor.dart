@@ -120,11 +120,9 @@ class TokenInterceptor extends Interceptor {
           );
           return handler.resolve(cloneReq);
         }
-      } catch (e, s) {
-        if (kDebugMode) {}
+      } catch (e) {
         try {
-          await storage.delete(TokenKeys.access);
-          await storage.delete(TokenKeys.refresh);
+          await storage.deleteAll();
         } catch (e) {}
 
         if (onLogout != null) {
