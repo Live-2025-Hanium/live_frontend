@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <domain-config>
-        <domain includeSubdomains="true">api3.live-hanium.app</domain>
+        <domain includeSubdomains="true">api.live-hanium.app</domain>
         <trust-anchors>
             <certificates src="system" />
             <certificates src="user" />
         </trust-anchors>
-        </domain-config>
+    </domain-config>
+
+    <domain-config>
+        <domain includeSubdomains="true">kakao.com</domain>
+        <domain includeSubdomains="true">kakao.co.kr</domain>
+        <domain includeSubdomains="true">kakaocdn.net</domain>
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </domain-config>
 </network-security-config>
