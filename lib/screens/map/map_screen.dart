@@ -25,6 +25,7 @@ class MapScreen extends StatelessWidget {
               },
               logoSvgAsset: 'assets/icons/clover.svg',
               hintText: hintText,
+              openDetail: () {},
             ),
           ),
         ),
