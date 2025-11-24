@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:live_frontend/theme/app_text_styles.dart';
 import './utils/debouncer.dart';
 import './utils/recent_search_repo.dart';
 import 'package:live_frontend/screens/forum/forum_search_screen.dart';
@@ -23,6 +24,7 @@ class SaeipSearchBar extends StatefulWidget {
     this.maxRecent = 10,
     this.debounceMs = 250,
     this.onChanged,
+    this.openDetail,
   }) : _isDetail = false,
        _openDetailOnTap = true,
        _autoFocus = false;
@@ -45,7 +47,8 @@ class SaeipSearchBar extends StatefulWidget {
     this.onChanged,
   }) : _isDetail = true,
        _openDetailOnTap = false,
-       _autoFocus = true;
+       _autoFocus = true,
+       openDetail = null;
 
   // 공통 프로퍼티
   final TextEditingController controller;
@@ -62,6 +65,7 @@ class SaeipSearchBar extends StatefulWidget {
   final int maxRecent;
   final int debounceMs;
   final ValueChanged<String>? onChanged;
+  final VoidCallback? openDetail;
 
   // 프리셋 내부 제어
   final bool _isDetail;
@@ -102,17 +106,6 @@ class _SaeipSearchBarState extends State<SaeipSearchBar> {
       _debouncer(() => h(v));
   }
 
-  void _openDetail() {
-    Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (_) => ForumSearchScreen(
-        externalController: widget.controller,
-        hintText: widget.hintText,
-      ),
-      ),
-    );
-  }
-
   void _handleSearchPressed() {
     final text = widget.controller.text.trim();
 
@@ -130,12 +123,12 @@ class _SaeipSearchBarState extends State<SaeipSearchBar> {
 
     // 메인 : 상세로만 이동 (검색 실행은 상세에서)
     if (text.isEmpty) {
-      _openDetail();
+      widget.openDetail?.call();
       return;
     }
     // 입력이 있어도 메인에선 검색 실행하지 않고 상세로 이동
     RecentSearchRepo.upsert(text, max: widget.maxRecent);
-    _openDetail();
+    widget.openDetail?.call();
   }
 
   void _handleSubmitted(String raw) {
@@ -151,11 +144,11 @@ class _SaeipSearchBarState extends State<SaeipSearchBar> {
 
     // 메인 : submit 시에도 상세로만 이동
     if (text.isEmpty) {
-      _openDetail();
+      widget.openDetail?.call();
       return;
     }
     RecentSearchRepo.upsert(text, max: widget.maxRecent);
-    _openDetail();
+    widget.openDetail?.call();
   }
 
   @override
@@ -174,10 +167,10 @@ class _SaeipSearchBarState extends State<SaeipSearchBar> {
           EdgeInsets.symmetric(horizontal: 12),
         ),
         textStyle: WidgetStatePropertyAll(
-          TextStyle(color: widget.textColor, fontSize: 15),
+          AppTextStyles.bodyRegular(context, color: widget.textColor),
         ),
         hintStyle: WidgetStatePropertyAll(
-          TextStyle(color: widget.hintColor, fontSize: 15),
+          AppTextStyles.bodyRegular(context, color: widget.hintColor),
         ),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(
@@ -212,7 +205,7 @@ class _SaeipSearchBarState extends State<SaeipSearchBar> {
           ),
         ],
         onTap: () {
-          if (widget._openDetailOnTap) _openDetail();
+          if (widget._openDetailOnTap) widget.openDetail?.call();
         },
         onChanged: _notifyChanged,
         onSubmitted: _handleSubmitted,
