@@ -28,7 +28,12 @@ class MapScreen extends StatelessWidget {
             ),
           ),
         ),
-        Positioned(bottom: 0, left: 0, right: 0, child: MapBottomSheet()),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: MapBottomSheet(showCategories: true),
+        ),
       ],
     );
   }
