@@ -31,15 +31,27 @@ class _MapBottomSheetState extends State<MapBottomSheet> {
     _showCategories = widget.showCategories;
   }
 
+  void _toggleCategories(DragEndDetails details) {
+    final velocity = details.primaryVelocity ?? 0.0;
+
+    if (velocity > 0) {
+      // 아래로 스와이프
+      setState(() {
+        _showCategories = false;
+      });
+    } else {
+      // 위로 스와이프
+      setState(() {
+        _showCategories = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onVerticalDragEnd: (_) {
-        setState(() {
-          _showCategories = !_showCategories;
-        });
-      },
+      onVerticalDragEnd: _toggleCategories,
       onPanDown: (_) {},
       child: Container(
         width: double.infinity,
