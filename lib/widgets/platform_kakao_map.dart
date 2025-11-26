@@ -1,17 +1,6 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-
 import 'package:kakao_map_plugin/kakao_map_plugin.dart' as mobile;
-
-import 'web/kakao_map_stub.dart'
-    if (dart.library.html) 'web/kakao_map_web.dart';
-
-class LatLngPoint {
-  final double lat;
-  final double lng;
-  final String? label;
-  const LatLngPoint(this.lat, this.lng, {this.label});
-}
+import 'package:live_frontend/models/map_model.dart';
 
 /// 단일 위젯으로 플랫폼 분기
 class PlatformKakaoMap extends StatelessWidget {
@@ -34,16 +23,6 @@ class PlatformKakaoMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (kIsWeb) {
-      // 웹: JS SDK 직결
-      return KakaoMapWeb(
-        centerLat: centerLat,
-        centerLng: centerLng,
-        level: zoomLevel,
-        points: points,
-      );
-    }
-
     // 모바일: kakao_map_plugin 그대로
     final markers = points.map((p) {
       return mobile.Marker(
