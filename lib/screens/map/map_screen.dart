@@ -4,7 +4,6 @@ import 'package:live_frontend/utilities/location_util.dart';
 import 'package:live_frontend/widgets/platform_kakao_map.dart';
 import 'package:live_frontend/screens/map/widget/map_bottom_sheet.dart';
 import 'package:live_frontend/widgets/saeip_search_bar.dart';
-import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -101,21 +100,12 @@ class _MapScreenState extends State<MapScreen> {
     final String hintText = '장소, 주소 검색';
     return Stack(
       children: [
-        if (!_isMapInitialized)
+        if (!_isMapInitialized || _isLoading)
           const Center(child: CircularProgressIndicator())
         else
           PlatformKakaoMap(
             centerLat: _currentLatitude ?? 37.5,
             centerLng: _currentLongitude ?? 127.0,
-            points: (_currentLatitude != null && _currentLongitude != null)
-                ? [
-                    LatLngPoint(
-                      _currentLatitude!,
-                      _currentLongitude!,
-                      label: '현재 위치',
-                    ),
-                  ]
-                : [],
           ),
         Positioned(
           top: 8,
@@ -142,13 +132,11 @@ class _MapScreenState extends State<MapScreen> {
             onLocatePressed: _handleLocatePressed,
           ),
         ),
-        if (_isLoading && _isMapInitialized)
+        if (_isLoading || !_isMapInitialized)
           Container(
             color: Colors.black.withOpacity(0.3),
             child: const Center(
-              child: CircularProgressIndicator(
-                color: Colors.white,
-              ),
+              child: CircularProgressIndicator(color: Colors.white),
             ),
           ),
       ],
