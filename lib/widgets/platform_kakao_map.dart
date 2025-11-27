@@ -4,7 +4,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:kakao_map_plugin/kakao_map_plugin.dart' as mobile;
 import 'package:live_frontend/models/map_model.dart';
 
-/// 단일 위젯으로 플랫폼 분기
 class PlatformKakaoMap extends StatefulWidget {
   const PlatformKakaoMap({
     super.key,
@@ -66,7 +65,7 @@ class _PlatformKakaoMapState extends State<PlatformKakaoMap> {
       debugPrint(
         'PlatformKakaoMap: failed to load asset for markerImageSrc: $e',
       );
-      // fallback: add marker without image
+
       markers.add(
         mobile.Marker(
           markerId: 'current_location',
@@ -74,7 +73,6 @@ class _PlatformKakaoMapState extends State<PlatformKakaoMap> {
           infoWindowContent: '현재 위치',
           width: 48,
           height: 48,
-          zIndex: 999,
         ),
       );
     }
@@ -122,16 +120,13 @@ class _PlatformKakaoMapState extends State<PlatformKakaoMap> {
       await ctrl.addMarker(markers: markers);
       debugPrint('PlatformKakaoMap: addMarker(markers:) succeeded');
 
-      // Ensure camera moves to first marker so user can see it
       try {
         final first = markers.first.latLng;
         await ctrl.panTo(first);
         debugPrint(
           'PlatformKakaoMap: panTo executed to ${first.latitude}, ${first.longitude}',
         );
-      } catch (_) {
-        // ignore pan failures
-      }
+      } catch (_) {}
       return;
     } catch (e) {
       debugPrint('PlatformKakaoMap: addMarker(markers:) failed: $e');
@@ -163,7 +158,7 @@ class _PlatformKakaoMapState extends State<PlatformKakaoMap> {
   @override
   void didUpdateWidget(covariant PlatformKakaoMap oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // If points changed and controller is available, update markers on the map.
+
     if (oldWidget.points != widget.points && _controller != null) {
       _addMarkersToController(_controller!);
     }

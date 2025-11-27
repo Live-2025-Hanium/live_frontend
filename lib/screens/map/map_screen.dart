@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:live_frontend/models/map_model.dart';
 import 'package:live_frontend/utilities/location_util.dart';
 import 'package:live_frontend/widgets/platform_kakao_map.dart';
 import 'package:live_frontend/screens/map/widget/map_bottom_sheet.dart';
