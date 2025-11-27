@@ -4,7 +4,7 @@ import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_search_bar.dart';
 import 'package:live_frontend/widgets/utils/recent_search_repo.dart';
 
-import 'widgets/map_recent_searches.dart';
+import '../widgets/map_recent_searches.dart';
 
 class MapSearchScreen extends StatefulWidget {
   const MapSearchScreen({
