@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:live_frontend/utilities/location_util.dart';
 import 'package:live_frontend/widgets/platform_kakao_map.dart';
 import 'package:live_frontend/screens/map/widgets/map_bottom_sheet.dart';
@@ -118,7 +119,15 @@ class _MapScreenState extends State<MapScreen> {
               },
               logoSvgAsset: 'assets/icons/clover.svg',
               hintText: hintText,
-              openDetail: () {},
+              openDetail: () {
+                context.pushNamed(
+                  'map_search',
+                  extra: {
+                    'externalController': controller,
+                    'hintText': hintText,
+                  },
+                );
+              },
             ),
           ),
         ),

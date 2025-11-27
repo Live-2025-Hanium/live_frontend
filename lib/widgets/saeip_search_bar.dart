@@ -24,6 +24,7 @@ class SaeipSearchBar extends StatefulWidget {
     this.debounceMs = 250,
     this.onChanged,
     this.openDetail,
+    this.padding = const EdgeInsets.symmetric(horizontal: 12),
   }) : _isDetail = false,
        _openDetailOnTap = true,
        _autoFocus = false;
@@ -44,6 +45,29 @@ class SaeipSearchBar extends StatefulWidget {
     this.maxRecent = 10,
     this.debounceMs = 250,
     this.onChanged,
+    this.padding = const EdgeInsets.symmetric(horizontal: 12),
+  }) : _isDetail = true,
+       _openDetailOnTap = false,
+       _autoFocus = true,
+       openDetail = null;
+
+  // 지도 검색 화면 전용: 자동 포커스 + 상세 이동 금지 + 클리어 버튼 노출
+  const SaeipSearchBar.map({
+    super.key,
+    required this.controller,
+    required this.onSubmit, // 상세에선 onSubmit이 실제 검색을 트리거
+    required this.hintText,
+    this.logoSvgAsset,
+    this.fillColor = Colors.white,
+    this.borderColor = Colors.white,
+    this.textColor = Colors.black,
+    this.hintColor = AppColors.blackBlack4,
+    this.height = 40,
+    this.radius = 8,
+    this.maxRecent = 10,
+    this.debounceMs = 250,
+    this.onChanged,
+    this.padding = const EdgeInsets.only(right: 12),
   }) : _isDetail = true,
        _openDetailOnTap = false,
        _autoFocus = true,
@@ -52,6 +76,7 @@ class SaeipSearchBar extends StatefulWidget {
   // 공통 프로퍼티
   final TextEditingController controller;
   final ValueChanged<String> onSubmit;
+  final EdgeInsets? padding;
 
   final String hintText;
   final String? logoSvgAsset; // 있으면 표시, 없으면 숨김
@@ -162,9 +187,7 @@ class _SaeipSearchBarState extends State<SaeipSearchBar> {
         hintText: widget.hintText,
         elevation: const WidgetStatePropertyAll(0),
         backgroundColor: WidgetStatePropertyAll(widget.fillColor),
-        padding: const WidgetStatePropertyAll(
-          EdgeInsets.symmetric(horizontal: 12),
-        ),
+        padding: WidgetStatePropertyAll(widget.padding),
         textStyle: WidgetStatePropertyAll(
           AppTextStyles.bodyRegular(context, color: widget.textColor),
         ),

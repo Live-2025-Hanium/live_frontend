@@ -13,6 +13,7 @@ import 'package:live_frontend/screens/home/execute/execute_visit_mission_screen.
 import 'package:live_frontend/screens/home/my-mission-add/my_mission_add_screen.dart';
 import 'package:live_frontend/screens/home/my-mission-add/repeat/repeat_screen.dart';
 import 'package:live_frontend/screens/map/map_screen.dart';
+import 'package:live_frontend/screens/map/search/map_search_screen.dart';
 import 'package:live_frontend/screens/mypage/mypage_screen.dart';
 import 'package:live_frontend/screens/root_screen.dart';
 import 'package:live_frontend/screens/statistics/statistics_screen.dart';
@@ -246,6 +247,21 @@ final routerProvider = Provider<GoRouter>((ref) {
             name: 'map',
             path: '/map',
             builder: (context, state) => const MapScreen(),
+            routes: [
+              GoRoute(
+                name: 'map_search',
+                path: 'search',
+                builder: (context, state) => MapSearchScreen(
+                  externalController:
+                      (state.extra
+                              as Map<String, dynamic>)['externalController']
+                          as TextEditingController,
+                  hintText:
+                      (state.extra as Map<String, dynamic>)['hintText']
+                          as String,
+                ),
+              ),
+            ],
           ),
           GoRoute(
             name: 'forum',

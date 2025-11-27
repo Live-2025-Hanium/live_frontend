@@ -53,7 +53,13 @@ class MapRecentSearches extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-          child: Text('최근 검색어', style: AppTextStyles.subtitleMedium(context)),
+          child: Text(
+            '최근 검색어',
+            style: AppTextStyles.subtitleMedium(
+              context,
+              color: AppColors.greenNormal,
+            ),
+          ),
         ),
       ],
     );
@@ -113,7 +119,7 @@ class _RecentSearchItem extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+        padding: EdgeInsets.only(left: 20.w, right: 4.w),
         child: Row(
           children: [
             Expanded(
@@ -124,11 +130,18 @@ class _RecentSearchItem extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            IconButton(
-              icon: Icon(Icons.close, size: 20.w, color: AppColors.blackBlack3),
-              onPressed: onDelete,
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
+            SizedBox(
+              width: 48.w,
+              height: 48.w,
+              child: IconButton(
+                icon: Icon(
+                  Icons.close,
+                  size: 24.w,
+                  color: AppColors.blackBlack3,
+                ),
+                onPressed: onDelete,
+                padding: EdgeInsets.zero,
+              ),
             ),
           ],
         ),

@@ -29,8 +29,7 @@ class ForumSearchScreen extends ConsumerStatefulWidget {
       _ForumSearchDetailScreenState();
 }
 
-class _ForumSearchDetailScreenState
-    extends ConsumerState<ForumSearchScreen> {
+class _ForumSearchDetailScreenState extends ConsumerState<ForumSearchScreen> {
   static const int _maxRecent = 10;
   static const double _scrollThreshold = 320.0;
 
@@ -56,10 +55,9 @@ class _ForumSearchDetailScreenState
     });
 
     _loadRecent();
-    _controller.addListener(() {
-      // 검색어가 변경되면 검색 실행 상태를 초기화
-      if (_hasSearched) setState(() => _hasSearched = false);
-    });
+    // Use a named listener and schedule setState in a post-frame callback
+    // to avoid calling setState while the framework is locked.
+    _controller.addListener(_onControllerChanged);
     _scroll.addListener(_onScroll);
   }
 
@@ -67,18 +65,28 @@ class _ForumSearchDetailScreenState
   void dispose() {
     _scroll.removeListener(_onScroll);
     _scroll.dispose();
-
-    _controller.removeListener(_onTextChanged);
-    _controller.clear();
+    _controller.removeListener(_onControllerChanged);
     super.dispose();
   }
 
-  void _onTextChanged() => setState(() {});
+  // Listener registered on the external text controller.
+  // We schedule the setState in a post-frame callback to ensure we don't
+  // trigger rebuilds while the framework is locked (which causes the
+  // AnimatedBuilder "widget tree was locked" error).
+  void _onControllerChanged() {
+    if (!_hasSearched) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (_hasSearched) setState(() => _hasSearched = false);
+    });
+  }
 
   Future<void> _loadRecent() async {
     setState(() => _recentLoading = true);
     try {
-      _recent = (await RecentSearchRepo.fetchAll()).take(_maxRecent).toList();
+      _recent = (await RecentSearchRepo.forum.fetchAll())
+          .take(_maxRecent)
+          .toList();
       _recentError = null;
     } catch (e) {
       _recentError = e;
@@ -169,7 +177,7 @@ class _ForumSearchDetailScreenState
                     if (term.isEmpty) return;
 
                     // 최근 검색어 저장
-                    await RecentSearchRepo.upsert(term);
+                    await RecentSearchRepo.forum.upsert(term);
                     await _loadRecent();
 
                     // 검색 실행
@@ -193,11 +201,11 @@ class _ForumSearchDetailScreenState
                   ref.read(forumSearchProvider.notifier).searchFirst(term);
                 },
                 onDeleteTerm: (term) async {
-                  await RecentSearchRepo.remove(term);
+                  await RecentSearchRepo.forum.remove(term);
                   await _loadRecent();
                 },
                 onClearAll: () async {
-                  await RecentSearchRepo.clear();
+                  await RecentSearchRepo.forum.clear();
                   await _loadRecent();
                 },
               )

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:live_frontend/widgets/saeip_app_bar.dart';
+import 'package:gap/gap.dart';
+import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/widgets/saeip_search_bar.dart';
 import 'package:live_frontend/widgets/utils/recent_search_repo.dart';
 
 import '../widgets/map_recent_searches.dart';
+import 'package:go_router/go_router.dart';
 
 class MapSearchScreen extends StatefulWidget {
   const MapSearchScreen({
@@ -49,7 +53,9 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
   Future<void> _loadRecent() async {
     setState(() => _recentLoading = true);
     try {
-      _recent = (await RecentSearchRepo.fetchAll()).take(_maxRecent).toList();
+      _recent = (await RecentSearchRepo.map.fetchAll())
+          .take(_maxRecent)
+          .toList();
       _recentError = null;
     } catch (e) {
       _recentError = e;
@@ -62,31 +68,38 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
     final term = raw.trim();
     if (term.isEmpty) return;
 
-    await RecentSearchRepo.upsert(term);
+    await RecentSearchRepo.map.upsert(term);
     await _loadRecent();
     widget.onSearch?.call(term);
   }
 
   @override
   Widget build(BuildContext context) {
+    final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS;
+
     return Scaffold(
-      appBar: SaeipAppBar(),
+      appBar: AppBar(
+        shape: const Border(
+          bottom: BorderSide(color: AppColors.blackBlack3, width: 0.5),
+        ),
+        title: SaeipSearchBar.map(
+          controller: widget.externalController,
+          hintText: widget.hintText,
+          onSubmit: (String query) {
+            // 검색어 제출 시 동작 (여기서는 아무 동작도 하지 않음)
+          },
+        ),
+        titleSpacing: 0,
+        centerTitle: isIOS,
+        leading: IconButton(
+          icon: Icon(isIOS ? Icons.chevron_left : Icons.arrow_back, size: 20),
+          onPressed: () => context.pop(),
+        ),
+      ),
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            // 검색바
-            SliverPadding(
-              padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 0),
-              sliver: SliverToBoxAdapter(
-                child: SaeipSearchBar.detail(
-                  controller: _controller,
-                  hintText: widget.hintText,
-                  onSubmit: _onSubmit,
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(child: SizedBox(height: 16.h)),
-
+            SliverToBoxAdapter(child: Gap(8.h)),
             // 최근 검색어 목록 (지도 탭용)
             MapRecentSearches(
               items: _recent,
@@ -97,11 +110,11 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                 await _onSubmit(term);
               },
               onDeleteTerm: (term) async {
-                await RecentSearchRepo.remove(term);
+                await RecentSearchRepo.map.remove(term);
                 await _loadRecent();
               },
               onClearAll: () async {
-                await RecentSearchRepo.clear();
+                await RecentSearchRepo.map.clear();
                 await _loadRecent();
               },
             ),
