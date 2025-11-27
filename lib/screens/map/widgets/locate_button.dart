@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class LocateButton extends StatelessWidget {
-  final VoidCallback? onPressed;
-  const LocateButton({super.key, this.onPressed});
+  final VoidCallback onPressed;
+  const LocateButton({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {

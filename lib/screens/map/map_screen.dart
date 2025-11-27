@@ -104,8 +104,8 @@ class _MapScreenState extends State<MapScreen> {
           const Center(child: CircularProgressIndicator())
         else
           PlatformKakaoMap(
-            centerLat: _currentLatitude ?? 37.5,
-            centerLng: _currentLongitude ?? 127.0,
+            centerLat: _currentLatitude,
+            centerLng: _currentLongitude,
           ),
         Positioned(
           top: 8,
