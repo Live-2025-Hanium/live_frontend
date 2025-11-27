@@ -1,26 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:live_frontend/theme/app_colors.dart';
-import 'package:live_frontend/widgets/saeip_search_bar.dart';
-import 'package:live_frontend/widgets/utils/recent_search_repo.dart';
-
-import '../widgets/map_recent_searches.dart';
 import 'package:go_router/go_router.dart';
+import 'package:live_frontend/screens/map/widgets/map_appbar.dart';
+import 'package:live_frontend/widgets/utils/recent_search_repo.dart';
+import '../widgets/map_recent_searches.dart';
 
 class MapSearchScreen extends StatefulWidget {
   const MapSearchScreen({
     super.key,
     required this.externalController,
     required this.hintText,
-    this.onSearch,
   });
 
   final TextEditingController externalController;
   final String hintText;
-  final ValueChanged<String>? onSearch;
 
   @override
   State<MapSearchScreen> createState() => _MapSearchScreenState();
@@ -64,37 +58,25 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
     }
   }
 
-  Future<void> _onSubmit(String raw) async {
-    final term = raw.trim();
-    if (term.isEmpty) return;
-
-    await RecentSearchRepo.map.upsert(term);
-    await _loadRecent();
-    widget.onSearch?.call(term);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS;
+    Future<void> onSubmit(String raw) async {
+      final term = raw.trim();
+      if (term.isEmpty) return;
+
+      await RecentSearchRepo.map.upsert(term);
+      await _loadRecent();
+      context.pushNamed(
+        'map_search_result',
+        extra: {'externalController': _controller, 'hintText': widget.hintText},
+      );
+    }
 
     return Scaffold(
-      appBar: AppBar(
-        shape: const Border(
-          bottom: BorderSide(color: AppColors.blackBlack3, width: 0.5),
-        ),
-        title: SaeipSearchBar.map(
-          controller: widget.externalController,
-          hintText: widget.hintText,
-          onSubmit: (String query) {
-            // 검색어 제출 시 동작 (여기서는 아무 동작도 하지 않음)
-          },
-        ),
-        titleSpacing: 0,
-        centerTitle: isIOS,
-        leading: IconButton(
-          icon: Icon(isIOS ? Icons.chevron_left : Icons.arrow_back, size: 20),
-          onPressed: () => context.pop(),
-        ),
+      appBar: MapAppBar(
+        externalController: _controller,
+        hintText: widget.hintText,
+        onSubmit: onSubmit,
       ),
       body: SafeArea(
         child: CustomScrollView(
@@ -107,7 +89,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
               error: _recentError,
               onTapTerm: (term) async {
                 _controller.text = term;
-                await _onSubmit(term);
+                await onSubmit(term);
               },
               onDeleteTerm: (term) async {
                 await RecentSearchRepo.map.remove(term);
