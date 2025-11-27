@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:live_frontend/utilities/location_util.dart';
 import 'package:live_frontend/widgets/platform_kakao_map.dart';
-import 'package:live_frontend/screens/map/widget/map_bottom_sheet.dart';
+import 'package:live_frontend/screens/map/widgets/map_bottom_sheet.dart';
 import 'package:live_frontend/widgets/saeip_search_bar.dart';
 
 class MapScreen extends StatefulWidget {
