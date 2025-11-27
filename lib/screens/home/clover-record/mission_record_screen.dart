@@ -17,7 +17,6 @@ import 'package:live_frontend/widgets/saeip_button.dart';
 
 import '../../../core/utils/s3_upload_util.dart';
 
-// 나중에 extra로 미션 데이터 받아오기!
 class MissionRecordScreen extends ConsumerStatefulWidget {
   final int id;
 

@@ -5,6 +5,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/screens/404/not_found_screen.dart';
 import 'package:live_frontend/screens/forum/forum_screen.dart';
+import 'package:live_frontend/screens/forum/forum_search_screen.dart';
 import 'package:live_frontend/screens/home/clover-record/mission_record_screen.dart';
 import 'package:live_frontend/screens/home/execute/execute_photo_mission_screen.dart';
 import 'package:live_frontend/screens/home/execute/execute_timer_mission_screen.dart';
@@ -251,6 +252,19 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/forum',
             builder: (context, state) => const ForumScreen(),
             routes: [
+              GoRoute(
+                name: 'forum_search',
+                path: 'search',
+                builder: (context, state) => ForumSearchScreen(
+                  externalController:
+                      (state.extra
+                              as Map<String, dynamic>)['externalController']
+                          as TextEditingController,
+                  hintText:
+                      (state.extra as Map<String, dynamic>)['hintText']
+                          as String,
+                ),
+              ),
               GoRoute(
                 name: 'forum_post',
                 path: 'post/:id',
