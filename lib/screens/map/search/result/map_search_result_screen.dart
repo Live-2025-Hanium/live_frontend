@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:live_frontend/screens/map/widgets/map_appbar.dart';
+import 'package:live_frontend/widgets/platform_kakao_map.dart';
 
 class MapSearchResultScreen extends StatefulWidget {
   final TextEditingController externalController;
@@ -23,7 +24,7 @@ class _MapSearchResultScreenState extends State<MapSearchResultScreen> {
         externalController: widget.externalController,
         hintText: widget.hintText,
       ),
-      body: const Center(child: Text('Map Search Result Screen')),
+      body: PlatformKakaoMap(centerLat: 37, centerLng: 127),
     );
   }
 }
