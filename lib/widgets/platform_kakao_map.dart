@@ -1,64 +1,100 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-
 import 'package:kakao_map_plugin/kakao_map_plugin.dart' as mobile;
+import 'package:live_frontend/models/map_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:live_frontend/providers/map_location_provider.dart';
+import 'package:live_frontend/core/services/map_manager.dart';
 
-import 'web/kakao_map_stub.dart'
-    if (dart.library.html) 'web/kakao_map_web.dart';
-
-class LatLngPoint {
-  final double lat;
-  final double lng;
-  final String? label;
-  const LatLngPoint(this.lat, this.lng, {this.label});
-}
-
-/// 단일 위젯으로 플랫폼 분기
-class PlatformKakaoMap extends StatelessWidget {
+class PlatformKakaoMap extends ConsumerStatefulWidget {
   const PlatformKakaoMap({
     super.key,
-    required this.centerLat,
-    required this.centerLng,
     this.zoomLevel = 3,
     this.points = const <LatLngPoint>[],
-    this.onMapCreated,
     this.circles = const [],
+    this.onMapReady,
   });
 
-  final double centerLat;
-  final double centerLng;
   final int zoomLevel;
   final List<LatLngPoint> points;
-  final void Function(mobile.KakaoMapController controller)? onMapCreated;
   final List<mobile.Circle> circles;
+  final VoidCallback? onMapReady;
+
+  @override
+  ConsumerState<PlatformKakaoMap> createState() => _PlatformKakaoMapState();
+}
+
+class _PlatformKakaoMapState extends ConsumerState<PlatformKakaoMap> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant PlatformKakaoMap oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // 마커리스트가 바뀌면 포인트 마커 갱신
+    if (oldWidget.points != widget.points &&
+        MapManager.instance.isInitialized) {
+      MapManager.instance.addMarkersFromPoints(widget.points);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (kIsWeb) {
-      // 웹: JS SDK 직결
-      return KakaoMapWeb(
-        centerLat: centerLat,
-        centerLng: centerLng,
-        level: zoomLevel,
-        points: points,
-      );
+    ref.listen<MapLocationState>(mapLocationProvider, (prev, next) {
+      if (!MapManager.instance.isInitialized) return;
+
+      if (next.centerLatitude != null && next.centerLongitude != null) {
+        MapManager.instance.setCenter(
+          next.centerLatitude!,
+          next.centerLongitude!,
+        );
+      }
+
+      if (next.currentLatitude != null && next.currentLongitude != null) {
+        MapManager.instance.addOrUpdateCurrentLocationMarker(
+          latitude: next.currentLatitude!,
+          longitude: next.currentLongitude!,
+        );
+      }
+    });
+
+    void onMapCreated(mobile.KakaoMapController controller) {
+      MapManager.instance.initialize(controller);
+
+      // 초기 맵 마커 추가
+      MapManager.instance.addMarkersFromPoints(widget.points);
+
+      // 프로바이더 상태 즉시 적용 // loc = locationState
+      final loc = ref.read(mapLocationProvider);
+      if (loc.centerLatitude != null && loc.centerLongitude != null) {
+        MapManager.instance.setCenter(
+          loc.centerLatitude!,
+          loc.centerLongitude!,
+        );
+      }
+      if (loc.currentLatitude != null && loc.currentLongitude != null) {
+        MapManager.instance.addOrUpdateCurrentLocationMarker(
+          latitude: loc.currentLatitude!,
+          longitude: loc.currentLongitude!,
+        );
+      }
+
+      // notify parent that map is ready
+      widget.onMapReady?.call();
     }
 
-    // 모바일: kakao_map_plugin 그대로
-    final markers = points.map((p) {
-      return mobile.Marker(
-        markerId: 'm_${p.lat}_${p.lng}',
-        latLng: mobile.LatLng(p.lat, p.lng),
-        infoWindowContent: p.label ?? '',
-      );
-    }).toList();
+    final loc = ref.watch(mapLocationProvider);
+    final centerLat = loc.centerLatitude ?? loc.currentLatitude ?? 37.5;
+    final centerLng = loc.centerLongitude ?? loc.currentLongitude ?? 127.0;
 
     return mobile.KakaoMap(
       onMapCreated: onMapCreated,
-      markers: markers,
-      circles: circles,
+      markers: const [],
+      circles: widget.circles,
       center: mobile.LatLng(centerLat, centerLng),
-      currentLevel: zoomLevel,
+      currentLevel: widget.zoomLevel,
     );
   }
 }

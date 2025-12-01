@@ -14,6 +14,13 @@ enum PlaceCategory {
   csc,
 }
 
+class LatLngPoint {
+  final double lat;
+  final double lng;
+  final String? label;
+  const LatLngPoint(this.lat, this.lng, {this.label});
+}
+
 extension PlaceCategoryExtension on PlaceCategory {
   String get displayName {
     switch (this) {

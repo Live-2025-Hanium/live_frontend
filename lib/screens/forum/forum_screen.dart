@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:live_frontend/screens/forum/forum_search_screen.dart';
 import 'package:live_frontend/widgets/saeip_search_bar.dart';
 import 'package:live_frontend/screens/forum/widgets/banner_carousel.dart';
 import 'package:live_frontend/screens/forum/widgets/category_chips.dart';
@@ -93,13 +91,9 @@ class _ForumScreenState extends State<ForumScreen> {
   @override
   Widget build(BuildContext context) {
     void openDetail() {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => ForumSearchScreen(
-            externalController: _searchCtrl,
-            hintText: '지원 사업, 생활 꿀팁',
-          ),
-        ),
+      context.pushNamed(
+        'forum_search',
+        extra: {'externalController': _searchCtrl, 'hintText': '지원 사업, 생활 꿀팁'},
       );
     }
 

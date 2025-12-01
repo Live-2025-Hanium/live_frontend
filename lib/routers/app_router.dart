@@ -5,6 +5,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:live_frontend/models/my_mission_model.dart';
 import 'package:live_frontend/screens/404/not_found_screen.dart';
 import 'package:live_frontend/screens/forum/forum_screen.dart';
+import 'package:live_frontend/screens/forum/forum_search_screen.dart';
 import 'package:live_frontend/screens/home/clover-record/mission_record_screen.dart';
 import 'package:live_frontend/screens/home/execute/execute_photo_mission_screen.dart';
 import 'package:live_frontend/screens/home/execute/execute_timer_mission_screen.dart';
@@ -12,6 +13,8 @@ import 'package:live_frontend/screens/home/execute/execute_visit_mission_screen.
 import 'package:live_frontend/screens/home/my-mission-add/my_mission_add_screen.dart';
 import 'package:live_frontend/screens/home/my-mission-add/repeat/repeat_screen.dart';
 import 'package:live_frontend/screens/map/map_screen.dart';
+import 'package:live_frontend/screens/map/search/map_search_screen.dart';
+import 'package:live_frontend/screens/map/search/result/map_search_result_screen.dart';
 import 'package:live_frontend/screens/mypage/mypage_screen.dart';
 import 'package:live_frontend/screens/root_screen.dart';
 import 'package:live_frontend/screens/statistics/statistics_screen.dart';
@@ -245,12 +248,53 @@ final routerProvider = Provider<GoRouter>((ref) {
             name: 'map',
             path: '/map',
             builder: (context, state) => const MapScreen(),
+            routes: [
+              GoRoute(
+                name: 'map_search',
+                path: 'search',
+                builder: (context, state) => MapSearchScreen(
+                  externalController:
+                      (state.extra
+                              as Map<String, dynamic>)['externalController']
+                          as TextEditingController,
+                  hintText:
+                      (state.extra as Map<String, dynamic>)['hintText']
+                          as String,
+                ),
+              ),
+              GoRoute(
+                name: 'map_search_result',
+                path: 'search_result',
+                builder: (context, state) => MapSearchResultScreen(
+                  externalController:
+                      (state.extra
+                              as Map<String, dynamic>)['externalController']
+                          as TextEditingController,
+                  hintText:
+                      (state.extra as Map<String, dynamic>)['hintText']
+                          as String,
+                ),
+              ),
+            ],
           ),
           GoRoute(
             name: 'forum',
             path: '/forum',
             builder: (context, state) => const ForumScreen(),
             routes: [
+              GoRoute(
+                name: 'forum_search',
+                path: 'search',
+                builder: (context, state) => ForumSearchScreen(
+                  externalController:
+                      (state.extra
+                              as Map<String, dynamic>)['externalController']
+                          as TextEditingController,
+                  hintText:
+                      (state.extra as Map<String, dynamic>)['hintText']
+                          as String,
+                ),
+              ),
               GoRoute(
                 name: 'forum_post',
                 path: 'post/:id',
