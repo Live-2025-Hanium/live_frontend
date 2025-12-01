@@ -24,7 +24,7 @@ class _MapSearchResultScreenState extends State<MapSearchResultScreen> {
         externalController: widget.externalController,
         hintText: widget.hintText,
       ),
-      body: PlatformKakaoMap(centerLat: 37, centerLng: 127),
+      body: PlatformKakaoMap(),
     );
   }
 }

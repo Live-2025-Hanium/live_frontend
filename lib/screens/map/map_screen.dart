@@ -13,9 +13,6 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  // 현재 위도, 경도 상태 변수
-  double? _currentLatitude;
-  double? _currentLongitude;
   bool _isLoading = true;
   bool _isMapInitialized = false;
 
@@ -30,14 +27,10 @@ class _MapScreenState extends State<MapScreen> {
     try {
       final location = await getCurrentLocation();
       debugPrint('MapScreen: location result => $location');
+      // mark loading complete when we have a location (or null)
       if (mounted) {
         setState(() {
-          if (location != null) {
-            _currentLatitude = location.latitude;
-            _currentLongitude = location.longitude;
-          }
           _isLoading = false;
-          _isMapInitialized = true;
         });
       }
 
@@ -100,13 +93,17 @@ class _MapScreenState extends State<MapScreen> {
     final String hintText = '장소, 주소 검색';
     return Stack(
       children: [
-        if (!_isMapInitialized || _isLoading)
-          const Center(child: CircularProgressIndicator())
-        else
-          PlatformKakaoMap(
-            centerLat: _currentLatitude,
-            centerLng: _currentLongitude,
-          ),
+        // Always build the map so its `onMapCreated` can run.
+        PlatformKakaoMap(
+          onMapReady: () {
+            if (mounted) {
+              setState(() {
+                _isMapInitialized = true;
+                _isLoading = false;
+              });
+            }
+          },
+        ),
         Positioned(
           top: 8,
           left: 12,

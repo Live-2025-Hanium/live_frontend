@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/models/map_model.dart';
-import 'package:live_frontend/screens/map/widgets/locate_button.dart';
+import 'package:live_frontend/widgets/locate_button.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 
@@ -59,7 +59,7 @@ class _MapBottomSheetState extends State<MapBottomSheet> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        LocateButton(onPressed: widget.onLocatePressed),
+        LocateButton(),
         Gap(16),
         GestureDetector(
           behavior: HitTestBehavior.opaque,
