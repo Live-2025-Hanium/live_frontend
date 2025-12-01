@@ -3,7 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SaeipNavigationBar extends StatefulWidget {
@@ -31,7 +32,7 @@ class _SaeipNavigationBarState extends State<SaeipNavigationBar> {
     final List<String> routes = [
       'home',
       'statistics',
-      'map',
+      // 'map',
       'forum',
       'mypage',
     ];
@@ -130,19 +131,19 @@ class _SaeipNavigationBarState extends State<SaeipNavigationBar> {
                 ),
                 label: '분석',
               ),
-              NavigationDestination(
-                selectedIcon: SvgPicture.asset(
-                  'assets/icons/map.svg',
-                  colorFilter: selectedIconColorFilter,
-                  height: 20.h,
-                ),
-                icon: SvgPicture.asset(
-                  'assets/icons/map.svg',
-                  colorFilter: iconColorFilter,
-                  height: 20.h,
-                ),
-                label: '지도',
-              ),
+              // NavigationDestination(
+              //   selectedIcon: SvgPicture.asset(
+              //     'assets/icons/map.svg',
+              //     colorFilter: selectedIconColorFilter,
+              //     height: 20.h,
+              //   ),
+              //   icon: SvgPicture.asset(
+              //     'assets/icons/map.svg',
+              //     colorFilter: iconColorFilter,
+              //     height: 20.h,
+              //   ),
+              //   label: '지도',
+              // ),
               NavigationDestination(
                 selectedIcon: SvgPicture.asset(
                   'assets/icons/forum.svg',
