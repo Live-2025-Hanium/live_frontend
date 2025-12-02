@@ -1,20 +1,15 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:live_frontend/models/survey_question_model.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
-import 'package:live_frontend/screens/survey/utils/parse_questions.dart';
+import 'package:live_frontend/providers/survey_provider.dart';
 import 'package:live_frontend/theme/app_colors.dart';
 import 'package:live_frontend/theme/app_text_styles.dart';
 import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
-import 'package:markdown_widget/markdown_widget.dart';
 import 'package:percent_indicator/flutter_percent_indicator.dart';
 
 class SurveyScreen extends ConsumerStatefulWidget {
@@ -28,18 +23,9 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
     with TickerProviderStateMixin {
   late PageController _pageViewController;
   int _currentPage = 0;
-  int _totalPages = 5;
-  List<SurveyQuestionModel> _questions = [];
-
-  late final Future<List<SurveyQuestionModel>> _questionsFuture =
-      loadQuestionsFromAssets().then((questions) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          setState(() {
-            _totalPages = (questions.length / 4).ceil();
-          });
-        });
-        return questions;
-      });
+  int _totalPages = 1; // 초기값을 1로 설정하여 0으로 나누는 오류 방지
+  final List<SurveyAnswerModel> _answers = [];
+  List<SurveyQuestionModel> _questions = []; // 로컬 캐시된 질문 목록
 
   @override
   void initState() {
@@ -73,11 +59,9 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
     }
   }
 
-  bool isAllSelected(List<SurveyQuestionModel> questions) {
-    final firstIndex = _currentPage * 4;
-    final lastIndex = (firstIndex + 4).clamp(0, questions.length);
-    for (int i = firstIndex; i < lastIndex; i++) {
-      if (i < questions.length && questions[i].response == null) {
+  bool isAllSelected(List<SurveyAnswerModel> answers) {
+    for (var answer in answers) {
+      if (answer.answerNumber == null && answer.answerNumbers == null) {
         return false;
       }
     }
@@ -86,8 +70,10 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
 
   @override
   Widget build(BuildContext context) {
-    bool allSelected = isAllSelected(_questions);
+    final questionsAsync = ref.watch(surveyQuestionsProvider);
+    bool allSelected = isAllSelected(_answers);
     int progress = allSelected ? _currentPage + 1 : _currentPage;
+
     return Scaffold(
       appBar: SaeipAppBar(onBack: _currentPage > 0 ? goToPrevPage : null),
       body: Container(
@@ -99,8 +85,8 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
               _buildUserInfoWidget(),
               const Gap(16),
               LinearPercentIndicator(
-                padding: EdgeInsets.only(left: 0, right: 10.w),
-                width: 300.w,
+                padding: EdgeInsets.only(left: 0, right: 10),
+                width: 300,
                 animation: true,
                 animationDuration: 1000,
                 lineHeight: 2.0,
@@ -116,66 +102,52 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
               ),
               const Gap(16),
               Expanded(
-                child: FutureBuilder<List<SurveyQuestionModel>>(
-                  future: _questionsFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('오류: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(child: Text('질문 없음'));
-                    }
-
-                    final questions = snapshot.data!;
-                    final totalPages = (questions.length / 4).ceil();
-
-                    if (_questions.isEmpty) {
+                child: questionsAsync.when(
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (error, stack) => Center(child: Text('오류: $error')),
+                  data: (questionsFromProvider) {
+                    // 프로바이더로부터 받은 데이터로 로컬 상태를 한 번만 초기화합니다.
+                    if (_questions.isEmpty &&
+                        questionsFromProvider.questions.isNotEmpty) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         setState(() {
-                          _questions = questions;
+                          _questions = questionsFromProvider.questions;
+                          _totalPages =
+                              (questionsFromProvider.questions.length / 4)
+                                  .ceil();
                         });
                       });
                     }
 
+                    if (_questions.isEmpty) {
+                      // 아직 데이터가 설정되지 않았으면 로딩 상태를 표시합니다.
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
                     return PageView.builder(
                       controller: _pageViewController,
-                      itemCount: totalPages,
+                      itemCount: _totalPages,
                       physics: const NeverScrollableScrollPhysics(), // 버튼으로만 이동
                       itemBuilder: (context, pageIndex) {
                         final startIndex = pageIndex * 4;
                         final endIndex = (startIndex + 4).clamp(
                           0,
-                          questions.length,
+                          _questions.length,
                         );
-                        final questionsForPage = questions.sublist(
+                        final questionsForPage = _questions.sublist(
                           startIndex,
                           endIndex,
                         );
 
                         return ListView.builder(
                           itemCount: questionsForPage.length,
-                          padding: EdgeInsets.only(top: 8.h, bottom: 24.h),
+                          padding: EdgeInsets.only(top: 8, bottom: 24),
                           itemBuilder: (context, index) {
                             final question = questionsForPage[index];
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 24.0),
-                              child: _buildLikertSelector(
-                                context: context,
-                                question: question.question ?? "",
-                                selectedIndex: question.response ?? -1,
-                                onChanged: (selected) {
-                                  setState(() {
-                                    if (question.response == selected) {
-                                      // 이미 선택된 경우 선택 해제
-                                      question.response = null;
-                                    } else {
-                                      // 새로 선택된 경우
-                                      question.response = selected;
-                                    }
-                                  });
-                                },
-                              ),
+                              child: questionBlock(question),
                             );
                           },
                         );
@@ -189,7 +161,6 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
                   },
                 ),
               ),
-
               const Gap(16),
               SizedBox(
                 width: double.infinity,
@@ -236,128 +207,138 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
     );
   }
 
-  Widget _buildLikertSelector({
-    required BuildContext context,
-    required String question,
-    required int selectedIndex,
-    required ValueChanged<int> onChanged,
-  }) {
-    List<(Color color, Color borderColor)> colors = [
-      (AppColors.pinkNormal, AppColors.pinkLightActive),
-      (AppColors.pinkNormal, AppColors.pinkLightActive),
-      (AppColors.blackBlack3, AppColors.blackBlack2),
-      (AppColors.greenNormal, AppColors.greenLightActive),
-      (AppColors.greenNormal, AppColors.greenLightActive),
-    ];
-
-    List<double> widths = [48.w, 36.w, 28.w, 36.w, 48.w];
+  // 질문 위젯 (객관식 선택)
+  Widget questionBlock(SurveyQuestionModel question) {
+    final answer = _answers.firstWhere(
+      (ans) => ans.questionNumber == question.questionNumber,
+      orElse: () => SurveyAnswerModel(
+        questionNumber: question.questionNumber,
+        answerNumber: null,
+        answerNumbers: null,
+        multipleChoice: question.questionType == QuestionType.multipleChoice,
+        singleChoice: question.questionType == QuestionType.singleChoice,
+      ),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
+      children: [
         Text(
-          question,
+          '${question.questionText} (${question.questionType.koreanLabel})',
           style: AppTextStyles.bodyRegular(context, color: Colors.black),
-          textAlign: TextAlign.start,
         ),
-        const Gap(15),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4.w),
-          child: Row(
-            children: List.generate(5, (i) {
-              return Padding(
-                padding: EdgeInsets.only(
-                  right: i == 0
-                      ? 24.w
-                      : i == 1
-                      ? 16.w
-                      : 0,
-                  left: i == 4
-                      ? 24.w
-                      : i == 3
-                      ? 16.w
-                      : 0,
-                ),
-                child: _buildCustomRadioButton(
-                  width: widths[i],
-                  height: widths[i],
-                  color: colors[i].$1,
-                  borderColor: colors[i].$2,
-                  isSelected: selectedIndex == i,
-                  onChanged: () => onChanged(i),
-                ),
-              );
-            }),
-          ),
-        ),
-        Gap(5.h),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                '아니오',
-                style: AppTextStyles.smallMedium(
-                  context,
-                  color: AppColors.blackBlack5,
-                ),
-              ),
-              Text(
-                '예',
-                style: AppTextStyles.smallMedium(
-                  context,
-                  color: AppColors.blackBlack5,
-                ),
-              ),
-            ],
-          ),
+        const Gap(8),
+        Column(
+          children: question.options.map((option) {
+            final isSelected =
+                question.questionType == QuestionType.singleChoice
+                ? answer.answerNumber == option.optionNumber
+                : (answer.answerNumbers?.contains(option.optionNumber) ??
+                      false);
+
+            return optionTile(option, isSelected, (value) {
+              setState(() {
+                final existingIndex = _answers.indexWhere(
+                  (ans) => ans.questionNumber == question.questionNumber,
+                );
+                final existing = existingIndex >= 0
+                    ? _answers[existingIndex]
+                    : null;
+
+                if (question.questionType == QuestionType.singleChoice) {
+                  final int? newAnswerNumber = value == true
+                      ? option.optionNumber
+                      : null;
+                  final newAnswer = SurveyAnswerModel(
+                    questionNumber: question.questionNumber,
+                    answerNumber: newAnswerNumber,
+                    answerNumbers: null,
+                    multipleChoice:
+                        question.questionType == QuestionType.multipleChoice,
+                    singleChoice:
+                        question.questionType == QuestionType.singleChoice,
+                  );
+
+                  if (existingIndex >= 0) {
+                    _answers[existingIndex] = newAnswer;
+                  } else {
+                    _answers.add(newAnswer);
+                  }
+                } else {
+                  final List<int> newAnswerNumbers =
+                      (existing?.answerNumbers != null)
+                      ? List<int>.from(existing!.answerNumbers!)
+                      : <int>[];
+
+                  if (value == true) {
+                    if (!newAnswerNumbers.contains(option.optionNumber)) {
+                      newAnswerNumbers.add(option.optionNumber);
+                    }
+                  } else {
+                    newAnswerNumbers.remove(option.optionNumber);
+                  }
+
+                  final newAnswer = SurveyAnswerModel(
+                    questionNumber: question.questionNumber,
+                    answerNumber: null,
+                    answerNumbers: newAnswerNumbers.isEmpty
+                        ? null
+                        : newAnswerNumbers,
+                    multipleChoice:
+                        question.questionType == QuestionType.multipleChoice,
+                    singleChoice:
+                        question.questionType == QuestionType.singleChoice,
+                  );
+
+                  if (existingIndex >= 0) {
+                    _answers[existingIndex] = newAnswer;
+                  } else {
+                    _answers.add(newAnswer);
+                  }
+                }
+              });
+            });
+          }).toList(),
         ),
       ],
     );
   }
 
-  Widget _buildCustomRadioButton({
-    required double width,
-    required double height,
-    required Color color,
-    required Color borderColor,
-    required bool isSelected,
-    required VoidCallback onChanged,
-  }) {
-    return SizedBox(
-      width: 48.w,
-      height: 48.w,
-      child: Material(
-        color: Colors.transparent,
-        shape: const CircleBorder(),
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: onChanged,
-          splashColor: color.toOpacity(0.2), // 선택 색상 기준 splash
-          child: Center(
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeInOut,
-              width: width,
-              height: height,
-              decoration: BoxDecoration(
-                color: isSelected ? color : Colors.transparent,
-                borderRadius: BorderRadius.circular(width / 2),
-                border: Border.all(color: borderColor, width: 1.0),
-              ),
+  Widget optionTile(
+    SurveyOptionModel option,
+    bool isSelected,
+    Function(bool?) onChanged,
+  ) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: SizedBox(
+        height: 48,
+        width: 48,
+        child: Transform.scale(
+          scale: 24 / 18,
+          child: Checkbox(
+            value: isSelected,
+            onChanged: onChanged,
+            activeColor: AppColors.greenNormal,
+            checkColor: Colors.white,
+            shape: const CircleBorder(
+              side: BorderSide(color: AppColors.greenNormal),
             ),
+            visualDensity: VisualDensity.compact,
           ),
         ),
+      ),
+      title: Text(
+        option.optionText,
+        style: AppTextStyles.bodyRegular(context, color: Colors.black),
       ),
     );
   }
 
   Future<void> _dialogBuilder(BuildContext context) {
-    final jsonList = _questions.map((q) => q.toAnswerJson()).toList();
+    // final jsonList = _questions.map((q) => q.toAnswerJson()).toList();
 
-    log("응답 JSON", name: "Survey", error: jsonEncode(jsonList));
+    // log("응답 JSON", name: "Survey", error: jsonEncode(jsonList));
 
     return showDialog(
       context: context,
