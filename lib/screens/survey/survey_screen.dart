@@ -10,7 +10,6 @@ import 'package:live_frontend/widgets/saeip_app_bar.dart';
 import 'package:live_frontend/widgets/saeip_button.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_frontend/widgets/saeip_modal.dart';
-import 'package:percent_indicator/flutter_percent_indicator.dart';
 
 class SurveyScreen extends ConsumerStatefulWidget {
   const SurveyScreen({super.key});
@@ -313,6 +312,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
   ) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
+      horizontalTitleGap: 0.0,
       leading: SizedBox(
         height: 48,
         width: 48,
