@@ -21,7 +21,8 @@ class SurveyScreen extends ConsumerStatefulWidget {
 class _SurveyScreenState extends ConsumerState<SurveyScreen> {
   int _currentPage = 0;
   int _totalPages = 1;
-  final List<SurveyAnswerModel> _answers = [];
+  final Map<int, SurveyAnswerModel> _answers = {};
+  bool allSelected = false;
 
   void goToNextPage() {
     if (_currentPage < _totalPages - 1) {
@@ -41,8 +42,8 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
     }
   }
 
-  bool isAllSelected(List<SurveyAnswerModel> answers) {
-    for (var answer in answers) {
+  bool isAllSelected(Map<int, SurveyAnswerModel> answers) {
+    for (var answer in answers.values) {
       if (answer.answerNumber == null && answer.answerNumbers == null) {
         return false;
       }
@@ -53,7 +54,6 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
   @override
   Widget build(BuildContext context) {
     final questionsAsync = ref.watch(surveyQuestionsProvider(_currentPage + 1));
-    bool allSelected = isAllSelected(_answers);
 
     return Scaffold(
       appBar: SaeipAppBar(onBack: _currentPage > 0 ? goToPrevPage : null),
@@ -81,7 +81,6 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
                         }
                       });
 
-                      // Render only the current page's questions returned by the provider
                       final questions = questionsFromProvider.questions;
                       if (questions.isEmpty) {
                         return const Center(child: CircularProgressIndicator());
@@ -162,18 +161,20 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
     );
   }
 
-  // 질문 위젯 (객관식 선택)
+  // 질문 위젯
   Widget questionBlock(SurveyQuestionModel question) {
-    final answer = _answers.firstWhere(
-      (ans) => ans.questionNumber == question.questionNumber,
-      orElse: () => SurveyAnswerModel(
+    // 답 리스트에 들어가지 않았다면 새로 추가
+    if (!_answers.containsKey(question.questionNumber)) {
+      _answers[question.questionNumber] = SurveyAnswerModel(
         questionNumber: question.questionNumber,
         answerNumber: null,
         answerNumbers: null,
         multipleChoice: question.questionType == QuestionType.multipleChoice,
         singleChoice: question.questionType == QuestionType.singleChoice,
-      ),
-    );
+      );
+    }
+
+    final answer = _answers[question.questionNumber]!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,20 +190,18 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
         Column(
           children: question.options.map((option) {
             final isSelected =
+                // 객관식이면
                 question.questionType == QuestionType.singleChoice
-                ? answer.answerNumber == option.optionNumber
-                : (answer.answerNumbers?.contains(option.optionNumber) ??
-                      false);
+                ?
+                  // 옵션넘버랑 헌택된 답변이랑 같으면 선택된거
+                  answer.answerNumber == option.optionNumber
+                :
+                  // 다중선택이고 답변리스트에 옵션넘버가 있으면 선택된거
+                  (answer.answerNumbers?.contains(option.optionNumber) ??
+                      false); // 일단 혹시 모르니 false 반환
 
             return optionTile(option, isSelected, (value) {
               setState(() {
-                final existingIndex = _answers.indexWhere(
-                  (ans) => ans.questionNumber == question.questionNumber,
-                );
-                final existing = existingIndex >= 0
-                    ? _answers[existingIndex]
-                    : null;
-
                 if (question.questionType == QuestionType.singleChoice) {
                   final int? newAnswerNumber = value == true
                       ? option.optionNumber
@@ -217,15 +216,11 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
                         question.questionType == QuestionType.singleChoice,
                   );
 
-                  if (existingIndex >= 0) {
-                    _answers[existingIndex] = newAnswer;
-                  } else {
-                    _answers.add(newAnswer);
-                  }
+                  _answers[question.questionNumber] = newAnswer;
                 } else {
                   final List<int> newAnswerNumbers =
-                      (existing?.answerNumbers != null)
-                      ? List<int>.from(existing!.answerNumbers!)
+                      (answer.answerNumbers != null)
+                      ? List<int>.from(answer.answerNumbers!)
                       : <int>[];
 
                   if (value == true) {
@@ -248,12 +243,9 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
                         question.questionType == QuestionType.singleChoice,
                   );
 
-                  if (existingIndex >= 0) {
-                    _answers[existingIndex] = newAnswer;
-                  } else {
-                    _answers.add(newAnswer);
-                  }
+                  _answers[question.questionNumber] = newAnswer;
                 }
+                allSelected = isAllSelected(_answers);
               });
             });
           }).toList(),
