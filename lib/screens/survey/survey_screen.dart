@@ -18,32 +18,16 @@ class SurveyScreen extends ConsumerStatefulWidget {
   ConsumerState<SurveyScreen> createState() => _SurveyScreenState();
 }
 
-class _SurveyScreenState extends ConsumerState<SurveyScreen>
-    with TickerProviderStateMixin {
-  late PageController _pageViewController;
+class _SurveyScreenState extends ConsumerState<SurveyScreen> {
   int _currentPage = 0;
-  int _totalPages = 1; // 초기값을 1로 설정하여 0으로 나누는 오류 방지
+  int _totalPages = 1;
   final List<SurveyAnswerModel> _answers = [];
-  List<SurveyQuestionModel> _questions = []; // 로컬 캐시된 질문 목록
-
-  @override
-  void initState() {
-    super.initState();
-    _pageViewController = PageController();
-  }
-
-  @override
-  void dispose() {
-    _pageViewController.dispose();
-    super.dispose();
-  }
 
   void goToNextPage() {
     if (_currentPage < _totalPages - 1) {
-      _pageViewController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+      setState(() {
+        _currentPage++;
+      });
     } else {
       _dialogBuilder(context);
     }
@@ -51,10 +35,9 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
 
   void goToPrevPage() {
     if (_currentPage > 0) {
-      _pageViewController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+      setState(() {
+        _currentPage--;
+      });
     }
   }
 
@@ -69,7 +52,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
 
   @override
   Widget build(BuildContext context) {
-    final questionsAsync = ref.watch(surveyQuestionsProvider);
+    final questionsAsync = ref.watch(surveyQuestionsProvider(_currentPage + 1));
     bool allSelected = isAllSelected(_answers);
 
     return Scaffold(
@@ -89,56 +72,30 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
                         const Center(child: CircularProgressIndicator()),
                     error: (error, stack) => Center(child: Text('오류: $error')),
                     data: (questionsFromProvider) {
-                      // 프로바이더로부터 받은 데이터로 로컬 상태를 한 번만 초기화합니다.
-                      if (_questions.isEmpty &&
-                          questionsFromProvider.questions.isNotEmpty) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                      // Ensure total pages is taken from the provider
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (mounted) {
                           setState(() {
-                            _questions = questionsFromProvider.questions;
-                            _totalPages =
-                                (questionsFromProvider.questions.length / 4)
-                                    .ceil();
+                            _totalPages = questionsFromProvider.totalPages;
                           });
-                        });
-                      }
+                        }
+                      });
 
-                      if (_questions.isEmpty) {
-                        // 아직 데이터가 설정되지 않았으면 로딩 상태를 표시합니다.
+                      // Render only the current page's questions returned by the provider
+                      final questions = questionsFromProvider.questions;
+                      if (questions.isEmpty) {
                         return const Center(child: CircularProgressIndicator());
                       }
 
-                      return PageView.builder(
-                        controller: _pageViewController,
-                        itemCount: _totalPages,
-                        physics:
-                            const NeverScrollableScrollPhysics(), // 버튼으로만 이동
-                        itemBuilder: (context, pageIndex) {
-                          final startIndex = pageIndex * 4;
-                          final endIndex = (startIndex + 4).clamp(
-                            0,
-                            _questions.length,
+                      return ListView.builder(
+                        itemCount: questions.length,
+                        padding: EdgeInsets.only(top: 8, bottom: 24),
+                        itemBuilder: (context, index) {
+                          final question = questions[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 24.0),
+                            child: questionBlock(question),
                           );
-                          final questionsForPage = _questions.sublist(
-                            startIndex,
-                            endIndex,
-                          );
-
-                          return ListView.builder(
-                            itemCount: questionsForPage.length,
-                            padding: EdgeInsets.only(top: 8, bottom: 24),
-                            itemBuilder: (context, index) {
-                              final question = questionsForPage[index];
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 24.0),
-                                child: questionBlock(question),
-                              );
-                            },
-                          );
-                        },
-                        onPageChanged: (index) {
-                          setState(() {
-                            _currentPage = index;
-                          });
                         },
                       );
                     },
