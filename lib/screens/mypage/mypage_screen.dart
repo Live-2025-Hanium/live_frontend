@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:live_frontend/screens/mypage/widget/my_mission_list.dart';
 import 'package:live_frontend/screens/mypage/widget/profile_widget.dart';
 import 'package:live_frontend/theme/app_colors.dart';
@@ -15,6 +16,12 @@ class MyPageScreen extends ConsumerWidget {
         children: [
           Padding(padding: const EdgeInsets.all(16.0), child: ProfileWidget()),
           MyMissionList(),
+          ElevatedButton(
+            onPressed: () {
+              context.goNamed('survey');
+            },
+            child: Text('Go to Survey'),
+          ),
         ],
       ),
     );

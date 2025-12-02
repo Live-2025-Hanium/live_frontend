@@ -72,102 +72,92 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
   Widget build(BuildContext context) {
     final questionsAsync = ref.watch(surveyQuestionsProvider);
     bool allSelected = isAllSelected(_answers);
-    int progress = allSelected ? _currentPage + 1 : _currentPage;
 
     return Scaffold(
       appBar: SaeipAppBar(onBack: _currentPage > 0 ? goToPrevPage : null),
       body: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 40),
+        padding: const EdgeInsets.only(bottom: 40),
         child: SafeArea(
           child: Column(
             children: [
               _buildUserInfoWidget(),
-              const Gap(16),
-              LinearPercentIndicator(
-                padding: EdgeInsets.only(left: 0, right: 10),
-                width: 300,
-                animation: true,
-                animationDuration: 1000,
-                lineHeight: 2.0,
-                trailing: Text(
-                  '$progress / $_totalPages',
-                  style: AppTextStyles.smallMedium(
-                    context,
-                    color: AppColors.blackBlack5,
+              const Gap(28),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(left: 8, right: 16),
+                  child: questionsAsync.when(
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
+                    error: (error, stack) => Center(child: Text('오류: $error')),
+                    data: (questionsFromProvider) {
+                      // 프로바이더로부터 받은 데이터로 로컬 상태를 한 번만 초기화합니다.
+                      if (_questions.isEmpty &&
+                          questionsFromProvider.questions.isNotEmpty) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          setState(() {
+                            _questions = questionsFromProvider.questions;
+                            _totalPages =
+                                (questionsFromProvider.questions.length / 4)
+                                    .ceil();
+                          });
+                        });
+                      }
+
+                      if (_questions.isEmpty) {
+                        // 아직 데이터가 설정되지 않았으면 로딩 상태를 표시합니다.
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      return PageView.builder(
+                        controller: _pageViewController,
+                        itemCount: _totalPages,
+                        physics:
+                            const NeverScrollableScrollPhysics(), // 버튼으로만 이동
+                        itemBuilder: (context, pageIndex) {
+                          final startIndex = pageIndex * 4;
+                          final endIndex = (startIndex + 4).clamp(
+                            0,
+                            _questions.length,
+                          );
+                          final questionsForPage = _questions.sublist(
+                            startIndex,
+                            endIndex,
+                          );
+
+                          return ListView.builder(
+                            itemCount: questionsForPage.length,
+                            padding: EdgeInsets.only(top: 8, bottom: 24),
+                            itemBuilder: (context, index) {
+                              final question = questionsForPage[index];
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 24.0),
+                                child: questionBlock(question),
+                              );
+                            },
+                          );
+                        },
+                        onPageChanged: (index) {
+                          setState(() {
+                            _currentPage = index;
+                          });
+                        },
+                      );
+                    },
                   ),
                 ),
-                percent: _totalPages == 0 ? 0 : progress / _totalPages,
-                progressColor: AppColors.greenNormal,
               ),
+
               const Gap(16),
-              Expanded(
-                child: questionsAsync.when(
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                  error: (error, stack) => Center(child: Text('오류: $error')),
-                  data: (questionsFromProvider) {
-                    // 프로바이더로부터 받은 데이터로 로컬 상태를 한 번만 초기화합니다.
-                    if (_questions.isEmpty &&
-                        questionsFromProvider.questions.isNotEmpty) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        setState(() {
-                          _questions = questionsFromProvider.questions;
-                          _totalPages =
-                              (questionsFromProvider.questions.length / 4)
-                                  .ceil();
-                        });
-                      });
-                    }
 
-                    if (_questions.isEmpty) {
-                      // 아직 데이터가 설정되지 않았으면 로딩 상태를 표시합니다.
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    return PageView.builder(
-                      controller: _pageViewController,
-                      itemCount: _totalPages,
-                      physics: const NeverScrollableScrollPhysics(), // 버튼으로만 이동
-                      itemBuilder: (context, pageIndex) {
-                        final startIndex = pageIndex * 4;
-                        final endIndex = (startIndex + 4).clamp(
-                          0,
-                          _questions.length,
-                        );
-                        final questionsForPage = _questions.sublist(
-                          startIndex,
-                          endIndex,
-                        );
-
-                        return ListView.builder(
-                          itemCount: questionsForPage.length,
-                          padding: EdgeInsets.only(top: 8, bottom: 24),
-                          itemBuilder: (context, index) {
-                            final question = questionsForPage[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 24.0),
-                              child: questionBlock(question),
-                            );
-                          },
-                        );
-                      },
-                      onPageChanged: (index) {
-                        setState(() {
-                          _currentPage = index;
-                        });
-                      },
-                    );
-                  },
-                ),
-              ),
-              const Gap(16),
-              SizedBox(
+              Container(
                 width: double.infinity,
-                child: SaeipButton(
-                  text: _currentPage + 1 == _totalPages ? '제출' : '다음',
-                  onPressed: goToNextPage,
-                  disabled: !allSelected,
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: SizedBox(
+                  child: SaeipButton(
+                    text: _currentPage + 1 == _totalPages ? '제출' : '다음',
+                    onPressed: goToNextPage,
+                    disabled: !allSelected,
+                  ),
                 ),
               ),
             ],
@@ -179,31 +169,40 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
 
   Widget _buildUserInfoWidget() {
     final userName = ref.watch(authProvider).nickname ?? "사용자";
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text.rich(
-          TextSpan(
-            children: [
-              TextSpan(
-                text: userName,
-                style: AppTextStyles.subtitleMedium(
-                  context,
-                  color: AppColors.greenNormal,
-                ),
-              ),
-              TextSpan(
-                text: " 님에 대해\n 알려주세요!",
-                style: AppTextStyles.subtitleMedium(
-                  context,
-                  color: Colors.black,
-                ),
-              ),
-            ],
-          ),
-          textAlign: TextAlign.center,
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: AppColors.greenNormal, width: 1.5),
         ),
-      ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: userName,
+                  style: AppTextStyles.subtitleMedium(
+                    context,
+                    color: AppColors.greenNormal,
+                  ),
+                ),
+                TextSpan(
+                  text: " 님에 대해 알려주세요!",
+                  style: AppTextStyles.subtitleMedium(
+                    context,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const Gap(24),
+        ],
+      ),
     );
   }
 
@@ -223,9 +222,12 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          '${question.questionText} (${question.questionType.koreanLabel})',
-          style: AppTextStyles.bodyRegular(context, color: Colors.black),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Text(
+            '${question.questionText} (${question.questionType.koreanLabel})',
+            style: AppTextStyles.bodyRegular(context, color: Colors.black),
+          ),
         ),
         const Gap(8),
         Column(
