@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:live_frontend/core/controllers/survey_controller.dart';
 import 'package:live_frontend/models/survey_question_model.dart';
 import 'package:live_frontend/providers/auth_provider.dart';
 import 'package:live_frontend/providers/survey_provider.dart';
@@ -291,15 +292,37 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
 
     // log("응답 JSON", name: "Survey", error: jsonEncode(jsonList));
 
+    // Capture the parent context so we can navigate after the dialog is closed.
+    final parentContext = context;
+
     return showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return SaeipModal(
           title: "잠깐!",
           message: "제출 이후 답변을 수정할 수 없어요.",
-          onConfirm: () => context.goNamed('home'),
+          onConfirm: () {
+            final List<SurveyAnswerModel> answers = _answers.values.toList()
+              ..sort((a, b) => a.questionNumber.compareTo(b.questionNumber));
+
+            Navigator.of(dialogContext).pop();
+
+            ref
+                .read(surveyControllerProvider)
+                .submitSurveyAnswers(answers)
+                .then((_) {
+                  if (mounted) {
+                    parentContext.goNamed('home');
+                  }
+                })
+                .catchError((error) {
+                  ScaffoldMessenger.of(
+                    parentContext,
+                  ).showSnackBar(SnackBar(content: Text('제출 실패: $error')));
+                });
+          },
           confirmText: "제출",
-          onCancel: () => Navigator.of(context).pop(),
+          onCancel: () => Navigator.of(dialogContext).pop(),
         );
       },
     );

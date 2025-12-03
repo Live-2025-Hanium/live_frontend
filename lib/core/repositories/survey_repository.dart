@@ -34,4 +34,26 @@ class SurveyRepository {
       throw Exception('Failed to load survey questions');
     }
   }
+
+  Future<void> postSurveyAnswers(List<SurveyAnswerModel> answers) async {
+    try {
+      final answersJson = answers.map((answer) => answer.toJson()).toList();
+      final response = await _dio.post(
+        '/api/v1/surveys/submit',
+        data: {'answers': answersJson},
+      );
+
+      final apiResponse = ApiResponseModel<void>.fromJson(
+        response.data,
+        (_) {},
+      );
+      if (!apiResponse.success) {
+        throw Exception(
+          'Error: ${apiResponse.error?.code ?? 'Unknown'} - ${apiResponse.error?.message ?? 'No message'}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Failed to submit survey answers');
+    }
+  }
 }

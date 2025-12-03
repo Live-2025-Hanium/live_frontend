@@ -15,4 +15,8 @@ class SurveyController {
   Future<PaginationModel> fetchSurveyQuestions(int page) async {
     return await _repository.getSurveyQuestions(page);
   }
+
+  Future<void> submitSurveyAnswers(List<SurveyAnswerModel> answers) async {
+    await _repository.postSurveyAnswers(answers);
+  }
 }
