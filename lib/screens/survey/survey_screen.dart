@@ -24,6 +24,9 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
   int _totalPages = 1;
   final Map<int, SurveyAnswerModel> _answers = {};
   bool allSelected = false;
+  // Track question numbers on the currently-displayed page so we can
+  // compute `allSelected` only for those questions (avoids empty-map bug).
+  Set<int> _currentQuestionNumbers = {};
 
   void goToNextPage() {
     if (_currentPage < _totalPages - 1) {
@@ -43,9 +46,24 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
     }
   }
 
-  bool isAllSelected(Map<int, SurveyAnswerModel> answers) {
-    for (var answer in answers.values) {
-      if (answer.answerNumber == null && answer.answerNumbers == null) {
+  // Check whether all questions (optionally limited to `questionNumbers`)
+  // have at least one selected answer. If the set of questionNumbers is
+  // empty, return false to avoid treating "no questions" as all selected.
+  bool isAllSelected(
+    Map<int, SurveyAnswerModel> answers, [
+    Set<int>? questionNumbers,
+  ]) {
+    final keys = (questionNumbers != null && questionNumbers.isNotEmpty)
+        ? questionNumbers
+        : answers.keys.toSet();
+
+    if (keys.isEmpty) return false;
+
+    for (var qnum in keys) {
+      final answer = answers[qnum];
+      if (answer == null) return false;
+      if (answer.answerNumber == null &&
+          (answer.answerNumbers == null || answer.answerNumbers!.isEmpty)) {
         return false;
       }
     }
@@ -78,6 +96,14 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
                         if (mounted) {
                           setState(() {
                             _totalPages = questionsFromProvider.totalPages;
+                            _currentQuestionNumbers = questionsFromProvider
+                                .questions
+                                .map((q) => q.questionNumber)
+                                .toSet();
+                            allSelected = isAllSelected(
+                              _answers,
+                              _currentQuestionNumbers,
+                            );
                           });
                         }
                       });
@@ -182,9 +208,38 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 8.0),
-          child: Text(
-            '${question.questionText} (${question.questionType.koreanLabel})',
-            style: AppTextStyles.bodyRegular(context, color: Colors.black),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${question.questionNumber}. ',
+                style: AppTextStyles.bodyRegular(context, color: Colors.black),
+              ),
+
+              Expanded(
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: question.questionText,
+                        style: AppTextStyles.bodyRegular(
+                          context,
+                          color: Colors.black,
+                        ),
+                      ),
+                      TextSpan(
+                        text: ' (${question.questionType.koreanLabel})',
+                        style: AppTextStyles.bodyRegular(
+                          context,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                  softWrap: true,
+                ),
+              ),
+            ],
           ),
         ),
         const Gap(8),
@@ -246,7 +301,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
 
                   _answers[question.questionNumber] = newAnswer;
                 }
-                allSelected = isAllSelected(_answers);
+                allSelected = isAllSelected(_answers, _currentQuestionNumbers);
               });
             });
           }).toList(),
@@ -288,11 +343,6 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
   }
 
   Future<void> _dialogBuilder(BuildContext context) {
-    // final jsonList = _questions.map((q) => q.toAnswerJson()).toList();
-
-    // log("응답 JSON", name: "Survey", error: jsonEncode(jsonList));
-
-    // Capture the parent context so we can navigate after the dialog is closed.
     final parentContext = context;
 
     return showDialog(
